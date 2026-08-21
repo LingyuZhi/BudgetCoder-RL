@@ -3,3 +3,11 @@ AGENTS.md
 
 # Private design / progress docs
 my_docs/
+
+# Runtime artifacts (smoke reports, logs)
+outputs/
+
+# Python build artifacts
+__pycache__/
+*.egg-info/
+.pytest_cache/

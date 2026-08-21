@@ -1,0 +1,6 @@
+# Custom agent loop registry for veRL (rollout.agent.agent_loop_config_path).
+# Each entry is instantiated via hydra.utils.instantiate; extra keys are passed
+# to the agent loop constructor as kwargs.
+- name: dummy_two_turn
+  _target_: budget_coder_rl.agent_loop.dummy.DummyTwoTurnAgentLoop
+  max_new_tokens_per_turn: 256

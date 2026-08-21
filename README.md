@@ -21,7 +21,7 @@ Training, evaluation, and installable package metadata are not locked yet.
 
 Pinned starting point:
 
-- Framework: [veRL](https://github.com/verl-project/verl) `release/v0.8.0` (sibling clone, not vendored)
+- Framework: [veRL](https://github.com/verl-project/verl) `main` @ `60546ef2a7464a158cd170f58f852a62a4e552ba` (`0.8.0.dev0`, pre-`v0.8.0`; sibling clone, not vendored). See `configs/versions/environment.md` for the exact pinned runtime.
 - Algorithm: GRPO
 - Parameter update: LoRA
 - Model: `Qwen/Qwen3-4B-Instruct-2507`
@@ -54,13 +54,27 @@ veRL is a pinned upstream sibling dependency, not part of this tree:
 
 ## Setup
 
-The Stage 1 environment is not locked yet. After the first working smoke, this README will record the exact veRL commit and install steps.
-
-Until then:
+The Stage 1 runtime is pinned in `configs/versions/environment.md` (veRL core =
+upstream `main` @ `60546ef2`, Python 3.12 / torch 2.8.0+cu128 / vLLM 0.11.0 /
+Ray 2.55.1 / Transformers 4.57.6).
 
 1. Clone this repository.
-2. Clone veRL `release/v0.8.0` as a sibling under `../deps/verl`.
-3. Do not vendor veRL into this tree or silently upgrade veRL / vLLM / PyTorch / Transformers.
+2. Use a veRL checkout at the pinned commit as a sibling under `../deps/verl`
+   (editable-installed into the RL conda environment).
+3. Install this package without touching the RL environment:
+
+```bash
+pip install --no-deps -e .
+```
+
+4. Do not vendor veRL into this tree or silently upgrade veRL / vLLM / PyTorch / Transformers.
+
+Smoke check (GPU node, pinned conda env):
+
+```bash
+python scripts/smoke/smoke_agent_loop.py --model-path <local-model-dir>
+pytest tests/
+```
 
 ## License
 

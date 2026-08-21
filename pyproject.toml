@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "budget-coder-rl"
+version = "0.1.0"
+description = "BudgetCoder-RL: budget-aware repository exploration with agentic RL (Stage 1)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+# Heavy runtime dependencies (torch / vllm / ray / transformers / verl) are
+# intentionally NOT declared here. They are provided by the pre-existing,
+# pinned RL conda environment (see configs/versions/environment.md).
+# Install this package with `pip install --no-deps -e .` so the known-working
+# environment is never touched.
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
