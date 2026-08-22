@@ -1,0 +1,186 @@
+{
+  "dataset": "SWE-Gym",
+  "hf_repo": "SWE-Gym/SWE-Gym",
+  "revision": "26a6eae79ae9cb6d4307c3cc99c126fbf23cb3f0",
+  "sha256": "60569cea74bb281f7a5579467436a2bc1932c6e0c5f2f7fa0d084392abd9ad97",
+  "n_rows": 2438,
+  "n_rows_written": 2438,
+  "rows_dropped": 0,
+  "n_heuristic_suspicion_rows": 615,
+  "heuristic_suspicion_is_not_confirmed_malformed": true,
+  "flag_class_notes": {
+    "heuristic_structural_suspicion": "Count-mismatch / coarse structural heuristics. n_heuristic_suspicion_rows is not a count of confirmed malformed rows. Pytest parametrized IDs may legitimately contain [], (), and special characters.",
+    "dataset_correlation_property": "Dataset or correlation properties (empty P2P, exact duplicate text/patch). Not a drop filter; all rows are retained.",
+    "observational_signal": "Observational signals only (hints presence, verbatim F2P in the issue, control characters in selectors). Not leakage verdicts."
+  },
+  "heuristic_suspicion_counts": {
+    "f2p_unbalanced_brackets": 88,
+    "p2p_unbalanced_brackets": 600,
+    "f2p_unbalanced_parens": 25,
+    "p2p_unbalanced_parens": 221
+  },
+  "dataset_property_counts": {
+    "p2p_empty": 210,
+    "duplicate_problem_statement": 54
+  },
+  "observation_counts": {
+    "hints_text_nonempty": 1528,
+    "hints_text_whitespace_only": 47,
+    "f2p_selector_verbatim_in_problem_statement": 3,
+    "selector_control_chars": 45
+  },
+  "heuristic_suspicion_by_repo": {
+    "p2p_unbalanced_brackets": {
+      "bokeh/bokeh": 2,
+      "conan-io/conan": 7,
+      "dask/dask": 8,
+      "facebookresearch/hydra": 27,
+      "getmoto/moto": 75,
+      "iterative/dvc": 21,
+      "modin-project/modin": 47,
+      "pandas-dev/pandas": 413
+    },
+    "p2p_unbalanced_parens": {
+      "facebookresearch/hydra": 4,
+      "getmoto/moto": 1,
+      "modin-project/modin": 1,
+      "pandas-dev/pandas": 215
+    },
+    "f2p_unbalanced_brackets": {
+      "conan-io/conan": 2,
+      "facebookresearch/hydra": 6,
+      "getmoto/moto": 8,
+      "iterative/dvc": 7,
+      "modin-project/modin": 2,
+      "pandas-dev/pandas": 63
+    },
+    "f2p_unbalanced_parens": {
+      "facebookresearch/hydra": 1,
+      "getmoto/moto": 1,
+      "pandas-dev/pandas": 23
+    }
+  },
+  "selector_control_chars": {
+    "n_instances_with_actual_c0": 45,
+    "n_instances_with_literal_escape_sequence": 80,
+    "actual_control_chars": {
+      "instance_counts": {
+        "NUL": 28,
+        "U+0001": 2,
+        "U+000C": 1,
+        "U+0012": 16,
+        "U+001F": 1
+      },
+      "occurrence_counts": {
+        "NUL": 650,
+        "U+0001": 18,
+        "U+000C": 1,
+        "U+0012": 64,
+        "U+001F": 1
+      }
+    },
+    "literal_escape_sequences": {
+      "instance_counts": {
+        "\\0": 1,
+        "\\n": 65,
+        "\\r": 5,
+        "\\t": 22
+      },
+      "occurrence_counts": {
+        "\\0": 2,
+        "\\n": 3610,
+        "\\r": 20,
+        "\\t": 465
+      },
+      "note": "Two-character (or longer) C0-related backslash sequences in selector text (\\n, \\t, \\0, \\x00-\\x1f), not decoded control bytes and not unicode letters."
+    }
+  },
+  "selector_shape": {
+    "FAIL_TO_PASS": {
+      "pytest_nodeid": 24231,
+      "path_like": 0,
+      "dotted_unittest": 0,
+      "other": 0
+    },
+    "PASS_TO_PASS": {
+      "pytest_nodeid": 1830573,
+      "path_like": 0,
+      "dotted_unittest": 0,
+      "other": 0
+    }
+  },
+  "duplicates": {
+    "problem_statement": {
+      "n_groups": 26,
+      "n_rows": 54,
+      "n_extra": 28
+    },
+    "patch": {
+      "n_groups": 0,
+      "n_rows": 0,
+      "n_extra": 0
+    },
+    "repo_base_commit_problem_statement": {
+      "n_groups": 1,
+      "n_rows": 2,
+      "n_extra": 1,
+      "groups": [
+        {
+          "repo": "pandas-dev/pandas",
+          "base_commit": "54bf475fd4d38a08a353a47e44dfecce24cdfb4b",
+          "instance_ids": [
+            "pandas-dev__pandas-53805",
+            "pandas-dev__pandas-53830"
+          ],
+          "n": 2
+        }
+      ]
+    }
+  },
+  "repo_base_commit": {
+    "n_groups": 2163,
+    "group_size_distribution": {
+      "1": 1940,
+      "2": 180,
+      "3": 36,
+      "4": 5,
+      "5": 2
+    },
+    "max_group_size": 5,
+    "n_singletons": 1940
+  },
+  "known_upstream_malformed": {
+    "instance_id": "conan-io__conan-11594",
+    "present_in_input": true,
+    "captured_by_generic_rule": true,
+    "matching_flags": [
+      "f2p_unbalanced_brackets",
+      "p2p_unbalanced_brackets"
+    ]
+  },
+  "privileged_fields": [
+    "hints_text",
+    "patch",
+    "test_patch",
+    "FAIL_TO_PASS",
+    "PASS_TO_PASS"
+  ],
+  "agent_task_input_fields": [
+    "problem_statement"
+  ],
+  "human_review_notes": [
+    "M1B does not drop rows. All input instances are retained.",
+    "Count-mismatch / coarse structural heuristics. n_heuristic_suspicion_rows is not a count of confirmed malformed rows. Pytest parametrized IDs may legitimately contain [], (), and special characters.",
+    "Dataset or correlation properties (empty P2P, exact duplicate text/patch). Not a drop filter; all rows are retained.",
+    "Observational signals only (hints presence, verbatim F2P in the issue, control characters in selectors). Not leakage verdicts.",
+    "Issue mentions of file/function/test names are not automatic leakage.",
+    "Unbalanced [] / () flags are count-mismatch heuristics, not confirmed malformed selectors. Pytest parametrized IDs may contain brackets.",
+    "Empty PASS_TO_PASS lists are a dataset property, not a structural anomaly or download defect. They are not filtered.",
+    "selector_control_chars counts actual C0 bytes in selectors. Literal backslash-escape text is reported separately. UUID/NUL parametrize nodeids may be legitimate.",
+    "Exact-duplicate normalized problem_statement groups are correlation properties, not a drop filter.",
+    "At least one identical (repo, base_commit, problem_statement) tuple exists; inspect before treating those instance_ids as independent.",
+    "F2P identifiers that appear verbatim in problem_statement are observational only; they may be legitimate issue text.",
+    "615 of 2438 instances have at least one heuristic structural suspicion (not confirmed malformed)."
+  ],
+  "jsonl": "data/interim/swe_gym/m1b_audit.jsonl"
+}

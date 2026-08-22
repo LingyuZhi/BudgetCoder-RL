@@ -10,6 +10,10 @@ outputs/
 # Official raw datasets (never commit)
 data/raw/
 
+# Regenerable interim audits / processed tables (never commit)
+data/interim/
+data/processed/
+
 # Python build artifacts
 __pycache__/
 *.egg-info/

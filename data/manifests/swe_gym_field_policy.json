@@ -1,0 +1,39 @@
+{
+  "dataset": "SWE-Gym",
+  "revision": "26a6eae79ae9cb6d4307c3cc99c126fbf23cb3f0",
+  "official_fields": [
+    "instance_id",
+    "hints_text",
+    "patch",
+    "test_patch",
+    "created_at",
+    "problem_statement",
+    "repo",
+    "base_commit",
+    "version",
+    "PASS_TO_PASS",
+    "FAIL_TO_PASS"
+  ],
+  "agent_task_input": [
+    "problem_statement"
+  ],
+  "runtime_identity_metadata": [
+    "instance_id",
+    "repo",
+    "base_commit",
+    "version",
+    "created_at"
+  ],
+  "privileged_policy_hidden": [
+    "hints_text",
+    "patch",
+    "test_patch",
+    "FAIL_TO_PASS",
+    "PASS_TO_PASS"
+  ],
+  "notes": {
+    "hints_text": "Stage-1 default: do not expose hints_text to the agent.",
+    "gold_patch_and_tests": "patch, test_patch, FAIL_TO_PASS, and PASS_TO_PASS are privileged evaluator information and must not enter the agent task view.",
+    "external_lookup": "Future rollout must forbid external web/GitHub lookup of the issue or repository. M1B records this contract only; no network sandbox is implemented here."
+  }
+}

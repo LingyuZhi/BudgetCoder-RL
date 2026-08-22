@@ -10,11 +10,11 @@ Git tracks only small, versionable files:
 - `fixtures/`: tiny samples for tests and smoke runs
 - `stats/`: counts and summaries (no full gold patches)
 
-Gitignored working-tree data (see `.gitignore` → `data/raw/`):
+Gitignored working-tree data (see `.gitignore`):
 
 - `raw/`: official tables such as SWE-Gym parquet
+- `interim/`: regenerable per-instance audits (e.g. M1B JSONL)
 - `processed/`: Stage 1 JSONL (when it exists)
-- `audits/`: large audit dumps, if any
 
 Repository clones / worktrees, Docker / executable images, model weights,
 checkpoints, full trajectories, and Hub caches live **outside** `data/`, under
@@ -30,17 +30,48 @@ one-off exception.
 | --- | --- |
 | Raw parquet + `SOURCE.json` + `profile.json` | `data/raw/swe_gym/` (not in Git) |
 | Pinned source / revision / sha256 | `manifests/swe_gym_raw.json` (in Git) |
+| Field visibility / leakage contract | `manifests/swe_gym_field_policy.json` (in Git) |
+| M1B audit summary | `manifests/swe_gym_m1b_audit_summary.json` (in Git) |
+| M1B per-instance flags | `interim/swe_gym/m1b_audit.jsonl` (not in Git; regenerable) |
 | Tiny inspect fixture | `fixtures/swe_gym_tiny.json` |
+| Tiny M1B audit fixture | `fixtures/swe_gym_m1b_audit.json` |
 
 Do **not** use `SWE-Gym/SWE-Gym-Lite` or `SWE-Gym/SWE-Gym-Raw`.
 
 ```bash
 python scripts/data/download_swe_gym.py
 python scripts/data/inspect_swe_gym.py
+python scripts/data/audit_swe_gym.py
 ```
 
 Download talks to Hugging Face (or `HF_ENDPOINT` if set). It does not install
-packages. Schema / row-count / repo-count mismatches fail the inspect script.
+packages. Schema / row-count / repo-count / parquet-identity mismatches fail
+the inspect and audit scripts.
 
-Stage 1 training data is derived later from these raw rows. Filtering, splits,
-and gold-patch oracle extraction are **not** done in M1A.
+### M1B field visibility (Stage 1)
+
+The 11 official columns are partitioned in `manifests/swe_gym_field_policy.json`:
+
+- **Agent task input:** `problem_statement`
+- **Runtime / identity metadata:** `instance_id`, `repo`, `base_commit`, `version`, `created_at`
+- **Privileged / policy-hidden:** `hints_text`, `patch`, `test_patch`, `FAIL_TO_PASS`, `PASS_TO_PASS`
+
+Stage 1 does **not** expose `hints_text` to the agent. Gold patch, test patch,
+F2P, and P2P are privileged evaluator information. Future rollout should forbid
+external web/GitHub lookup; M1B records that contract and does not implement a
+network sandbox.
+
+M1B audits all 2438 rows in place. It does **not** drop instances, rewrite the
+raw parquet, extract oracle localization labels, or create train/val/test
+splits. Identity / schema / cardinality errors are hard fails.
+
+Audit labels are three disjoint classes:
+
+- **Heuristic structural suspicion** (e.g. unbalanced `[]` / `()`): count-mismatch
+  heuristics only. `n_heuristic_suspicion_rows` is **not** a count of confirmed
+  malformed rows. Pytest parametrized IDs may contain brackets, parentheses,
+  and special characters.
+- **Dataset / correlation property** (e.g. empty `PASS_TO_PASS`, exact duplicate
+  `problem_statement`): statistics, not a drop filter.
+- **Observational signal** (e.g. nonempty `hints_text`, F2P text appearing in
+  the issue): not leakage verdicts.
