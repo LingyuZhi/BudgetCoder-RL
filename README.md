@@ -37,11 +37,11 @@ Tool and environment tokens are observations. They must not contribute to the po
 src/budget_coder_rl/   # core Python package
 configs/               # Stage 1 and experiment configs
 scripts/               # setup / data / smoke / train / eval entrypoints
-data/                  # small manifests and fixtures only
+data/                  # dataset lifecycle: manifests/fixtures in Git; raw/processed gitignored
 tests/
 ```
 
-Raw datasets, repository snapshots, model weights, checkpoints, and full trajectories do **not** belong in Git. Runtime data should live outside the repository, under an external root pointed to by `BCRL_DATA_ROOT`.
+Tabular datasets (e.g. official SWE-Gym parquet) live under `data/` and are gitignored. Repository snapshots, Docker / executable images, model weights, checkpoints, and full trajectories stay outside the Git tree, under `$BCRL_DATA_ROOT`. Nothing in `data/raw/` or `data/processed/` should be committed.
 
 veRL is a pinned upstream sibling dependency, not part of this tree:
 

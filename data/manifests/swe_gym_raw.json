@@ -1,0 +1,28 @@
+{
+  "dataset": "SWE-Gym",
+  "hf_repo": "SWE-Gym/SWE-Gym",
+  "hf_url": "https://huggingface.co/datasets/SWE-Gym/SWE-Gym",
+  "revision": "26a6eae79ae9cb6d4307c3cc99c126fbf23cb3f0",
+  "filename": "data/train-00000-of-00001.parquet",
+  "sha256": "60569cea74bb281f7a5579467436a2bc1932c6e0c5f2f7fa0d084392abd9ad97",
+  "size_bytes": 43644473,
+  "expected_n_rows": 2438,
+  "expected_n_repos": 11,
+  "required_columns": [
+    "instance_id",
+    "hints_text",
+    "patch",
+    "test_patch",
+    "created_at",
+    "problem_statement",
+    "repo",
+    "base_commit",
+    "version",
+    "PASS_TO_PASS",
+    "FAIL_TO_PASS"
+  ],
+  "local_dir": "data/raw/swe_gym",
+  "notes": "Official SWE-Gym train split. Raw parquet is gitignored under data/raw/. Do not use SWE-Gym-Lite or SWE-Gym-Raw.",
+  "verified_at": "2026-08-22T05:28:24.952487+00:00",
+  "skipped": false
+}

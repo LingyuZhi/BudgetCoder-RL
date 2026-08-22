@@ -7,6 +7,9 @@ my_docs/
 # Runtime artifacts (smoke reports, logs)
 outputs/
 
+# Official raw datasets (never commit)
+data/raw/
+
 # Python build artifacts
 __pycache__/
 *.egg-info/

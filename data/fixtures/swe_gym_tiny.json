@@ -1,0 +1,41 @@
+[
+  {
+    "instance_id": "owner_a__repo-a-1",
+    "hints_text": "",
+    "patch": "short patch",
+    "test_patch": "t1",
+    "created_at": "2020-01-01T00:00:00",
+    "problem_statement": "short issue",
+    "repo": "owner-a/repo-a",
+    "base_commit": "aaa",
+    "version": "1.0",
+    "PASS_TO_PASS": ["test_ok"],
+    "FAIL_TO_PASS": ["test_fail"]
+  },
+  {
+    "instance_id": "owner_b__repo-b-2",
+    "hints_text": "a hint",
+    "patch": "XXXX_FAKE_PATCH_START XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX XXXX_FAKE_PATCH_END",
+    "test_patch": "",
+    "created_at": "2021-01-01T00:00:00",
+    "problem_statement": "medium-length issue for the small repo",
+    "repo": "owner-b/repo-b",
+    "base_commit": "bbb",
+    "version": "2.0",
+    "PASS_TO_PASS": ["a", "b", "c"],
+    "FAIL_TO_PASS": []
+  },
+  {
+    "instance_id": "owner_a__repo-a-3",
+    "hints_text": null,
+    "patch": "p3",
+    "test_patch": "tp3",
+    "created_at": "2022-01-01T00:00:00",
+    "problem_statement": "this is the longest problem statement in the fixture and should be selected for preview",
+    "repo": "owner-a/repo-a",
+    "base_commit": "ccc",
+    "version": "1.1",
+    "PASS_TO_PASS": "[]",
+    "FAIL_TO_PASS": "[\"one\", \"two\"]"
+  }
+]
