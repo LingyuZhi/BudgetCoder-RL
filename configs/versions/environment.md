@@ -10,6 +10,7 @@
 | veRL | 0.8.0.dev0 |
 | veRL upstream core revision | `verl-project/verl@60546ef2a7464a158cd170f58f852a62a4e552ba` |
 | Base model | `Qwen/Qwen3-4B-Instruct-2507` |
+| unidiff (M1C-A data parser) | 0.7.5 |
 
 Framework upgrades should rerun the M0 AgentLoop smoke before being used for
 Stage 1 experiments.

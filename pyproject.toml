@@ -9,12 +9,15 @@ description = "BudgetCoder-RL: budget-aware repository exploration with agentic 
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-# Heavy runtime dependencies (torch / vllm / ray / transformers / verl) are
+# Heavy RL runtime dependencies (torch / vllm / ray / transformers / verl) are
 # intentionally NOT declared here. They are provided by the pre-existing,
 # pinned RL conda environment (see configs/versions/environment.md).
-# Install this package with `pip install --no-deps -e .` so the known-working
-# environment is never touched.
-dependencies = []
+# Small data-pipeline parsers may be declared. Install this package with
+# `pip install --no-deps -e .` so the RL stack is never resolved/upgraded;
+# install declared data parsers separately (e.g. `pip install 'unidiff>=0.7.5,<1'`).
+dependencies = [
+    "unidiff>=0.7.5,<1",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]

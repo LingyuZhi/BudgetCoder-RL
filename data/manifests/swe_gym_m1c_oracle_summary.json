@@ -1,0 +1,153 @@
+{
+  "dataset": "SWE-Gym",
+  "hf_repo": "SWE-Gym/SWE-Gym",
+  "revision": "26a6eae79ae9cb6d4307c3cc99c126fbf23cb3f0",
+  "sha256": "60569cea74bb281f7a5579467436a2bc1932c6e0c5f2f7fa0d084392abd9ad97",
+  "oracle_source": "patch",
+  "n_rows": 2438,
+  "n_rows_written": 2438,
+  "rows_dropped": 0,
+  "successfully_parsed": 2438,
+  "parse_failure_count": 0,
+  "parse_failure_instance_ids": [],
+  "parse_failures": [],
+  "gold_edit_files_per_instance": {
+    "n": 2438,
+    "min": 1,
+    "mean": 2.4824,
+    "p50": 2.0,
+    "p90": 4.0,
+    "p95": 6.0,
+    "p99": 12.0,
+    "max": 286
+  },
+  "base_changed_files_per_instance": {
+    "n": 2438,
+    "min": 1,
+    "mean": 2.3486,
+    "p50": 2.0,
+    "p90": 4.0,
+    "p95": 6.0,
+    "p99": 11.63,
+    "max": 67
+  },
+  "hunks_per_instance": {
+    "n": 2438,
+    "min": 1,
+    "mean": 5.9885,
+    "p50": 3.0,
+    "p90": 14.0,
+    "p95": 20.15,
+    "p99": 40.26,
+    "max": 235
+  },
+  "added_lines_per_instance": {
+    "n": 2438,
+    "min": 0,
+    "mean": 55.6144,
+    "p50": 12.0,
+    "p90": 79.0,
+    "p95": 127.0,
+    "p99": 305.26,
+    "max": 56484
+  },
+  "removed_lines_per_instance": {
+    "n": 2438,
+    "min": 0,
+    "mean": 14.1735,
+    "p50": 3.0,
+    "p90": 32.0,
+    "p95": 56.15,
+    "p99": 190.34,
+    "max": 599
+  },
+  "file_operation_counts": {
+    "modified": 5702,
+    "added": 326,
+    "deleted": 14,
+    "path_changed": 10
+  },
+  "file_extension_distribution": {
+    ".py": 5080,
+    ".rst": 740,
+    ".pyx": 147,
+    ".yaml": 21,
+    ".pyi": 20,
+    ".c": 11,
+    ".pxd": 8,
+    ".h": 7,
+    ".in": 4,
+    ".build": 3,
+    ".yml": 3,
+    ".ipynb": 2,
+    ".sh": 2,
+    ".txt": 2,
+    ".md": 1,
+    "<none>": 1
+  },
+  "instance_file_views": {
+    "n_with_added_file": 32,
+    "n_added_only": 0,
+    "n_zero_base_changed_files": 0,
+    "n_with_deleted_file": 7,
+    "n_with_path_changed": 5,
+    "note": "Observational only. Not a drop filter. Whether to exclude zero-base-visible or added-heavy instances is left to M1D."
+  },
+  "outliers": {
+    "max_gold_edit_files": {
+      "instance_id": "getmoto__moto-7418",
+      "n_gold_edit_files": 286
+    },
+    "max_base_changed_files": {
+      "instance_id": "bokeh__bokeh-13535",
+      "n_base_changed_files": 67
+    },
+    "max_hunks": {
+      "instance_id": "getmoto__moto-7418",
+      "n_hunks": 235
+    },
+    "max_added_lines": {
+      "instance_id": "getmoto__moto-7418",
+      "n_added_lines": 56484
+    },
+    "max_removed_lines": {
+      "instance_id": "iterative__dvc-1892",
+      "n_removed_lines": 599
+    }
+  },
+  "test_like_gold_paths": {
+    "n_instances": 0,
+    "n_files": 0,
+    "note": "Observational only. Test-like gold paths are not dropped and are not mixed in from test_patch."
+  },
+  "spotlight": {
+    "instance_id": "getmoto__moto-7418",
+    "present_in_input": true,
+    "parse_ok": true,
+    "parse_error": null,
+    "n_gold_edit_files": 286,
+    "n_base_changed_files": 4,
+    "n_hunks": 235,
+    "n_added_lines": 56484,
+    "n_removed_lines": 31,
+    "operations": {
+      "modified": 4,
+      "added": 282,
+      "deleted": 0,
+      "path_changed": 0
+    },
+    "test_like_gold_paths": []
+  },
+  "notes": {
+    "source_coordinates": "base_commit (removed_source_lines)",
+    "target_coordinates": "gold-patched (added_target_lines)",
+    "gold_edit_files": "Gold patch structure. May include added target paths that do not exist at base_commit. Not the Stage-1 retrieval reward target.",
+    "base_changed_files": "Source-side paths present at base_commit. Candidate oracle for future base-repository localization reward.",
+    "path_changed": "source_path != target_path after a/b normalization. Does not claim Git rename metadata.",
+    "no_oracle_lines_field": true,
+    "ast_extraction": false,
+    "test_patch_used_for_oracle": false,
+    "zero_base_visible_filter": "deferred to M1D"
+  },
+  "jsonl": "data/interim/swe_gym/m1c_oracle.jsonl"
+}
