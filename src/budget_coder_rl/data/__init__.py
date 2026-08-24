@@ -7,4 +7,5 @@ M1C-A: gold-patch file / hunk / line-coordinate oracles
 M1C-B: base-repository function/class symbol oracles (stdlib AST).
 M1D-A: eligibility / structural-difficulty features (no filter / split).
 M1D-B: eligibility policy freeze and grouped/repo-stratified train/dev split.
+M1E: veRL-ready train/dev parquet + evaluator-only oracle sidecar.
 """

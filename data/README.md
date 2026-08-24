@@ -14,7 +14,7 @@ Gitignored working-tree data (see `.gitignore`):
 
 - `raw/`: official tables such as SWE-Gym parquet
 - `interim/`: regenerable per-instance audits / oracles / features (M1B / M1C / M1D-A JSONL)
-- `processed/`: Stage 1 JSONL (when it exists)
+- `processed/`: Stage 1 veRL parquet (M1E train/dev + evaluator oracle; gitignored)
 
 Repository clones / worktrees, Docker / executable images, model weights,
 checkpoints, full trajectories, and Hub caches live **outside** `data/`, under
@@ -48,6 +48,10 @@ one-off exception.
 | M1D-B eligibility policy | `manifests/swe_gym_m1d_policy.json` (in Git) |
 | M1D-B train/dev split | `manifests/swe_gym_m1d_split.json` (in Git; assignments, no patches) |
 | M1D-B split audit summary | `manifests/swe_gym_m1d_split_summary.json` (in Git) |
+| M1E schema contract | `manifests/swe_gym_m1e_schema.json` (in Git) |
+| M1E dataset manifest | `manifests/swe_gym_m1e_dataset_manifest.json` (in Git; checksums, no host paths) |
+| M1E policy train/dev parquet | `processed/swe_gym/train.parquet`, `dev.parquet` (not in Git) |
+| M1E evaluator oracle sidecar | `processed/swe_gym/evaluator_oracle.parquet` (not in Git) |
 
 Do **not** use `SWE-Gym/SWE-Gym-Lite` or `SWE-Gym/SWE-Gym-Raw`.
 
@@ -60,6 +64,8 @@ python scripts/data/prepare_swe_gym_repos.py
 python scripts/data/extract_swe_gym_symbol_oracle.py
 python scripts/data/extract_swe_gym_m1d_features.py
 python scripts/data/split_swe_gym_m1d.py
+python scripts/data/materialize_swe_gym_m1e.py
+python scripts/smoke/smoke_rlhf_dataset.py
 ```
 
 Download talks to Hugging Face (or `HF_ENDPOINT` if set). It does not install
@@ -187,3 +193,25 @@ The split manifest stores one assignment per instance (`instance_id`, `repo`,
 `correlation_group_id`, `split`) and does **not** copy `patch`, `test_patch`,
 oracle symbol details, or `problem_statement`. Secondary feature distributions
 are audited only. M1D-B does **not** materialize veRL parquet (that is M1E).
+
+### M1E veRL-ready parquet and evaluator sidecar
+
+M1E consumes the frozen M1D split and M1C oracles. It does **not** re-run
+split, AST, or unidiff, and does not filter instances.
+
+Policy/runtime files `processed/swe_gym/train.parquet` and `dev.parquet`
+contain only `data_source`, `prompt`, `reward_model`, and `extra_info`.
+`prompt` is a single user message whose content is the raw
+`problem_statement`. `reward_model.ground_truth` is the opaque
+`instance_id`. Privileged gold labels are not stored, including inside
+`extra_info`. `agent_name` is omitted so AgentLoop can use
+`default_agent_loop`.
+
+Evaluator-only `processed/swe_gym/evaluator_oracle.parquet` is physically
+separate and holds `base_changed_files`, canonical `oracle_symbols`
+(`path` + `qualname`), and `symbol_applicable`. Zero-symbol rows are
+kept (`symbol_applicable=False`). Future reward is not implemented here.
+
+Pinned veRL `RLHFDataset` smoke must set `filter_overlong_prompts=false`;
+the constructor default would drop long issues. Training config should
+do the same. Do not upgrade veRL for M1E.

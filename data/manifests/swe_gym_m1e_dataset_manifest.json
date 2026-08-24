@@ -1,0 +1,94 @@
+{
+  "schema_version": "swe-gym-m1e-verl-v1",
+  "dataset": "SWE-Gym",
+  "hf_repo": "SWE-Gym/SWE-Gym",
+  "revision": "26a6eae79ae9cb6d4307c3cc99c126fbf23cb3f0",
+  "raw_parquet": {
+    "path": "data/raw/swe_gym/data/train-00000-of-00001.parquet",
+    "sha256": "60569cea74bb281f7a5579467436a2bc1932c6e0c5f2f7fa0d084392abd9ad97",
+    "size_bytes": 43644473,
+    "n_rows": 2438
+  },
+  "inputs": {
+    "m1c_oracle_jsonl": {
+      "path": "data/interim/swe_gym/m1c_oracle.jsonl",
+      "sha256": "12c007fd7fbae3cd25ba37bb68959a60a25e8f518975c0e9eaaa1c18d21ec11e"
+    },
+    "m1c_symbol_jsonl": {
+      "path": "data/interim/swe_gym/m1c_symbol_oracle.jsonl",
+      "sha256": "b9b50f81630211c133f51547d4d957762a05bc7b26dd2fb233df856f7df7b667"
+    },
+    "m1c_oracle_summary": {
+      "path": "data/manifests/swe_gym_m1c_oracle_summary.json",
+      "sha256": "5ab28dc479ecd8b1cde318e854a33585d93b24339851e2d230e8b161a7e9da85"
+    },
+    "m1c_symbol_summary": {
+      "path": "data/manifests/swe_gym_m1c_symbol_summary.json",
+      "sha256": "676cbdab3aae7fb2a471f71296bd419e9a63216d7925dbdfc86345046f7ea18d"
+    },
+    "m1d_policy": {
+      "path": "data/manifests/swe_gym_m1d_policy.json",
+      "sha256": "c871175e5af1cce9c1c7fa2de3402abcb43df31b037bfd10727312916b303ae0"
+    },
+    "m1d_split": {
+      "path": "data/manifests/swe_gym_m1d_split.json",
+      "sha256": "0141d75066ef488bd501ffbf5c73703d6888f6f08a6cbb186d600179dc3b8a89"
+    },
+    "m1d_feature_summary": {
+      "path": "data/manifests/swe_gym_m1d_feature_summary.json",
+      "sha256": "ee40b77a96f6460a8e8a1160e8df707d46f82c31c13c30dbdee618fe9aa899aa",
+      "consumed_feature_values": false,
+      "note": "Checksum of the git-tracked M1D-A summary only. Feature values are not joined into policy or sidecar rows."
+    }
+  },
+  "artifacts": {
+    "train": {
+      "path": "data/processed/swe_gym/train.parquet",
+      "n_rows": 2194,
+      "size_bytes": 5420791,
+      "sha256": "87229ffe9c6b56c55849b721fb5a22883cfd2657eadd9b9bf398f4a4f384653f",
+      "logical_sha256": "f3d7d67e79b12d7b40826aad3add663cb39cbbd1e2052e01604e5963d9f7144b"
+    },
+    "dev": {
+      "path": "data/processed/swe_gym/dev.parquet",
+      "n_rows": 244,
+      "size_bytes": 629041,
+      "sha256": "b0d181b0b9206a5e3da3503efcc02c8c58a5db6a8610e5474f2c2d6169e53542",
+      "logical_sha256": "889805eb1d825742f287204577358fe5f5d0c4f1b39e483b32ea7773334602e2"
+    },
+    "evaluator_oracle": {
+      "path": "data/processed/swe_gym/evaluator_oracle.parquet",
+      "n_rows": 2438,
+      "size_bytes": 727247,
+      "sha256": "b7e99c9fc0b5af1bf7b1a0a9e0d2f516d7452bfdddc4441c3cd3576e446f57af",
+      "logical_sha256": "91796ba7df71d9520c536f013b716d108279aefe7a4e719b427c92466f2719cb"
+    }
+  },
+  "split_checks": {
+    "train_rows": 2194,
+    "dev_rows": 244,
+    "oracle_rows": 2438,
+    "intersection": 0,
+    "union": 2438,
+    "exact_m1d_match": true
+  },
+  "symbol_applicable": {
+    "true": 2280,
+    "false": 158,
+    "denominator": 2438
+  },
+  "libraries": {
+    "python": "3.12.0",
+    "schema_version": "swe-gym-m1e-verl-v1",
+    "datasets": "4.8.5",
+    "pyarrow": "24.0.0",
+    "pandas": "3.0.3"
+  },
+  "row_ordering": "instance_id lexicographic (Python str sort)",
+  "not_implemented": [
+    "reward compute_score",
+    "Agent scaffold",
+    "tool environment",
+    "GRPO"
+  ]
+}

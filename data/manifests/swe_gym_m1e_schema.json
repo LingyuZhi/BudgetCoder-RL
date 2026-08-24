@@ -1,0 +1,140 @@
+{
+  "schema_version": "swe-gym-m1e-verl-v1",
+  "dataset": "SWE-Gym",
+  "hf_repo": "SWE-Gym/SWE-Gym",
+  "revision": "26a6eae79ae9cb6d4307c3cc99c126fbf23cb3f0",
+  "data_source": "budget_coder_swe_gym_localization",
+  "row_ordering": "instance_id lexicographic (Python str sort)",
+  "agent_name": {
+    "present_in_dataset": false,
+    "reason": "Pinned AgentLoopWorker fills config.agent.default_agent_loop when agent_name is missing from the batch. Dataset must not bake a specific Agent implementation name."
+  },
+  "prompt_contract": {
+    "prompt_key": "prompt",
+    "messages": [
+      {
+        "role": "user",
+        "content": "raw problem_statement only"
+      }
+    ],
+    "not_included": [
+      "hints_text",
+      "oracle labels",
+      "system prompt",
+      "tool protocol",
+      "Agent scaffold"
+    ],
+    "note": "Future system/tool/scaffold prompts belong in AgentLoop/runtime, not in this dataset."
+  },
+  "oracle_separation": {
+    "policy_runtime": [
+      "data/processed/swe_gym/train.parquet",
+      "data/processed/swe_gym/dev.parquet"
+    ],
+    "evaluator_only": "data/processed/swe_gym/evaluator_oracle.parquet",
+    "reward_model.ground_truth": "instance_id (opaque; lookup sidecar later)",
+    "compute_score": "not implemented in M1E"
+  },
+  "verl": {
+    "prompt_key": "prompt",
+    "return_raw_chat": true,
+    "filter_overlong_prompts": {
+      "required_for_full_corpus": false,
+      "constructor_default": true,
+      "note": "Pinned RLHFDataset defaults filter_overlong_prompts=True and max_prompt_length=1024. Training/smoke must set filter_overlong_prompts=false or long SWE-Gym issues are dropped. Do not change veRL."
+    }
+  },
+  "policy_runtime": {
+    "columns": [
+      "data_source",
+      "prompt",
+      "reward_model",
+      "extra_info"
+    ],
+    "semantics": {
+      "data_source": "budget_coder_swe_gym_localization",
+      "prompt": "list of one user message; content = raw problem_statement",
+      "reward_model.style": "rule",
+      "reward_model.ground_truth": "instance_id only",
+      "extra_info.index": "0-based rank within this split after instance_id lex sort",
+      "extra_info.instance_id": "SWE-Gym instance_id",
+      "extra_info.repo": "owner/name",
+      "extra_info.base_commit": "base commit SHA",
+      "extra_info.version": "SWE-Gym version string",
+      "extra_info.split": "train | dev"
+    },
+    "extra_info_keys": [
+      "index",
+      "instance_id",
+      "repo",
+      "base_commit",
+      "version",
+      "split"
+    ],
+    "forbidden_keys": [
+      "hints_text",
+      "patch",
+      "test_patch",
+      "FAIL_TO_PASS",
+      "PASS_TO_PASS",
+      "gold_edit_files",
+      "base_changed_files",
+      "oracle_symbols",
+      "unmapped_sites",
+      "file_results",
+      "technical_valid",
+      "technical_invalid_reasons",
+      "search_space",
+      "target_scope",
+      "hint_strength",
+      "modality",
+      "correlation_group_id",
+      "correlation_group_size",
+      "file_target_density",
+      "python_target_density",
+      "gold_full_path_mentioned",
+      "gold_basename_mentioned",
+      "gold_qualified_symbol_mentioned",
+      "gold_symbol_name_mentioned",
+      "oracle_symbol_count",
+      "base_changed_file_count",
+      "gold_edit_file_count",
+      "n_oracle_symbols",
+      "n_base_changed_files",
+      "n_gold_edit_files",
+      "n_gold_edit_file_count",
+      "repo_tracked_files",
+      "repo_python_files",
+      "repo_code_like_files",
+      "symbol_oracle_available",
+      "symbol_applicable",
+      "difficulty",
+      "easy",
+      "medium",
+      "hard",
+      "keep",
+      "drop"
+    ]
+  },
+  "evaluator_sidecar": {
+    "columns": [
+      "instance_id",
+      "split",
+      "base_changed_files",
+      "oracle_symbols",
+      "symbol_applicable"
+    ],
+    "semantics": {
+      "instance_id": "join key",
+      "split": "frozen M1D assignment",
+      "base_changed_files": "frozen M1C-A source-side paths at base_commit",
+      "oracle_symbols": "frozen M1C-B conservative base-existing symbols, identity = path + qualname",
+      "symbol_applicable": "True iff at least one canonical oracle symbol; False does not drop"
+    },
+    "symbol_identity": [
+      "path",
+      "qualname"
+    ],
+    "future_reward_note": "symbol applicable: 0.5 * F1_file + 0.5 * F1_symbol; symbol N/A: masked normalization -> F1_file. Not implemented in M1E."
+  }
+}
