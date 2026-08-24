@@ -13,7 +13,7 @@ Git tracks only small, versionable files:
 Gitignored working-tree data (see `.gitignore`):
 
 - `raw/`: official tables such as SWE-Gym parquet
-- `interim/`: regenerable per-instance audits / oracles (M1B JSONL, M1C-A JSONL)
+- `interim/`: regenerable per-instance audits / oracles (M1B / M1C-A / M1C-B JSONL)
 - `processed/`: Stage 1 JSONL (when it exists)
 
 Repository clones / worktrees, Docker / executable images, model weights,
@@ -38,6 +38,10 @@ one-off exception.
 | Tiny inspect fixture | `fixtures/swe_gym_tiny.json` |
 | Tiny M1B audit fixture | `fixtures/swe_gym_m1b_audit.json` |
 | Tiny M1C-A oracle fixture | `fixtures/swe_gym_m1c_oracle.json` |
+| M1C-B symbol oracle summary | `manifests/swe_gym_m1c_symbol_summary.json` (in Git) |
+| M1C-B per-instance symbol oracles | `interim/swe_gym/m1c_symbol_oracle.jsonl` (not in Git; regenerable) |
+| M1C-B repo source pins | `manifests/swe_gym_repo_sources.json` (in Git; no host-absolute paths) |
+| Tiny M1C-B symbol fixture | `fixtures/swe_gym_m1c_symbol_oracle.json` |
 
 Do **not** use `SWE-Gym/SWE-Gym-Lite` or `SWE-Gym/SWE-Gym-Raw`.
 
@@ -46,6 +50,8 @@ python scripts/data/download_swe_gym.py
 python scripts/data/inspect_swe_gym.py
 python scripts/data/audit_swe_gym.py
 python scripts/data/extract_swe_gym_oracle.py
+python scripts/data/prepare_swe_gym_repos.py
+python scripts/data/extract_swe_gym_symbol_oracle.py
 ```
 
 Download talks to Hugging Face (or `HF_ENDPOINT` if set). It does not install
@@ -104,6 +110,23 @@ Two derived file views:
 Whether to filter zero-base-visible or added-heavy instances is left to
 M1D. Path differences are labeled `path_changed` (normalized
 `source_path != target_path`), not a confirmed Git rename.
+
+### M1C-B base-repository symbol oracle
+
+M1C-B maps gold-patch change sites onto function/class symbols that
+exist at `base_commit`. It does **not**:
+
+- create one checkout per instance (one bare Git object store per unique repo)
+- download files from GitHub HTTP APIs
+- parse non-Python files with tree-sitter / Cython
+- drop instances, rewrite the raw parquet, or create train/val/test splits
+- put symbol oracles into `agent_task_view`
+
+Repository object stores live at `$BCRL_DATA_ROOT/repos/swe_gym/`, not
+under `data/raw/`. Preparation may use the network and fetches
+parquet-derived `base_commit` SHAs into one bare repo per unique
+`repo`. Extraction is offline (`git rev-parse` / `git cat-file` only).
+Missing commits or blobs are reported and the instance is retained.
 
 Coordinates are split on purpose:
 

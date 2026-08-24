@@ -28,6 +28,15 @@ PRIVILEGED_FIELDS: tuple[str, ...] = (
     "FAIL_TO_PASS",
     "PASS_TO_PASS",
 )
+# Derived evaluator metadata. Not official SWE-Gym columns and not part of
+# the 11-field visibility partition. Must not enter agent_task_view.
+DERIVED_PRIVILEGED_ORACLE_FIELDS: tuple[str, ...] = (
+    "gold_edit_files",
+    "base_changed_files",
+    "oracle_symbols",
+    "unmapped_sites",
+    "file_results",
+)
 
 _POLICY_NOTES: dict[str, str] = {
     "hints_text": (

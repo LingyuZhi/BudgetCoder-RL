@@ -1,0 +1,640 @@
+{
+  "dataset": "SWE-Gym",
+  "hf_repo": "SWE-Gym/SWE-Gym",
+  "revision": "26a6eae79ae9cb6d4307c3cc99c126fbf23cb3f0",
+  "sha256": "60569cea74bb281f7a5579467436a2bc1932c6e0c5f2f7fa0d084392abd9ad97",
+  "oracle_source": "base_repository_ast",
+  "parser": {
+    "python_version": "3.12.0",
+    "python_version_info": [
+      3,
+      12,
+      0
+    ],
+    "implementation": "cpython"
+  },
+  "n_rows": 2438,
+  "n_rows_written": 2438,
+  "rows_dropped": 0,
+  "repo_preparation": {
+    "n_repos": 11,
+    "n_repos_available": 11,
+    "n_repos_failed": 0,
+    "cache_root_env": "BCRL_DATA_ROOT",
+    "cache_relpath": "repos/swe_gym",
+    "cache_disk_bytes": 5279938945
+  },
+  "commits": {
+    "n_unique_repo_base_commit": 2163,
+    "n_resolved": 2163,
+    "n_missing": 0
+  },
+  "blobs": {
+    "n_base_changed_file_occurrences": 5726,
+    "n_ok": 5726,
+    "n_missing": 0
+  },
+  "files": {
+    "n_base_changed_file_occurrences": 5726,
+    "n_eligible_py_pyi": 4779,
+    "n_unsupported_extension": 947,
+    "eligible_extensions": [
+      ".py",
+      ".pyi"
+    ],
+    "extension_counts_all": {
+      ".py": 4759,
+      ".rst": 740,
+      ".pyx": 147,
+      ".yaml": 21,
+      ".pyi": 20,
+      ".c": 9,
+      ".pxd": 7,
+      ".h": 5,
+      ".in": 4,
+      ".build": 3,
+      ".yml": 3,
+      ".ipynb": 2,
+      ".sh": 2,
+      ".txt": 2,
+      ".md": 1,
+      "<none>": 1
+    },
+    "extension_counts_eligible": {
+      ".py": 4759,
+      ".pyi": 20
+    },
+    "extension_counts_unsupported": {
+      ".rst": 740,
+      ".pyx": 147,
+      ".yaml": 21,
+      ".c": 9,
+      ".pxd": 7,
+      ".h": 5,
+      ".in": 4,
+      ".build": 3,
+      ".yml": 3,
+      ".ipynb": 2,
+      ".sh": 2,
+      ".txt": 2,
+      ".md": 1,
+      "<none>": 1
+    },
+    "file_status_counts": {
+      "ok": 4779,
+      "unsupported_extension": 947
+    },
+    "decode_success": 4779,
+    "decode_failure": 0,
+    "ast_parse_success": 4779,
+    "ast_parse_failure": 0
+  },
+  "instances": {
+    "denominator": 2438,
+    "n_with_ge1_oracle_symbol": 2280,
+    "n_zero_oracle_symbol": 158,
+    "n_with_ast_eligible_file": 2360
+  },
+  "symbols_per_instance_all": {
+    "n": 2438,
+    "min": 0,
+    "mean": 3.7404,
+    "p50": 2.0,
+    "p90": 8.0,
+    "p95": 14.0,
+    "p99": 29.63,
+    "max": 107
+  },
+  "symbols_per_instance_ast_eligible": {
+    "n": 2360,
+    "min": 0,
+    "mean": 3.864,
+    "p50": 2.0,
+    "p90": 8.0,
+    "p95": 14.0,
+    "p99": 30.82,
+    "max": 107
+  },
+  "change_sites": {
+    "n_removed_line_sites": 34555,
+    "n_removed_line_mapped": 29593,
+    "n_addition_run_sites": 19601,
+    "n_addition_anchor_same_symbol": 13326,
+    "n_addition_anchor_one_sided_weaker": 254,
+    "unmapped_reason_counts": {
+      "module_level": 5298,
+      "no_enclosing_symbol": 0,
+      "ambiguous_addition_anchor": 2194,
+      "unsupported_extension": 3491,
+      "decode_error": 0,
+      "ast_parse_error": 0,
+      "missing_blob": 0,
+      "missing_commit": 0,
+      "missing_repo": 0,
+      "invalid_path": 0
+    },
+    "note": "addition_anchor_same_symbol is conservative mapped evidence. addition_anchor_one_sided is weaker and is not included in the conservative mapped count. Reasons are observational; they are not drop filters."
+  },
+  "examples": {
+    "decode_error": [],
+    "ast_parse_error": [],
+    "representative_oracle_symbols": [
+      {
+        "instance_id": "Project-MONAI__MONAI-1010",
+        "path": "monai/apps/datasets.py",
+        "qualname": "DecathlonDataset",
+        "kind": "class",
+        "start_line": 134,
+        "end_line": 265,
+        "evidence": [
+          "addition_anchor_same_symbol"
+        ]
+      },
+      {
+        "instance_id": "Project-MONAI__MONAI-1011",
+        "path": "monai/transforms/croppad/array.py",
+        "qualname": "CropForeground.__init__",
+        "kind": "function",
+        "start_line": 386,
+        "end_line": 398,
+        "evidence": [
+          "addition_anchor_same_symbol",
+          "removed_source_line"
+        ]
+      },
+      {
+        "instance_id": "Project-MONAI__MONAI-1012",
+        "path": "monai/data/nifti_saver.py",
+        "qualname": "NiftiSaver.save",
+        "kind": "function",
+        "start_line": 71,
+        "end_line": 120,
+        "evidence": [
+          "addition_anchor_same_symbol"
+        ]
+      },
+      {
+        "instance_id": "Project-MONAI__MONAI-1030",
+        "path": "monai/data/image_reader.py",
+        "qualname": "ImageReader.read",
+        "kind": "function",
+        "start_line": 56,
+        "end_line": 66,
+        "evidence": [
+          "addition_anchor_same_symbol",
+          "removed_source_line"
+        ]
+      },
+      {
+        "instance_id": "Project-MONAI__MONAI-1037",
+        "path": "monai/data/image_reader.py",
+        "qualname": "ITKReader",
+        "kind": "class",
+        "start_line": 82,
+        "end_line": 226,
+        "evidence": [
+          "addition_anchor_same_symbol",
+          "removed_source_line"
+        ]
+      },
+      {
+        "instance_id": "Project-MONAI__MONAI-1065",
+        "path": "monai/apps/utils.py",
+        "qualname": "download_url",
+        "kind": "function",
+        "start_line": 69,
+        "end_line": 193,
+        "evidence": [
+          "addition_anchor_same_symbol",
+          "removed_source_line"
+        ]
+      }
+    ],
+    "zero_symbol_instances": [
+      {
+        "instance_id": "Project-MONAI__MONAI-1086",
+        "n_base_changed_files": 2,
+        "file_statuses": [
+          "ok",
+          "ok"
+        ],
+        "unmapped_reason_counts": {
+          "ambiguous_addition_anchor": 2
+        }
+      },
+      {
+        "instance_id": "Project-MONAI__MONAI-1690",
+        "n_base_changed_files": 1,
+        "file_statuses": [
+          "ok"
+        ],
+        "unmapped_reason_counts": {
+          "module_level": 1
+        }
+      },
+      {
+        "instance_id": "Project-MONAI__MONAI-3135",
+        "n_base_changed_files": 15,
+        "file_statuses": [
+          "ok",
+          "ok",
+          "ok",
+          "ok",
+          "ok",
+          "ok",
+          "ok",
+          "ok",
+          "ok",
+          "ok",
+          "ok",
+          "ok",
+          "ok",
+          "ok",
+          "ok"
+        ],
+        "unmapped_reason_counts": {
+          "module_level": 39
+        }
+      },
+      {
+        "instance_id": "Project-MONAI__MONAI-4676",
+        "n_base_changed_files": 1,
+        "file_statuses": [
+          "ok"
+        ],
+        "unmapped_reason_counts": {
+          "ambiguous_addition_anchor": 1
+        }
+      },
+      {
+        "instance_id": "Project-MONAI__MONAI-6523",
+        "n_base_changed_files": 1,
+        "file_statuses": [
+          "ok"
+        ],
+        "unmapped_reason_counts": {
+          "ambiguous_addition_anchor": 1
+        }
+      },
+      {
+        "instance_id": "bokeh__bokeh-13198",
+        "n_base_changed_files": 1,
+        "file_statuses": [
+          "ok"
+        ],
+        "unmapped_reason_counts": {
+          "module_level": 1,
+          "ambiguous_addition_anchor": 1
+        }
+      },
+      {
+        "instance_id": "bokeh__bokeh-13641",
+        "n_base_changed_files": 1,
+        "file_statuses": [
+          "ok"
+        ],
+        "unmapped_reason_counts": {
+          "module_level": 1,
+          "ambiguous_addition_anchor": 1
+        }
+      },
+      {
+        "instance_id": "conan-io__conan-10213",
+        "n_base_changed_files": 2,
+        "file_statuses": [
+          "ok",
+          "ok"
+        ],
+        "unmapped_reason_counts": {
+          "module_level": 1,
+          "ambiguous_addition_anchor": 1
+        }
+      }
+    ]
+  },
+  "outliers": {
+    "max_oracle_symbols": {
+      "instance_id": "Project-MONAI__MONAI-6080",
+      "n_oracle_symbols": 107
+    },
+    "max_removed_line_sites": {
+      "instance_id": "iterative__dvc-1892",
+      "n_removed_line_sites": 599
+    },
+    "max_addition_run_sites": {
+      "instance_id": "Project-MONAI__MONAI-6080",
+      "n_addition_run_sites": 245
+    },
+    "max_unmapped_sites": {
+      "instance_id": "getmoto__moto-6746",
+      "n_unmapped_sites": 351
+    }
+  },
+  "spotlight": {
+    "instance_id": "getmoto__moto-7418",
+    "present_in_input": true,
+    "parse_ok": true,
+    "repo_ok": true,
+    "commit_ok": true,
+    "n_gold_edit_files": 286,
+    "n_base_changed_files": 4,
+    "n_skipped_added_files": 282,
+    "n_oracle_symbols": 11,
+    "n_removed_line_sites": 31,
+    "n_removed_line_mapped": 31,
+    "n_addition_run_sites": 17,
+    "n_addition_anchor_same_symbol": 5,
+    "n_addition_anchor_one_sided": 1,
+    "files": [
+      {
+        "path": "moto/core/config.py",
+        "status": "ok",
+        "error": null,
+        "n_symbols_extracted": 7,
+        "n_oracle_symbols": 0,
+        "oracle_symbols": [],
+        "unmapped_sites": [
+          {
+            "path": "moto/core/config.py",
+            "site_kind": "addition_run",
+            "line": null,
+            "prev_line": 23,
+            "next_line": 24,
+            "n_added_lines": 4,
+            "reason": "module_level"
+          },
+          {
+            "path": "moto/core/config.py",
+            "site_kind": "addition_run",
+            "line": null,
+            "prev_line": 30,
+            "next_line": 31,
+            "n_added_lines": 1,
+            "reason": "module_level"
+          },
+          {
+            "path": "moto/core/config.py",
+            "site_kind": "addition_run",
+            "line": null,
+            "prev_line": 43,
+            "next_line": 44,
+            "n_added_lines": 1,
+            "reason": "module_level"
+          }
+        ]
+      },
+      {
+        "path": "moto/moto_api/_internal/models.py",
+        "status": "ok",
+        "error": null,
+        "n_symbols_extracted": 16,
+        "n_oracle_symbols": 0,
+        "oracle_symbols": [],
+        "unmapped_sites": [
+          {
+            "path": "moto/moto_api/_internal/models.py",
+            "site_kind": "addition_run",
+            "line": null,
+            "prev_line": 130,
+            "next_line": 131,
+            "n_added_lines": 2,
+            "reason": "ambiguous_addition_anchor"
+          }
+        ]
+      },
+      {
+        "path": "moto/stepfunctions/models.py",
+        "status": "ok",
+        "error": null,
+        "n_symbols_extracted": 43,
+        "n_oracle_symbols": 7,
+        "oracle_symbols": [
+          {
+            "path": "moto/stepfunctions/models.py",
+            "qualname": "StateMachine.stop_execution",
+            "kind": "function",
+            "start_line": 68,
+            "end_line": 77,
+            "depth": 1,
+            "symbol_id": "moto/stepfunctions/models.py:StateMachine.stop_execution:function:68-77",
+            "evidence": [
+              "addition_anchor_same_symbol",
+              "removed_source_line"
+            ]
+          },
+          {
+            "path": "moto/stepfunctions/models.py",
+            "qualname": "Execution.stop",
+            "kind": "function",
+            "start_line": 368,
+            "end_line": 370,
+            "depth": 1,
+            "symbol_id": "moto/stepfunctions/models.py:Execution.stop:function:368-370",
+            "evidence": [
+              "addition_anchor_same_symbol",
+              "removed_source_line"
+            ]
+          },
+          {
+            "path": "moto/stepfunctions/models.py",
+            "qualname": "StepFunctionBackend",
+            "kind": "class",
+            "start_line": 373,
+            "end_line": 684,
+            "depth": 0,
+            "symbol_id": "moto/stepfunctions/models.py:StepFunctionBackend:class:373-684",
+            "evidence": [
+              "addition_anchor_same_symbol"
+            ]
+          },
+          {
+            "path": "moto/stepfunctions/models.py",
+            "qualname": "StepFunctionBackend.__init__",
+            "kind": "function",
+            "start_line": 484,
+            "end_line": 488,
+            "depth": 1,
+            "symbol_id": "moto/stepfunctions/models.py:StepFunctionBackend.__init__:function:484-488",
+            "evidence": [
+              "removed_source_line"
+            ]
+          },
+          {
+            "path": "moto/stepfunctions/models.py",
+            "qualname": "StepFunctionBackend.list_executions",
+            "kind": "function",
+            "start_line": 555,
+            "end_line": 572,
+            "depth": 1,
+            "symbol_id": "moto/stepfunctions/models.py:StepFunctionBackend.list_executions:function:555-572",
+            "evidence": [
+              "removed_source_line"
+            ]
+          },
+          {
+            "path": "moto/stepfunctions/models.py",
+            "qualname": "StepFunctionBackend.describe_execution",
+            "kind": "function",
+            "start_line": 574,
+            "end_line": 593,
+            "depth": 1,
+            "symbol_id": "moto/stepfunctions/models.py:StepFunctionBackend.describe_execution:function:574-593",
+            "evidence": [
+              "removed_source_line"
+            ]
+          },
+          {
+            "path": "moto/stepfunctions/models.py",
+            "qualname": "StepFunctionBackend.get_execution_history",
+            "kind": "function",
+            "start_line": 595,
+            "end_line": 614,
+            "depth": 1,
+            "symbol_id": "moto/stepfunctions/models.py:StepFunctionBackend.get_execution_history:function:595-614",
+            "evidence": [
+              "removed_source_line"
+            ]
+          }
+        ],
+        "unmapped_sites": [
+          {
+            "path": "moto/stepfunctions/models.py",
+            "site_kind": "addition_run",
+            "line": null,
+            "prev_line": 267,
+            "next_line": 268,
+            "n_added_lines": 6,
+            "reason": "ambiguous_addition_anchor"
+          },
+          {
+            "path": "moto/stepfunctions/models.py",
+            "site_kind": "addition_run",
+            "line": null,
+            "prev_line": 615,
+            "next_line": 616,
+            "n_added_lines": 7,
+            "reason": "ambiguous_addition_anchor"
+          },
+          {
+            "path": "moto/stepfunctions/models.py",
+            "site_kind": "addition_run",
+            "line": null,
+            "prev_line": 636,
+            "next_line": 637,
+            "n_added_lines": 24,
+            "reason": "ambiguous_addition_anchor"
+          }
+        ]
+      },
+      {
+        "path": "moto/stepfunctions/responses.py",
+        "status": "ok",
+        "error": null,
+        "n_symbols_extracted": 18,
+        "n_oracle_symbols": 4,
+        "oracle_symbols": [
+          {
+            "path": "moto/stepfunctions/responses.py",
+            "qualname": "StepFunctionResponse.stepfunction_backend",
+            "kind": "function",
+            "start_line": 13,
+            "end_line": 15,
+            "depth": 1,
+            "symbol_id": "moto/stepfunctions/responses.py:StepFunctionResponse.stepfunction_backend:function:13-15",
+            "evidence": [
+              "removed_source_line"
+            ]
+          },
+          {
+            "path": "moto/stepfunctions/responses.py",
+            "qualname": "StepFunctionResponse.describe_execution",
+            "kind": "function",
+            "start_line": 144,
+            "end_line": 156,
+            "depth": 1,
+            "symbol_id": "moto/stepfunctions/responses.py:StepFunctionResponse.describe_execution:function:144-156",
+            "evidence": [
+              "addition_anchor_same_symbol",
+              "removed_source_line"
+            ]
+          },
+          {
+            "path": "moto/stepfunctions/responses.py",
+            "qualname": "StepFunctionResponse.describe_state_machine_for_execution",
+            "kind": "function",
+            "start_line": 158,
+            "end_line": 161,
+            "depth": 1,
+            "symbol_id": "moto/stepfunctions/responses.py:StepFunctionResponse.describe_state_machine_for_execution:function:158-161",
+            "evidence": [
+              "removed_source_line"
+            ]
+          },
+          {
+            "path": "moto/stepfunctions/responses.py",
+            "qualname": "StepFunctionResponse.get_execution_history",
+            "kind": "function",
+            "start_line": 169,
+            "end_line": 175,
+            "depth": 1,
+            "symbol_id": "moto/stepfunctions/responses.py:StepFunctionResponse.get_execution_history:function:169-175",
+            "evidence": [
+              "addition_anchor_one_sided"
+            ]
+          }
+        ],
+        "unmapped_sites": [
+          {
+            "path": "moto/stepfunctions/responses.py",
+            "site_kind": "addition_run",
+            "line": null,
+            "prev_line": 3,
+            "next_line": 4,
+            "n_added_lines": 1,
+            "reason": "module_level"
+          },
+          {
+            "path": "moto/stepfunctions/responses.py",
+            "site_kind": "addition_run",
+            "line": null,
+            "prev_line": 6,
+            "next_line": 7,
+            "n_added_lines": 1,
+            "reason": "module_level"
+          },
+          {
+            "path": "moto/stepfunctions/responses.py",
+            "site_kind": "addition_run",
+            "line": null,
+            "prev_line": 15,
+            "next_line": 16,
+            "n_added_lines": 6,
+            "reason": "ambiguous_addition_anchor"
+          },
+          {
+            "path": "moto/stepfunctions/responses.py",
+            "site_kind": "addition_run",
+            "line": null,
+            "prev_line": 161,
+            "next_line": 162,
+            "n_added_lines": 2,
+            "reason": "ambiguous_addition_anchor"
+          }
+        ]
+      }
+    ]
+  },
+  "notes": {
+    "source_path_only": true,
+    "no_fake_module_symbol": true,
+    "no_target_only_symbols": true,
+    "added_files_excluded_from_base_oracle": true,
+    "conservative_addition_gap_is_unmapped": "Insertions between two different innermost base symbols, including end-of-function before the next sibling, stay unmapped. Indentation / target AST is not used.",
+    "one_sided_addition_is_weaker_evidence": true,
+    "ast_extraction": true,
+    "test_patch_used_for_oracle": false,
+    "zero_base_visible_filter": "deferred to M1D",
+    "not_m1d": true
+  },
+  "jsonl": "data/interim/swe_gym/m1c_symbol_oracle.jsonl"
+}
