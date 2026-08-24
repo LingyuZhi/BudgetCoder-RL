@@ -1,0 +1,1052 @@
+{
+  "dataset": "SWE-Gym",
+  "hf_repo": "SWE-Gym/SWE-Gym",
+  "revision": "26a6eae79ae9cb6d4307c3cc99c126fbf23cb3f0",
+  "sha256": "60569cea74bb281f7a5579467436a2bc1932c6e0c5f2f7fa0d084392abd9ad97",
+  "n_rows": 2438,
+  "n_rows_written": 2438,
+  "rows_dropped": 0,
+  "technical_validity": {
+    "n_valid": 2438,
+    "n_invalid": 0,
+    "denominator": 2438,
+    "reason_counts": {}
+  },
+  "search_space": {
+    "repo_tracked_files": {
+      "n": 2438,
+      "min": 197,
+      "mean": 1569.0381,
+      "p50": 1457.0,
+      "p90": 2535.0,
+      "p95": 2563.0,
+      "p99": 5035.56,
+      "max": 5640
+    },
+    "repo_python_files": {
+      "n": 2438,
+      "min": 98,
+      "mean": 1045.6858,
+      "p50": 1170.0,
+      "p90": 1547.0,
+      "p95": 1602.0,
+      "p99": 1705.26,
+      "max": 2064
+    },
+    "repo_code_like_files": {
+      "n": 2438,
+      "min": 98,
+      "mean": 1081.274,
+      "p50": 1189.0,
+      "p90": 1625.0,
+      "p95": 1637.0,
+      "p99": 1705.26,
+      "max": 2064
+    },
+    "file_target_density": {
+      "n": 2438,
+      "min": 0.0001779359,
+      "mean": 0.0023,
+      "p50": 0.0011895323,
+      "p90": 0.0045516812,
+      "p95": 0.0079178501,
+      "p99": 0.0178977348,
+      "max": 0.0842911877,
+      "n_defined": 2438,
+      "n_undefined": 0,
+      "denominator": 2438
+    },
+    "python_target_density": {
+      "n": 2438,
+      "min": 0.0,
+      "mean": 0.0032,
+      "p50": 0.0013463482,
+      "p90": 0.0067567568,
+      "p95": 0.0114199554,
+      "p99": 0.0251213832,
+      "max": 0.1052631579,
+      "n_defined": 2438,
+      "n_undefined": 0,
+      "denominator": 2438
+    },
+    "n_density_undefined_rows": 0,
+    "denominator": 2438
+  },
+  "target_scope": {
+    "base_changed_file_count": {
+      "n": 2438,
+      "min": 1,
+      "mean": 2.3486,
+      "p50": 2.0,
+      "p90": 4.0,
+      "p95": 6.0,
+      "p99": 11.63,
+      "max": 67
+    },
+    "gold_edit_file_count": {
+      "n": 2438,
+      "min": 1,
+      "mean": 2.4824,
+      "p50": 2.0,
+      "p90": 4.0,
+      "p95": 6.0,
+      "p99": 12.0,
+      "max": 286
+    },
+    "oracle_symbol_count": {
+      "n": 2438,
+      "min": 0,
+      "mean": 3.7404,
+      "p50": 2.0,
+      "p90": 8.0,
+      "p95": 14.0,
+      "p99": 29.63,
+      "max": 107
+    },
+    "gold_hunk_count": {
+      "n": 2438,
+      "min": 1,
+      "mean": 5.9885,
+      "p50": 3.0,
+      "p90": 14.0,
+      "p95": 20.15,
+      "p99": 40.26,
+      "max": 235
+    },
+    "added_line_count": {
+      "n": 2438,
+      "min": 0,
+      "mean": 55.6144,
+      "p50": 12.0,
+      "p90": 79.0,
+      "p95": 127.0,
+      "p99": 305.26,
+      "max": 56484
+    },
+    "removed_line_count": {
+      "n": 2438,
+      "min": 0,
+      "mean": 14.1735,
+      "p50": 3.0,
+      "p90": 32.0,
+      "p95": 56.15,
+      "p99": 190.34,
+      "max": 599
+    },
+    "n_contains_added_file": 32,
+    "n_contains_deleted_file": 7,
+    "n_contains_path_changed": 5,
+    "denominator": 2438
+  },
+  "modality_counts": {
+    "has_python_ast_target": 2360,
+    "has_code_like_target": 2436,
+    "symbol_oracle_available": 2280,
+    "docs_only_target": 0,
+    "non_code_only_target": 2,
+    "mixed_code_noncode_target": 653,
+    "denominator": 2438
+  },
+  "symbol_capability": {
+    "n_symbol_capable": 2280,
+    "n_file_only": 158,
+    "n_file_only_python_unmapped": 80,
+    "n_file_only_non_python": 78,
+    "denominator": 2438,
+    "note": "symbol_capable = oracle_symbol_count >= 1. file_only = oracle_symbol_count == 0. Zero-symbol is not invalid."
+  },
+  "hint_strength": {
+    "gold_full_path_mentioned": 65,
+    "gold_basename_mentioned": 657,
+    "gold_symbol_name_mentioned": 1046,
+    "gold_qualified_symbol_mentioned": 135,
+    "denominator": 2438,
+    "note": "Legitimate issue-text mentions of base_changed_files / oracle symbols. Not leakage. Counts are instance-level booleans (distinct target coverage), denominator is n_rows."
+  },
+  "correlation": {
+    "n_groups": 2136,
+    "n_singleton_groups": 1894,
+    "group_size": {
+      "n": 2136,
+      "min": 1,
+      "mean": 1.1414,
+      "p50": 1.0,
+      "p90": 2.0,
+      "p95": 2.0,
+      "p99": 3.0,
+      "max": 5
+    },
+    "max_group": {
+      "correlation_group_id": "cg:pandas-dev__pandas-51565",
+      "size": 5,
+      "n_instance_ids_preview": 5,
+      "instance_ids_preview": [
+        "pandas-dev__pandas-51565",
+        "pandas-dev__pandas-51672",
+        "pandas-dev__pandas-51689",
+        "pandas-dev__pandas-51790",
+        "pandas-dev__pandas-51793"
+      ]
+    },
+    "pandas_spotlight": {
+      "instance_ids": [
+        "pandas-dev__pandas-53805",
+        "pandas-dev__pandas-53830"
+      ],
+      "present_in_input": true,
+      "same_group": true,
+      "correlation_group_id": "cg:pandas-dev__pandas-53805",
+      "correlation_group_size": 3
+    },
+    "rule": "Connected components over same (repo, base_commit) OR same normalized problem_statement. Not a split."
+  },
+  "per_repo": {
+    "Project-MONAI/MONAI": {
+      "n": 374,
+      "denominator": 374,
+      "repo_tracked_files": {
+        "n": 374,
+        "min": 308,
+        "mean": 960.3503,
+        "p50": 963.0,
+        "p90": 1310.0,
+        "p95": 1326.0,
+        "p99": 1348.08,
+        "max": 1392
+      },
+      "file_target_density": {
+        "n": 374,
+        "min": 0.0007401925,
+        "mean": 0.0031,
+        "p50": 0.0017414101,
+        "p90": 0.0060768835,
+        "p95": 0.0088572689,
+        "p99": 0.020675,
+        "max": 0.0519877676
+      },
+      "python_target_density": {
+        "n": 374,
+        "min": 0.000890472,
+        "mean": 0.0038,
+        "p50": 0.0020758107,
+        "p90": 0.0074103433,
+        "p95": 0.0107168342,
+        "p99": 0.0255445696,
+        "max": 0.0634328358
+      },
+      "base_changed_file_count": {
+        "n": 374,
+        "min": 1,
+        "mean": 2.4706,
+        "p50": 2.0,
+        "p90": 5.0,
+        "p95": 7.0,
+        "p99": 11.27,
+        "max": 17
+      },
+      "oracle_symbol_count": {
+        "n": 374,
+        "min": 0,
+        "mean": 6.4947,
+        "p50": 4.0,
+        "p90": 14.0,
+        "p95": 20.0,
+        "p99": 44.54,
+        "max": 107
+      },
+      "modality_counts": {
+        "has_python_ast_target": 374,
+        "has_code_like_target": 374,
+        "symbol_oracle_available": 369,
+        "docs_only_target": 0,
+        "non_code_only_target": 0,
+        "mixed_code_noncode_target": 0
+      },
+      "hint_counts": {
+        "gold_full_path_mentioned": 12,
+        "gold_basename_mentioned": 150,
+        "gold_symbol_name_mentioned": 183,
+        "gold_qualified_symbol_mentioned": 10
+      },
+      "n_technical_valid": 374,
+      "n_symbol_capable": 369,
+      "n_file_only": 5
+    },
+    "bokeh/bokeh": {
+      "n": 26,
+      "denominator": 26,
+      "repo_tracked_files": {
+        "n": 26,
+        "min": 5028,
+        "mean": 5290.5769,
+        "p50": 5187.0,
+        "p90": 5581.5,
+        "p95": 5619.75,
+        "p99": 5635.0,
+        "max": 5640
+      },
+      "file_target_density": {
+        "n": 26,
+        "min": 0.0001779359,
+        "mean": 0.0009,
+        "p50": 0.0001963126,
+        "p90": 0.0009572448,
+        "p95": 0.0018708562,
+        "p99": 0.0096843516,
+        "max": 0.0121906841
+      },
+      "python_target_density": {
+        "n": 26,
+        "min": 0.0007662835,
+        "mean": 0.0037,
+        "p50": 0.0007924334,
+        "p90": 0.0039285152,
+        "p95": 0.0075697211,
+        "p99": 0.0410844239,
+        "max": 0.0518575851
+      },
+      "base_changed_file_count": {
+        "n": 26,
+        "min": 1,
+        "mean": 4.6923,
+        "p50": 1.0,
+        "p90": 5.0,
+        "p95": 9.5,
+        "p99": 53.0,
+        "max": 67
+      },
+      "oracle_symbol_count": {
+        "n": 26,
+        "min": 0,
+        "mean": 3.5385,
+        "p50": 2.0,
+        "p90": 10.5,
+        "p95": 12.75,
+        "p99": 13.75,
+        "max": 14
+      },
+      "modality_counts": {
+        "has_python_ast_target": 26,
+        "has_code_like_target": 26,
+        "symbol_oracle_available": 24,
+        "docs_only_target": 0,
+        "non_code_only_target": 0,
+        "mixed_code_noncode_target": 0
+      },
+      "hint_counts": {
+        "gold_full_path_mentioned": 0,
+        "gold_basename_mentioned": 12,
+        "gold_symbol_name_mentioned": 15,
+        "gold_qualified_symbol_mentioned": 4
+      },
+      "n_technical_valid": 26,
+      "n_symbol_capable": 24,
+      "n_file_only": 2
+    },
+    "conan-io/conan": {
+      "n": 75,
+      "denominator": 75,
+      "repo_tracked_files": {
+        "n": 75,
+        "min": 895,
+        "mean": 1086.8133,
+        "p50": 1017.0,
+        "p90": 1255.4,
+        "p95": 1265.9,
+        "p99": 1276.0,
+        "max": 1276
+      },
+      "file_target_density": {
+        "n": 75,
+        "min": 0.0007836991,
+        "mean": 0.0016,
+        "p50": 0.0010277492,
+        "p90": 0.002811266,
+        "p95": 0.0042505214,
+        "p99": 0.0083918905,
+        "max": 0.0134744947
+      },
+      "python_target_density": {
+        "n": 75,
+        "min": 0.0008058018,
+        "mean": 0.0016,
+        "p50": 0.0010604454,
+        "p90": 0.0028977696,
+        "p95": 0.0043848285,
+        "p99": 0.0086667481,
+        "max": 0.0139720559
+      },
+      "base_changed_file_count": {
+        "n": 75,
+        "min": 1,
+        "mean": 1.72,
+        "p50": 1.0,
+        "p90": 3.0,
+        "p95": 5.0,
+        "p99": 9.56,
+        "max": 14
+      },
+      "oracle_symbol_count": {
+        "n": 75,
+        "min": 0,
+        "mean": 2.52,
+        "p50": 1.0,
+        "p90": 5.0,
+        "p95": 9.0,
+        "p99": 12.56,
+        "max": 17
+      },
+      "modality_counts": {
+        "has_python_ast_target": 75,
+        "has_code_like_target": 75,
+        "symbol_oracle_available": 73,
+        "docs_only_target": 0,
+        "non_code_only_target": 0,
+        "mixed_code_noncode_target": 0
+      },
+      "hint_counts": {
+        "gold_full_path_mentioned": 0,
+        "gold_basename_mentioned": 13,
+        "gold_symbol_name_mentioned": 28,
+        "gold_qualified_symbol_mentioned": 2
+      },
+      "n_technical_valid": 75,
+      "n_symbol_capable": 73,
+      "n_file_only": 2
+    },
+    "dask/dask": {
+      "n": 145,
+      "denominator": 145,
+      "repo_tracked_files": {
+        "n": 145,
+        "min": 408,
+        "mean": 455.6345,
+        "p50": 460.0,
+        "p90": 490.6,
+        "p95": 492.0,
+        "p99": 497.0,
+        "max": 504
+      },
+      "file_target_density": {
+        "n": 145,
+        "min": 0.001984127,
+        "mean": 0.0028,
+        "p50": 0.0022172949,
+        "p90": 0.0044444444,
+        "p95": 0.0048899756,
+        "p99": 0.0089824257,
+        "max": 0.0096618357
+      },
+      "python_target_density": {
+        "n": 145,
+        "min": 0.0038610039,
+        "mean": 0.0054,
+        "p50": 0.0042016807,
+        "p90": 0.0084033613,
+        "p95": 0.0093457944,
+        "p99": 0.0173964236,
+        "max": 0.0186915888
+      },
+      "base_changed_file_count": {
+        "n": 145,
+        "min": 1,
+        "mean": 1.2897,
+        "p50": 1.0,
+        "p90": 2.0,
+        "p95": 2.0,
+        "p99": 4.0,
+        "max": 4
+      },
+      "oracle_symbol_count": {
+        "n": 145,
+        "min": 0,
+        "mean": 2.2552,
+        "p50": 1.0,
+        "p90": 5.0,
+        "p95": 7.0,
+        "p99": 12.0,
+        "max": 25
+      },
+      "modality_counts": {
+        "has_python_ast_target": 145,
+        "has_code_like_target": 145,
+        "symbol_oracle_available": 133,
+        "docs_only_target": 0,
+        "non_code_only_target": 0,
+        "mixed_code_noncode_target": 0
+      },
+      "hint_counts": {
+        "gold_full_path_mentioned": 1,
+        "gold_basename_mentioned": 48,
+        "gold_symbol_name_mentioned": 81,
+        "gold_qualified_symbol_mentioned": 9
+      },
+      "n_technical_valid": 145,
+      "n_symbol_capable": 133,
+      "n_file_only": 12
+    },
+    "facebookresearch/hydra": {
+      "n": 66,
+      "denominator": 66,
+      "repo_tracked_files": {
+        "n": 66,
+        "min": 596,
+        "mean": 1081.9545,
+        "p50": 1167.0,
+        "p90": 1298.0,
+        "p95": 1364.25,
+        "p99": 1443.7,
+        "max": 1510
+      },
+      "file_target_density": {
+        "n": 66,
+        "min": 0.0006622517,
+        "mean": 0.0021,
+        "p50": 0.0009017133,
+        "p90": 0.0049361334,
+        "p95": 0.0061398666,
+        "p99": 0.0102598053,
+        "max": 0.0109489051
+      },
+      "python_target_density": {
+        "n": 66,
+        "min": 0.0022624434,
+        "mean": 0.006,
+        "p50": 0.0028089888,
+        "p90": 0.0136796688,
+        "p95": 0.0156455863,
+        "p99": 0.028903016,
+        "max": 0.0337078652
+      },
+      "base_changed_file_count": {
+        "n": 66,
+        "min": 1,
+        "mean": 2.0152,
+        "p50": 1.0,
+        "p90": 4.0,
+        "p95": 5.0,
+        "p99": 11.35,
+        "max": 12
+      },
+      "oracle_symbol_count": {
+        "n": 66,
+        "min": 0,
+        "mean": 3.0758,
+        "p50": 2.0,
+        "p90": 8.0,
+        "p95": 8.0,
+        "p99": 11.7,
+        "max": 13
+      },
+      "modality_counts": {
+        "has_python_ast_target": 66,
+        "has_code_like_target": 66,
+        "symbol_oracle_available": 65,
+        "docs_only_target": 0,
+        "non_code_only_target": 0,
+        "mixed_code_noncode_target": 0
+      },
+      "hint_counts": {
+        "gold_full_path_mentioned": 1,
+        "gold_basename_mentioned": 18,
+        "gold_symbol_name_mentioned": 23,
+        "gold_qualified_symbol_mentioned": 0
+      },
+      "n_technical_valid": 66,
+      "n_symbol_capable": 65,
+      "n_file_only": 1
+    },
+    "getmoto/moto": {
+      "n": 343,
+      "denominator": 343,
+      "repo_tracked_files": {
+        "n": 343,
+        "min": 1364,
+        "mean": 1909.4898,
+        "p50": 1958.0,
+        "p90": 2166.0,
+        "p95": 2196.0,
+        "p99": 2540.58,
+        "max": 2568
+      },
+      "file_target_density": {
+        "n": 343,
+        "min": 0.0003894081,
+        "mean": 0.0011,
+        "p50": 0.0006863418,
+        "p90": 0.0019460412,
+        "p95": 0.0024975057,
+        "p99": 0.0040503179,
+        "max": 0.013559322
+      },
+      "python_target_density": {
+        "n": 343,
+        "min": 0.0004844961,
+        "mean": 0.0013,
+        "p50": 0.0008244023,
+        "p90": 0.0024763719,
+        "p95": 0.0030566284,
+        "p99": 0.0048706294,
+        "max": 0.0172839506
+      },
+      "base_changed_file_count": {
+        "n": 343,
+        "min": 1,
+        "mean": 2.0029,
+        "p50": 1.0,
+        "p90": 3.0,
+        "p95": 4.0,
+        "p99": 6.16,
+        "max": 31
+      },
+      "oracle_symbol_count": {
+        "n": 343,
+        "min": 0,
+        "mean": 4.0875,
+        "p50": 2.0,
+        "p90": 8.0,
+        "p95": 14.9,
+        "p99": 42.74,
+        "max": 69
+      },
+      "modality_counts": {
+        "has_python_ast_target": 343,
+        "has_code_like_target": 343,
+        "symbol_oracle_available": 321,
+        "docs_only_target": 0,
+        "non_code_only_target": 0,
+        "mixed_code_noncode_target": 0
+      },
+      "hint_counts": {
+        "gold_full_path_mentioned": 11,
+        "gold_basename_mentioned": 112,
+        "gold_symbol_name_mentioned": 165,
+        "gold_qualified_symbol_mentioned": 9
+      },
+      "n_technical_valid": 343,
+      "n_symbol_capable": 321,
+      "n_file_only": 22
+    },
+    "iterative/dvc": {
+      "n": 225,
+      "denominator": 225,
+      "repo_tracked_files": {
+        "n": 225,
+        "min": 197,
+        "mean": 433.0978,
+        "p50": 449.0,
+        "p90": 571.0,
+        "p95": 586.0,
+        "p99": 608.0,
+        "max": 612
+      },
+      "file_target_density": {
+        "n": 225,
+        "min": 0.0016339869,
+        "mean": 0.0071,
+        "p50": 0.0038834951,
+        "p90": 0.0144971264,
+        "p95": 0.0201190572,
+        "p99": 0.0502398777,
+        "max": 0.0842911877
+      },
+      "python_target_density": {
+        "n": 225,
+        "min": 0.0017921147,
+        "mean": 0.0085,
+        "p50": 0.0046082949,
+        "p90": 0.0170940171,
+        "p95": 0.0241375722,
+        "p99": 0.0626882144,
+        "max": 0.1052631579
+      },
+      "base_changed_file_count": {
+        "n": 225,
+        "min": 1,
+        "mean": 2.7467,
+        "p50": 2.0,
+        "p90": 6.0,
+        "p95": 8.0,
+        "p99": 13.0,
+        "max": 22
+      },
+      "oracle_symbol_count": {
+        "n": 225,
+        "min": 0,
+        "mean": 4.9911,
+        "p50": 2.0,
+        "p90": 11.6,
+        "p95": 17.0,
+        "p99": 23.0,
+        "max": 96
+      },
+      "modality_counts": {
+        "has_python_ast_target": 225,
+        "has_code_like_target": 225,
+        "symbol_oracle_available": 218,
+        "docs_only_target": 0,
+        "non_code_only_target": 0,
+        "mixed_code_noncode_target": 0
+      },
+      "hint_counts": {
+        "gold_full_path_mentioned": 8,
+        "gold_basename_mentioned": 32,
+        "gold_symbol_name_mentioned": 88,
+        "gold_qualified_symbol_mentioned": 4
+      },
+      "n_technical_valid": 225,
+      "n_symbol_capable": 218,
+      "n_file_only": 7
+    },
+    "modin-project/modin": {
+      "n": 107,
+      "denominator": 107,
+      "repo_tracked_files": {
+        "n": 107,
+        "min": 762,
+        "mean": 792.243,
+        "p50": 789.0,
+        "p90": 802.0,
+        "p95": 809.0,
+        "p99": 810.0,
+        "max": 810
+      },
+      "file_target_density": {
+        "n": 107,
+        "min": 0.0012345679,
+        "mean": 0.0033,
+        "p50": 0.0012755102,
+        "p90": 0.0075835603,
+        "p95": 0.0101885424,
+        "p99": 0.0182453412,
+        "max": 0.0228426396
+      },
+      "python_target_density": {
+        "n": 107,
+        "min": 0.0021834061,
+        "mean": 0.0058,
+        "p50": 0.0023148148,
+        "p90": 0.0132656674,
+        "p95": 0.0183928272,
+        "p99": 0.0325083859,
+        "max": 0.0405405405
+      },
+      "base_changed_file_count": {
+        "n": 107,
+        "min": 1,
+        "mean": 2.5701,
+        "p50": 1.0,
+        "p90": 6.0,
+        "p95": 8.0,
+        "p99": 13.94,
+        "max": 18
+      },
+      "oracle_symbol_count": {
+        "n": 107,
+        "min": 0,
+        "mean": 4.9907,
+        "p50": 2.0,
+        "p90": 10.0,
+        "p95": 14.1,
+        "p99": 59.22,
+        "max": 102
+      },
+      "modality_counts": {
+        "has_python_ast_target": 107,
+        "has_code_like_target": 107,
+        "symbol_oracle_available": 100,
+        "docs_only_target": 0,
+        "non_code_only_target": 0,
+        "mixed_code_noncode_target": 0
+      },
+      "hint_counts": {
+        "gold_full_path_mentioned": 2,
+        "gold_basename_mentioned": 37,
+        "gold_symbol_name_mentioned": 59,
+        "gold_qualified_symbol_mentioned": 7
+      },
+      "n_technical_valid": 107,
+      "n_symbol_capable": 100,
+      "n_file_only": 7
+    },
+    "pandas-dev/pandas": {
+      "n": 737,
+      "denominator": 737,
+      "repo_tracked_files": {
+        "n": 737,
+        "min": 2437,
+        "mean": 2513.8236,
+        "p50": 2529.0,
+        "p90": 2565.0,
+        "p95": 2566.0,
+        "p99": 2568.0,
+        "max": 2570
+      },
+      "file_target_density": {
+        "n": 737,
+        "min": 0.0003895598,
+        "mean": 0.0011,
+        "p50": 0.0008084074,
+        "p90": 0.0019485581,
+        "p95": 0.0023724807,
+        "p99": 0.0043853302,
+        "max": 0.0111243544
+      },
+      "python_target_density": {
+        "n": 737,
+        "min": 0.0,
+        "mean": 0.001,
+        "p50": 0.000665779,
+        "p90": 0.0019781091,
+        "p95": 0.0026385224,
+        "p99": 0.0052837883,
+        "max": 0.0086551265
+      },
+      "base_changed_file_count": {
+        "n": 737,
+        "min": 1,
+        "mean": 2.7802,
+        "p50": 2.0,
+        "p90": 5.0,
+        "p95": 6.0,
+        "p99": 11.0,
+        "max": 28
+      },
+      "oracle_symbol_count": {
+        "n": 737,
+        "min": 0,
+        "mean": 2.4233,
+        "p50": 1.0,
+        "p90": 5.0,
+        "p95": 8.0,
+        "p99": 20.0,
+        "max": 61
+      },
+      "modality_counts": {
+        "has_python_ast_target": 659,
+        "has_code_like_target": 735,
+        "symbol_oracle_available": 646,
+        "docs_only_target": 0,
+        "non_code_only_target": 2,
+        "mixed_code_noncode_target": 653
+      },
+      "hint_counts": {
+        "gold_full_path_mentioned": 12,
+        "gold_basename_mentioned": 169,
+        "gold_symbol_name_mentioned": 338,
+        "gold_qualified_symbol_mentioned": 89
+      },
+      "n_technical_valid": 737,
+      "n_symbol_capable": 646,
+      "n_file_only": 91
+    },
+    "pydantic/pydantic": {
+      "n": 83,
+      "denominator": 83,
+      "repo_tracked_files": {
+        "n": 83,
+        "min": 221,
+        "mean": 401.3373,
+        "p50": 442.0,
+        "p90": 487.6,
+        "p95": 489.0,
+        "p99": 489.0,
+        "max": 489
+      },
+      "file_target_density": {
+        "n": 83,
+        "min": 0.0020449898,
+        "mean": 0.0046,
+        "p50": 0.0029850746,
+        "p90": 0.0088522588,
+        "p95": 0.0108562554,
+        "p99": 0.0186551883,
+        "max": 0.0211864407
+      },
+      "python_target_density": {
+        "n": 83,
+        "min": 0.0033783784,
+        "mean": 0.009,
+        "p50": 0.006097561,
+        "p90": 0.01827051,
+        "p95": 0.0235370842,
+        "p99": 0.0429901961,
+        "max": 0.0490196078
+      },
+      "base_changed_file_count": {
+        "n": 83,
+        "min": 1,
+        "mean": 1.6867,
+        "p50": 1.0,
+        "p90": 3.0,
+        "p95": 4.0,
+        "p99": 5.36,
+        "max": 7
+      },
+      "oracle_symbol_count": {
+        "n": 83,
+        "min": 0,
+        "mean": 3.4217,
+        "p50": 2.0,
+        "p90": 8.8,
+        "p95": 13.7,
+        "p99": 21.08,
+        "max": 26
+      },
+      "modality_counts": {
+        "has_python_ast_target": 83,
+        "has_code_like_target": 83,
+        "symbol_oracle_available": 81,
+        "docs_only_target": 0,
+        "non_code_only_target": 0,
+        "mixed_code_noncode_target": 0
+      },
+      "hint_counts": {
+        "gold_full_path_mentioned": 0,
+        "gold_basename_mentioned": 9,
+        "gold_symbol_name_mentioned": 20,
+        "gold_qualified_symbol_mentioned": 1
+      },
+      "n_technical_valid": 83,
+      "n_symbol_capable": 81,
+      "n_file_only": 2
+    },
+    "python/mypy": {
+      "n": 257,
+      "denominator": 257,
+      "repo_tracked_files": {
+        "n": 257,
+        "min": 780,
+        "mean": 1503.6226,
+        "p50": 1461.0,
+        "p90": 1739.0,
+        "p95": 1744.6,
+        "p99": 1747.44,
+        "max": 1748
+      },
+      "file_target_density": {
+        "n": 257,
+        "min": 0.0005720824,
+        "mean": 0.0012,
+        "p50": 0.0007057163,
+        "p90": 0.0025407925,
+        "p95": 0.0030699442,
+        "p99": 0.0058866919,
+        "max": 0.0088945362
+      },
+      "python_target_density": {
+        "n": 257,
+        "min": 0.0007267442,
+        "mean": 0.0017,
+        "p50": 0.0009813543,
+        "p90": 0.0035561216,
+        "p95": 0.0044762793,
+        "p99": 0.0082394526,
+        "max": 0.0155555556
+      },
+      "base_changed_file_count": {
+        "n": 257,
+        "min": 1,
+        "mean": 1.7977,
+        "p50": 1.0,
+        "p90": 4.0,
+        "p95": 5.0,
+        "p99": 8.0,
+        "max": 11
+      },
+      "oracle_symbol_count": {
+        "n": 257,
+        "min": 0,
+        "mean": 2.9183,
+        "p50": 1.0,
+        "p90": 6.0,
+        "p95": 10.2,
+        "p99": 19.32,
+        "max": 25
+      },
+      "modality_counts": {
+        "has_python_ast_target": 257,
+        "has_code_like_target": 257,
+        "symbol_oracle_available": 250,
+        "docs_only_target": 0,
+        "non_code_only_target": 0,
+        "mixed_code_noncode_target": 0
+      },
+      "hint_counts": {
+        "gold_full_path_mentioned": 18,
+        "gold_basename_mentioned": 57,
+        "gold_symbol_name_mentioned": 46,
+        "gold_qualified_symbol_mentioned": 0
+      },
+      "n_technical_valid": 257,
+      "n_symbol_capable": 250,
+      "n_file_only": 7
+    }
+  },
+  "outliers": {
+    "max_repo_tracked_files": {
+      "instance_id": "bokeh__bokeh-13800",
+      "value": 5640
+    },
+    "min_file_target_density": {
+      "instance_id": "bokeh__bokeh-13757",
+      "value": 0.0001779359
+    },
+    "max_file_target_density": {
+      "instance_id": "iterative__dvc-1892",
+      "value": 0.0842911877
+    },
+    "max_base_changed_file_count": {
+      "instance_id": "bokeh__bokeh-13535",
+      "value": 67
+    },
+    "max_oracle_symbol_count": {
+      "instance_id": "Project-MONAI__MONAI-6080",
+      "value": 107
+    },
+    "max_gold_edit_file_count": {
+      "instance_id": "getmoto__moto-7418",
+      "value": 286
+    }
+  },
+  "codescout_comparison": {
+    "status": "skipped",
+    "reason": "Optional reference would require a network fetch or vendoring OpenHands/SWE-Gym-code-search instance IDs. Core M1D-A does not depend on CodeScout and does not drop instances."
+  },
+  "notes": {
+    "no_filter": true,
+    "no_split": true,
+    "no_keep_drop": true,
+    "no_composite_difficulty": true,
+    "not_m1d_b": true,
+    "privileged_derived_fields": [
+      "technical_valid",
+      "technical_invalid_reasons",
+      "search_space",
+      "target_scope",
+      "hint_strength",
+      "modality",
+      "correlation_group_id",
+      "correlation_group_size"
+    ],
+    "code_like_extensions": [
+      ".c",
+      ".cc",
+      ".cpp",
+      ".cxx",
+      ".h",
+      ".hh",
+      ".hpp",
+      ".hxx",
+      ".pxd",
+      ".pxi",
+      ".py",
+      ".pyi",
+      ".pyx"
+    ],
+    "js_ts_not_code_like": true,
+    "zero_symbol_is_not_invalid": true,
+    "added_files_not_base_retrieval_targets": true
+  },
+  "jsonl": "data/interim/swe_gym/m1d_features.jsonl"
+}

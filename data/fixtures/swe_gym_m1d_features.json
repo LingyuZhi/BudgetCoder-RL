@@ -1,0 +1,14 @@
+{
+  "ls_tree_sample": "100644 blob abcdef1234567890abcdef1234567890abcdef12     120\tsrc/foo.py\n100644 blob abcdef1234567890abcdef1234567890abcdef12      40\tsrc/foo.pyi\n100644 blob abcdef1234567890abcdef1234567890abcdef12      80\tsrc/ext.pyx\n100644 blob abcdef1234567890abcdef1234567890abcdef12      16\tdocs/readme.rst\n100644 blob abcdef1234567890abcdef1234567890abcdef12       8\tconfig.yaml\n100644 blob abcdef1234567890abcdef1234567890abcdef12      32\tui/app.js\n160000 commit abcdef1234567890abcdef1234567890abcdef12       -\tvendor/sub\n120000 blob abcdef1234567890abcdef1234567890abcdef12      11\tlink.py\n",
+  "mentions": {
+    "full_path_issue": "Please inspect src/foo.py for the crash.",
+    "basename_only_issue": "The bug is in foo.py according to the traceback.",
+    "symbol_issue": "Cache.invalidate returns stale data.",
+    "qualified_issue": "Fix Cache.invalidate on the miss path."
+  },
+  "false_positives": {
+    "foo_pyi": "Please change src/foo.pyi stubs.",
+    "myfoo": "See myfoo.py for helpers.",
+    "partial_symbol": "The helper invalidate_all is wrong."
+  }
+}

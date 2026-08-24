@@ -13,7 +13,7 @@ Git tracks only small, versionable files:
 Gitignored working-tree data (see `.gitignore`):
 
 - `raw/`: official tables such as SWE-Gym parquet
-- `interim/`: regenerable per-instance audits / oracles (M1B / M1C-A / M1C-B JSONL)
+- `interim/`: regenerable per-instance audits / oracles / features (M1B / M1C / M1D-A JSONL)
 - `processed/`: Stage 1 JSONL (when it exists)
 
 Repository clones / worktrees, Docker / executable images, model weights,
@@ -42,6 +42,9 @@ one-off exception.
 | M1C-B per-instance symbol oracles | `interim/swe_gym/m1c_symbol_oracle.jsonl` (not in Git; regenerable) |
 | M1C-B repo source pins | `manifests/swe_gym_repo_sources.json` (in Git; no host-absolute paths) |
 | Tiny M1C-B symbol fixture | `fixtures/swe_gym_m1c_symbol_oracle.json` |
+| M1D-A feature summary | `manifests/swe_gym_m1d_feature_summary.json` (in Git) |
+| M1D-A per-instance features | `interim/swe_gym/m1d_features.jsonl` (not in Git; regenerable) |
+| Tiny M1D-A feature fixture | `fixtures/swe_gym_m1d_features.json` |
 
 Do **not** use `SWE-Gym/SWE-Gym-Lite` or `SWE-Gym/SWE-Gym-Raw`.
 
@@ -52,6 +55,7 @@ python scripts/data/audit_swe_gym.py
 python scripts/data/extract_swe_gym_oracle.py
 python scripts/data/prepare_swe_gym_repos.py
 python scripts/data/extract_swe_gym_symbol_oracle.py
+python scripts/data/extract_swe_gym_m1d_features.py
 ```
 
 Download talks to Hugging Face (or `HF_ENDPOINT` if set). It does not install
@@ -137,3 +141,22 @@ Test-like gold paths (`tests/`, `test/`, `test_*.py`, `*_test.py`) are
 observational statistics only and are not used as a drop filter. Parse
 failures are reported with `instance_id` + parser error; there is no regex
 fallback.
+
+### M1D-A eligibility / structural-difficulty audit
+
+M1D-A joins the frozen parquet, M1C-A/B JSONL, and local bare mirrors into
+a 2438-row feature table. It does **not**:
+
+- drop or filter instances, or write `keep` / `drop`
+- create train/dev/test splits
+- synthesize a composite easy/medium/hard score
+- re-parse gold patches or re-run AST
+- checkout worktrees, use the network, or depend on CodeScout
+- put derived features into `agent_task_view`
+
+Technical validity reasons are recorded in place. Stage-1 localization
+counts use `base_changed_files`, not added gold targets. Issue mentions of
+gold paths/symbols are difficulty/hint features, not leakage. Correlation
+groups are connected components over the same `(repo, base_commit)` or the
+same normalized `problem_statement`; they are not a split. Filtering and
+split decisions are **M1D-B**.

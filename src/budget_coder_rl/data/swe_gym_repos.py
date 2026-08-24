@@ -25,7 +25,7 @@ CACHE_RELPATH = "repos/swe_gym"
 REMOTE_TEMPLATE = "https://github.com/{repo}.git"
 CLONE_KIND = "bare"
 NETWORK_GIT_VERBS = frozenset({"clone", "fetch", "pull", "push", "remote"})
-SAFE_OFFLINE_GIT_VERBS = frozenset({"rev-parse", "cat-file"})
+SAFE_OFFLINE_GIT_VERBS = frozenset({"rev-parse", "cat-file", "ls-tree"})
 
 
 class GitError(RuntimeError):
