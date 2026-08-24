@@ -172,6 +172,8 @@ def _build_loop(
     prompt_length: int = 2048,
     response_length: int = 2048,
     max_turns: int = 6,
+    obs_tokens_limit: int | None = None,
+    budget_visible: bool = False,
 ) -> RepoExplorationAgentLoop:
     from verl.experimental.agent_loop.agent_loop import DictConfigWrap
     from verl.utils.dataset.rl_dataset import RLHFDataset
@@ -195,6 +197,8 @@ def _build_loop(
         data_config=DictConfigWrap(OmegaConf.create({})),
         repo_environment=env,
         max_turns=max_turns,
+        obs_tokens_limit=obs_tokens_limit,
+        budget_visible=budget_visible,
     )
 
 

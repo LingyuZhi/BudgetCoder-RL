@@ -1,0 +1,9 @@
+{
+  "search_is_case_sensitive_literal_substring": true,
+  "search_literal_phrase": "case-sensitive literal substring",
+  "system_prompt_sha256": "cae3b3ad912849ac81bb38676403a271d4924e760d92b19a90b47c4c32e59e00",
+  "system_prompt_chars": 1623,
+  "obs_version": "bcrl-obs-v1",
+  "budget_envelope_version": "bcrl-budget-v1",
+  "note": "Confirmed: search is a case-sensitive literal substring. Do not trajectory-tune this prompt."
+}

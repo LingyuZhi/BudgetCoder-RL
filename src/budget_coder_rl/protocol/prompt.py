@@ -9,8 +9,10 @@ Must not receive or serialize privileged extra_info (patch, oracle, etc.).
 
 from __future__ import annotations
 
+import hashlib
 from typing import Any, Mapping, Sequence
 
+from budget_coder_rl.budget.state import BudgetState, format_budget_state
 from budget_coder_rl.env.tools import (
     QUERY_MAX_CHARS,
     READ_MAX_CHARS,
@@ -34,9 +36,20 @@ from budget_coder_rl.protocol.parser import (
 _TOOL_NAME_LIST = ", ".join(sorted(TOOL_NAMES))
 
 
-def build_system_prompt() -> str:
-    """Localization role, tool contract, and strict one-action protocol."""
-    return (
+SEARCH_LITERAL_PHRASE = "case-sensitive literal substring"
+
+
+def build_system_prompt(
+    *,
+    budget_state: BudgetState | None = None,
+    budget_visible: bool = False,
+) -> str:
+    """Localization role, tool contract, and strict one-action protocol.
+
+    Hidden / no-budget default text is frozen. Visible remaining-budget state
+    is appended and must not change tools or the action protocol.
+    """
+    text = (
         "You are a repository-localization agent. Given a software issue and a "
         "read-only snapshot of the repository at a fixed base commit, explore "
         "the tree and submit the code locations that must be changed to address "
@@ -51,7 +64,7 @@ def build_system_prompt() -> str:
         f"{TREE_DEFAULT_PATH!r}), depth (default {TREE_DEFAULT_DEPTH}, max "
         f"{TREE_MAX_DEPTH}). At most {TREE_MAX_ENTRIES} entries are returned. "
         "Does not follow directory symlinks.\n"
-        f"- search: case-sensitive literal substring search. Arguments: query "
+        f"- search: {SEARCH_LITERAL_PHRASE} search. Arguments: query "
         f"(required, max {QUERY_MAX_CHARS} characters, single line), path "
         f"(default {SEARCH_DEFAULT_PATH!r}), max_results (default "
         f"{SEARCH_DEFAULT_MAX_RESULTS}, cap {SEARCH_MAX_RESULTS}). Hidden "
@@ -80,6 +93,11 @@ def build_system_prompt() -> str:
         "Submit when you have identified the relevant files/symbols. Do not "
         "attempt to patch the issue."
     )
+    if not budget_visible:
+        return text
+    if budget_state is None or budget_state.obs_tokens_limit is None:
+        raise ValueError("visible budget prompt requires a numeric obs_tokens_limit")
+    return text + "\n\n" + format_budget_state(budget_state).rstrip("\n")
 
 
 def build_user_prompt(problem_statement: str, *, repo: str | None = None) -> str:
@@ -97,9 +115,17 @@ def build_stage1_messages(
     problem_statement: str,
     *,
     repo: str | None = None,
+    budget_state: BudgetState | None = None,
+    budget_visible: bool = False,
 ) -> list[dict[str, str]]:
     return [
-        {"role": "system", "content": build_system_prompt()},
+        {
+            "role": "system",
+            "content": build_system_prompt(
+                budget_state=budget_state,
+                budget_visible=budget_visible,
+            ),
+        },
         {"role": "user", "content": build_user_prompt(problem_statement, repo=repo)},
     ]
 
@@ -158,3 +184,20 @@ def _coerce_messages(raw_prompt: Any) -> list[dict[str, Any]]:
 
 def rendered_prompt_text(messages: Sequence[Mapping[str, str]]) -> str:
     return "\n".join(str(message.get("content") or "") for message in messages)
+
+
+def runtime_prompt_audit() -> dict[str, Any]:
+    """Frozen hidden system-prompt facts. Not a trajectory-tuning surface."""
+    text = build_system_prompt()
+    return {
+        "search_is_case_sensitive_literal_substring": SEARCH_LITERAL_PHRASE in text,
+        "search_literal_phrase": SEARCH_LITERAL_PHRASE,
+        "system_prompt_sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
+        "system_prompt_chars": len(text),
+        "obs_version": "bcrl-obs-v1",
+        "budget_envelope_version": "bcrl-budget-v1",
+        "note": (
+            "Confirmed: search is a case-sensitive literal substring. "
+            "Do not trajectory-tune this prompt."
+        ),
+    }

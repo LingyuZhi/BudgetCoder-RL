@@ -6,7 +6,8 @@ ground truth. Observations are encoded once via ``apply_chat_template``
 (``role=user``, ``remove_system_prompt=True``) and appended. History is
 never decoded and re-encoded.
 
-Does not look up evaluator oracles or compute reward.
+Does not look up evaluator oracles or compute reward. Observation-token
+budget accounting uses inserted observation token IDs only.
 """
 
 from __future__ import annotations
@@ -22,6 +23,13 @@ from verl.utils.rollout_trace import rollout_trace_op
 from verl.workers.rollout.replica import TokenOutput
 
 from budget_coder_rl.agent_loop.tokenization import decode_for_parser
+from budget_coder_rl.budget.state import (
+    BUDGET_HEADER_MAX_ITERS,
+    BudgetHeaderFixpointError,
+    BudgetState,
+    resolve_episode_budget,
+    wrap_observation_with_budget,
+)
 from budget_coder_rl.env import ExplorationSession, RepoEnvironment
 from budget_coder_rl.protocol.parser import (
     FinalAction,
@@ -56,6 +64,8 @@ class RepoExplorationAgentLoop(AgentLoopBase):
         max_turns: int = DEFAULT_MAX_TURNS,
         max_new_tokens_per_turn: int = DEFAULT_MAX_NEW_TOKENS_PER_TURN,
         repo_environment: RepoEnvironment | None = None,
+        obs_tokens_limit: int | None = None,
+        budget_visible: bool = False,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
@@ -64,13 +74,37 @@ class RepoExplorationAgentLoop(AgentLoopBase):
         self.max_turns = int(max_turns)
         self.max_new_tokens_per_turn = int(max_new_tokens_per_turn)
         self.repo_environment = repo_environment
+        self.obs_tokens_limit, self.budget_visible = resolve_episode_budget(
+            {
+                "obs_tokens_limit": obs_tokens_limit,
+                "budget_visible": budget_visible,
+            },
+            default_limit=None,
+            default_visible=False,
+        )
 
     @rollout_trace_op
     async def run(self, sampling_params: dict[str, Any], **kwargs) -> AgentLoopOutput:
         extra_info = _coerce_mapping(kwargs.get("extra_info"))
         instance_id = str(extra_info.get("instance_id") or "")
+        obs_tokens_limit, budget_visible = resolve_episode_budget(
+            extra_info,
+            default_limit=self.obs_tokens_limit,
+            default_visible=self.budget_visible,
+        )
+        budget = BudgetState(
+            obs_tokens_used=0,
+            obs_tokens_limit=obs_tokens_limit,
+            turns_used=0,
+            turns_limit=self.max_turns,
+        )
         issue = extract_issue_text(kwargs.get("raw_prompt"))
-        messages = build_stage1_messages(issue, repo=policy_safe_repo(extra_info))
+        messages = build_stage1_messages(
+            issue,
+            repo=policy_safe_repo(extra_info),
+            budget_state=budget if budget_visible else None,
+            budget_visible=budget_visible,
+        )
         request_id = uuid4().hex
         metrics: dict[str, Any] = {}
         sampling_record = {
@@ -100,6 +134,8 @@ class RepoExplorationAgentLoop(AgentLoopBase):
         submission: dict[str, Any] | None = None
         assistant_turns = 0
         observation_turns = 0
+        inserted_obs_tokens = 0
+        inserted_tool_obs_tokens = 0
         num_preempted = -1
 
         for _turn in range(self.max_turns):
@@ -127,6 +163,7 @@ class RepoExplorationAgentLoop(AgentLoopBase):
             response_ids.extend(gen_ids)
             response_mask.extend([1] * len(gen_ids))
             assistant_turns += 1
+            budget.turns_used = assistant_turns
             segments.append({"kind": "assistant", "token_ids": list(gen_ids)})
             if response_logprobs is not None:
                 if output.log_probs:
@@ -138,6 +175,7 @@ class RepoExplorationAgentLoop(AgentLoopBase):
             step = session.step(text)
             action_name, action_arguments, parse_error_code = _research_action(text)
             obs_headers = _observation_headers(step.observation)
+            budget_before = budget.as_dict()
             research_events.append(
                 {
                     "turn": step.turn,
@@ -153,6 +191,10 @@ class RepoExplorationAgentLoop(AgentLoopBase):
                     "observation": step.observation,
                     "observation_preview": _preview(step.observation),
                     "observation_token_count": None,
+                    "tool_observation_token_count": None,
+                    "inserted": None,
+                    "budget_before": budget_before,
+                    "budget_after": budget.as_dict(),
                     "tool_status": obs_headers.get("status"),
                     "tool": obs_headers.get("tool"),
                     "error_code": obs_headers.get("code") or parse_error_code,
@@ -167,23 +209,41 @@ class RepoExplorationAgentLoop(AgentLoopBase):
             if step.terminal:
                 termination = step.termination or "finish"
                 submission = step.submission
+                research_events[-1]["inserted"] = False
+                research_events[-1]["budget_after"] = budget.as_dict()
                 break
 
-            obs_ids = await self.apply_chat_template(
-                [{"role": "user", "content": step.observation}],
-                remove_system_prompt=True,
+            obs_ids, _user_content, tool_obs_n = await self._encode_observation(
+                step.observation,
+                budget=budget,
+                visible=budget_visible,
             )
-            obs_ids = list(obs_ids)
+            event = research_events[-1]
+            event["observation_token_count"] = len(obs_ids)
+            event["tool_observation_token_count"] = tool_obs_n
+            event["would_be_observation_token_count"] = len(obs_ids)
+
+            if not budget.can_insert(len(obs_ids)):
+                termination = "budget_exhausted"
+                event["inserted"] = False
+                event["budget_after"] = budget.as_dict()
+                break
             if len(response_ids) + len(obs_ids) > self.response_length:
                 termination = "response_length"
-                research_events[-1]["observation_token_count"] = len(obs_ids)
+                event["inserted"] = False
+                event["budget_after"] = budget.as_dict()
                 break
+
             response_ids.extend(obs_ids)
             response_mask.extend([0] * len(obs_ids))
             observation_turns += 1
+            budget.consume(len(obs_ids))
+            inserted_obs_tokens += len(obs_ids)
+            inserted_tool_obs_tokens += tool_obs_n
             segments.append({"kind": "observation", "token_ids": list(obs_ids)})
-            research_events[-1]["observation_token_count"] = len(obs_ids)
-            research_events[-1]["cumulative_response_tokens"] = len(response_ids)
+            event["inserted"] = True
+            event["budget_after"] = budget.as_dict()
+            event["cumulative_response_tokens"] = len(response_ids)
             if response_logprobs is not None:
                 response_logprobs.extend([0.0] * len(obs_ids))
         else:
@@ -192,6 +252,11 @@ class RepoExplorationAgentLoop(AgentLoopBase):
 
         metrics["num_preempted"] = num_preempted
         assert len(response_ids) == len(response_mask)
+        policy_token_count = int(sum(response_mask))
+        assert inserted_obs_tokens == sum(
+            len(item["token_ids"]) for item in segments if item["kind"] == "observation"
+        )
+        assert inserted_obs_tokens == budget.obs_tokens_used
 
         output = AgentLoopOutput(
             prompt_ids=prompt_ids,
@@ -208,12 +273,21 @@ class RepoExplorationAgentLoop(AgentLoopBase):
                 "instance_id": instance_id,
                 "repo": extra_info.get("repo"),
                 "base_commit": extra_info.get("base_commit"),
+                "split": extra_info.get("split"),
                 "final_submission": submission,
                 "termination": termination,
                 "segments": segments,
                 "events": research_events,
                 "unpadded_prompt_ids": list(prompt_ids),
                 "prompt_token_count": len(prompt_ids),
+                "policy_token_count": policy_token_count,
+                "observation_token_count": inserted_obs_tokens,
+                "tool_observation_token_count": inserted_tool_obs_tokens,
+                "obs_tokens_used": budget.obs_tokens_used,
+                "obs_tokens_limit": obs_tokens_limit,
+                "obs_tokens_remaining": budget.obs_tokens_remaining,
+                "budget_visible": budget_visible,
+                "budget_exhausted": termination == "budget_exhausted",
                 "sampling_params": sampling_record,
                 "max_turns": self.max_turns,
                 "max_new_tokens_per_turn": self.max_new_tokens_per_turn,
@@ -223,6 +297,50 @@ class RepoExplorationAgentLoop(AgentLoopBase):
             }
         )
         return output
+
+    async def _encode_user_message(self, content: str) -> list[int]:
+        ids = await self.apply_chat_template(
+            [{"role": "user", "content": content}],
+            remove_system_prompt=True,
+        )
+        return list(ids)
+
+    async def _encode_observation(
+        self,
+        v1_text: str,
+        *,
+        budget: BudgetState,
+        visible: bool,
+    ) -> tuple[list[int], str, int]:
+        if not visible:
+            ids = await self._encode_user_message(v1_text)
+            return ids, v1_text, len(ids)
+
+        if budget.obs_tokens_limit is None:
+            raise RuntimeError("visible observation encode requires obs_tokens_limit")
+        used_before = budget.obs_tokens_used
+        displayed_used = used_before
+        last_ids: list[int] | None = None
+        for _ in range(BUDGET_HEADER_MAX_ITERS):
+            tentative = BudgetState(
+                obs_tokens_used=displayed_used,
+                obs_tokens_limit=budget.obs_tokens_limit,
+                turns_used=budget.turns_used,
+                turns_limit=budget.turns_limit,
+            )
+            content = wrap_observation_with_budget(v1_text, tentative)
+            ids = await self._encode_user_message(content)
+            last_ids = ids
+            used_after = used_before + len(ids)
+            if displayed_used == used_after:
+                v1_ids = await self._encode_user_message(v1_text)
+                return ids, content, len(v1_ids)
+            displayed_used = used_after
+        raise BudgetHeaderFixpointError(
+            "bcrl-budget-v1 header fixpoint did not converge after "
+            f"{BUDGET_HEADER_MAX_ITERS} iterations (used_before={used_before}, "
+            f"last_encoded={0 if last_ids is None else len(last_ids)})"
+        )
 
 
 def _research_action(text: str) -> tuple[str | None, dict[str, Any] | None, str | None]:
