@@ -21,7 +21,15 @@ from verl.utils.profiler import simple_timer
 from verl.utils.rollout_trace import rollout_trace_op
 from verl.workers.rollout.replica import TokenOutput
 
+from budget_coder_rl.agent_loop.tokenization import decode_for_parser
 from budget_coder_rl.env import ExplorationSession, RepoEnvironment
+from budget_coder_rl.protocol.parser import (
+    FinalAction,
+    ProtocolError,
+    ToolCall,
+    locations_payload,
+    parse_action,
+)
 from budget_coder_rl.protocol.prompt import (
     build_stage1_messages,
     extract_issue_text,
@@ -65,6 +73,11 @@ class RepoExplorationAgentLoop(AgentLoopBase):
         messages = build_stage1_messages(issue, repo=policy_safe_repo(extra_info))
         request_id = uuid4().hex
         metrics: dict[str, Any] = {}
+        sampling_record = {
+            "temperature": sampling_params.get("temperature"),
+            "top_p": sampling_params.get("top_p"),
+            "top_k": sampling_params.get("top_k"),
+        }
 
         prompt_ids = await self.apply_chat_template(messages)
         if len(prompt_ids) > self.prompt_length:
@@ -95,9 +108,11 @@ class RepoExplorationAgentLoop(AgentLoopBase):
                 termination = "response_length"
                 break
 
+            max_tokens = min(self.max_new_tokens_per_turn, remaining)
+            generate_prefix_n = len(prompt_ids) + len(response_ids)
             turn_params = {
                 **sampling_params,
-                "max_tokens": min(self.max_new_tokens_per_turn, remaining),
+                "max_tokens": max_tokens,
             }
             with simple_timer("generate_sequences", metrics):
                 output: TokenOutput = await self.server_manager.generate(
@@ -119,18 +134,33 @@ class RepoExplorationAgentLoop(AgentLoopBase):
                 elif gen_ids:
                     response_logprobs = None
 
-            text = self.tokenizer.decode(gen_ids, skip_special_tokens=True)
+            text = decode_for_parser(self.tokenizer, gen_ids)
             step = session.step(text)
+            action_name, action_arguments, parse_error_code = _research_action(text)
+            obs_headers = _observation_headers(step.observation)
             research_events.append(
                 {
                     "turn": step.turn,
                     "action_type": step.action_type,
+                    "action_name": action_name,
+                    "action_arguments": action_arguments,
                     "raw_action": text,
+                    "generated_token_count": len(gen_ids),
+                    "stop_reason": output.stop_reason,
+                    "max_tokens": max_tokens,
+                    "generate_prefix_n": generate_prefix_n,
+                    "parse_error_code": parse_error_code,
                     "observation": step.observation,
-                    "terminal": step.terminal,
+                    "observation_preview": _preview(step.observation),
+                    "observation_token_count": None,
+                    "tool_status": obs_headers.get("status"),
+                    "tool": obs_headers.get("tool"),
+                    "error_code": obs_headers.get("code") or parse_error_code,
                     "error_kind": step.error_kind,
+                    "terminal": step.terminal,
                     "termination": step.termination,
                     "submission": step.submission,
+                    "cumulative_response_tokens": len(response_ids),
                 }
             )
 
@@ -146,11 +176,14 @@ class RepoExplorationAgentLoop(AgentLoopBase):
             obs_ids = list(obs_ids)
             if len(response_ids) + len(obs_ids) > self.response_length:
                 termination = "response_length"
+                research_events[-1]["observation_token_count"] = len(obs_ids)
                 break
             response_ids.extend(obs_ids)
             response_mask.extend([0] * len(obs_ids))
             observation_turns += 1
             segments.append({"kind": "observation", "token_ids": list(obs_ids)})
+            research_events[-1]["observation_token_count"] = len(obs_ids)
+            research_events[-1]["cumulative_response_tokens"] = len(response_ids)
             if response_logprobs is not None:
                 response_logprobs.extend([0.0] * len(obs_ids))
         else:
@@ -179,11 +212,49 @@ class RepoExplorationAgentLoop(AgentLoopBase):
                 "termination": termination,
                 "segments": segments,
                 "events": research_events,
+                "unpadded_prompt_ids": list(prompt_ids),
+                "prompt_token_count": len(prompt_ids),
+                "sampling_params": sampling_record,
+                "max_turns": self.max_turns,
+                "max_new_tokens_per_turn": self.max_new_tokens_per_turn,
+                "model_name_or_path": getattr(self.tokenizer, "name_or_path", None),
                 # Research/debug only. Never rebuild RL token trajectories from this.
                 "trace_role": "research_debug_not_training_tokens",
             }
         )
         return output
+
+
+def _research_action(text: str) -> tuple[str | None, dict[str, Any] | None, str | None]:
+    try:
+        parsed = parse_action(text)
+    except ProtocolError as exc:
+        return None, None, exc.code
+    if isinstance(parsed, ToolCall):
+        return parsed.name, dict(parsed.arguments), None
+    if isinstance(parsed, FinalAction):
+        return "finish", locations_payload(parsed), None
+    return None, None, None
+
+
+def _observation_headers(text: str) -> dict[str, str]:
+    headers: dict[str, str] = {}
+    for line in str(text).splitlines():
+        if line.strip() == "---":
+            break
+        if not line or line.startswith("#"):
+            continue
+        key, sep, value = line.partition(": ")
+        if not sep or key in headers:
+            continue
+        headers[key] = value
+    return headers
+
+
+def _preview(text: str, limit: int = 800) -> str:
+    if len(text) <= limit:
+        return text
+    return text[:limit] + "\n...[truncated preview]..."
 
 
 def _coerce_mapping(value: Any) -> dict[str, Any]:

@@ -257,6 +257,17 @@ def test_multi_turn_exact_ids_and_masks(tokenizer, tmp_path: Path):
     assert "bcrl-obs-v1" in decoded_o1
     assert "tool: tree" in decoded_o1
 
+    events = output.extra_fields["events"]
+    assert events[0]["action_name"] == "tree"
+    assert events[0]["action_arguments"]["path"] == "."
+    assert events[0]["generated_token_count"] == len(a1_ids)
+    assert events[0]["tool_status"] == "ok"
+    assert events[0]["parse_error_code"] is None
+    assert events[0]["observation_token_count"] == len(o1)
+    assert events[2]["action_name"] == "finish"
+    assert output.extra_fields["prompt_token_count"] == len(output.prompt_ids)
+    assert output.extra_fields["unpadded_prompt_ids"] == list(output.prompt_ids)
+
 
 def test_protocol_error_keeps_generated_ids_and_continues(tokenizer, tmp_path: Path):
     from verl.workers.rollout.replica import TokenOutput
@@ -281,6 +292,8 @@ def test_protocol_error_keeps_generated_ids_and_continues(tokenizer, tmp_path: P
     )
     assert output.extra_fields["termination"] == "finish"
     assert output.extra_fields["events"][0]["error_kind"] == "protocol"
+    assert output.extra_fields["events"][0]["parse_error_code"] is not None
+    assert output.extra_fields["events"][0]["tool_status"] == "error"
 
 
 def test_adversarial_tokenizer_does_not_reencode_generated_ids(tmp_path: Path):
@@ -378,3 +391,12 @@ def test_hydra_yaml_instantiates_repo_exploration_loop(tokenizer, tmp_path: Path
     output = _run(loop, extra)
     assert output.extra_fields["termination"] == "finish"
     assert extra["instance_id"] == output.extra_fields["instance_id"]
+
+
+def test_m2d_yaml_raises_per_turn_cap_not_protocol():
+    configs = OmegaConf.load(
+        str(REPO_ROOT / "configs" / "agent_loop" / "repo_exploration_m2d.yaml")
+    )
+    assert configs[0].name == "repo_exploration"
+    assert configs[0].max_turns == 6
+    assert configs[0].max_new_tokens_per_turn == 2048
