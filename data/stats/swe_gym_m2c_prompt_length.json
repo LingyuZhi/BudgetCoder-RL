@@ -1,0 +1,101 @@
+{
+  "schema_version": "swe-gym-m2c-runtime-prompt-v1",
+  "tokenizer": "Qwen/Qwen3-4B-Instruct-2507",
+  "tokenizer_path_note": "resolved locally; host path not pinned",
+  "encoding": "build_stage1_messages + encode_chat_messages (veRL apply_chat_template, tools=None, add_generation_prompt=True)",
+  "silent_truncation": false,
+  "m1_split_changed": false,
+  "candidate_limits": [
+    1024,
+    2048,
+    4096,
+    8192,
+    16384,
+    32768
+  ],
+  "train": {
+    "n": 2194,
+    "stats": {
+      "n": 2194,
+      "min": 402,
+      "mean": 1077.7005,
+      "p50": 808.0,
+      "p90": 1867.3,
+      "p95": 2401.35,
+      "p99": 3868.82,
+      "max": 19564
+    },
+    "over_limits": {
+      "1024": {
+        "n_over": 851,
+        "fraction": 0.387876
+      },
+      "2048": {
+        "n_over": 162,
+        "fraction": 0.073838
+      },
+      "4096": {
+        "n_over": 21,
+        "fraction": 0.009572
+      },
+      "8192": {
+        "n_over": 4,
+        "fraction": 0.001823
+      },
+      "16384": {
+        "n_over": 1,
+        "fraction": 0.000456
+      },
+      "32768": {
+        "n_over": 0,
+        "fraction": 0.0
+      }
+    }
+  },
+  "dev": {
+    "n": 244,
+    "stats": {
+      "n": 244,
+      "min": 399,
+      "mean": 1092.3852,
+      "p50": 785.0,
+      "p90": 1756.3,
+      "p95": 2635.7,
+      "p99": 5235.96,
+      "max": 9180
+    },
+    "over_limits": {
+      "1024": {
+        "n_over": 87,
+        "fraction": 0.356557
+      },
+      "2048": {
+        "n_over": 19,
+        "fraction": 0.077869
+      },
+      "4096": {
+        "n_over": 5,
+        "fraction": 0.020492
+      },
+      "8192": {
+        "n_over": 1,
+        "fraction": 0.004098
+      },
+      "16384": {
+        "n_over": 0,
+        "fraction": 0.0
+      },
+      "32768": {
+        "n_over": 0,
+        "fraction": 0.0
+      }
+    }
+  },
+  "m2d_runtime_policy_notes": [
+    "Pinned RLHFDataset defaults filter_overlong_prompts=True and max_prompt_length=1024; training must set filter_overlong_prompts=false.",
+    "AgentLoop hard-fails when len(prompt_ids) > rollout.prompt_length; do not silent-truncate.",
+    "Choose rollout.prompt_length (and later max_model_len) from these runtime-prompt stats before M2D real Qwen generate.",
+    "Samples still over the chosen limit should be skipped or failed explicitly, not filtered by rewriting M1."
+  ],
+  "overlong_jsonl": "data/interim/swe_gym/m2c_prompt_overlong.jsonl"
+}

@@ -3,7 +3,10 @@ def test_package_import():
 
 
 def test_agent_loop_import():
-    from budget_coder_rl.agent_loop import DummyTwoTurnAgentLoop  # noqa: F401
+    from budget_coder_rl.agent_loop import (  # noqa: F401
+        DummyTwoTurnAgentLoop,
+        RepoExplorationAgentLoop,
+    )
 
 
 def test_env_import():

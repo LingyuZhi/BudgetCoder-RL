@@ -19,8 +19,19 @@ TREE_DEFAULT_DEPTH = 2
 SEARCH_DEFAULT_PATH = "."
 SEARCH_DEFAULT_MAX_RESULTS = 50
 
-_TOOL_CALL_RE = re.compile(r"^<tool_call>\s*(.*?)\s*</tool_call>$", re.DOTALL)
-_FINAL_RE = re.compile(r"^<final>\s*(.*?)\s*</final>$", re.DOTALL)
+TOOL_CALL_OPEN = "<tool_call>"
+TOOL_CALL_CLOSE = "</tool_call>"
+FINAL_OPEN = "<final>"
+FINAL_CLOSE = "</final>"
+
+_TOOL_CALL_RE = re.compile(
+    rf"^{re.escape(TOOL_CALL_OPEN)}\s*(.*?)\s*{re.escape(TOOL_CALL_CLOSE)}$",
+    re.DOTALL,
+)
+_FINAL_RE = re.compile(
+    rf"^{re.escape(FINAL_OPEN)}\s*(.*?)\s*{re.escape(FINAL_CLOSE)}$",
+    re.DOTALL,
+)
 _CONTROL_NEWLINE = re.compile(r"[\r\n]")
 
 
@@ -58,36 +69,42 @@ def parse_action(text: str) -> ToolCall | FinalAction:
     if not stripped:
         raise ProtocolError("empty_action", "action text is empty")
 
-    n_tool_open = stripped.count("<tool_call>")
-    n_tool_close = stripped.count("</tool_call>")
-    n_final_open = stripped.count("<final>")
-    n_final_close = stripped.count("</final>")
+    n_tool_open = stripped.count(TOOL_CALL_OPEN)
+    n_tool_close = stripped.count(TOOL_CALL_CLOSE)
+    n_final_open = stripped.count(FINAL_OPEN)
+    n_final_close = stripped.count(FINAL_CLOSE)
     n_open = n_tool_open + n_final_open
     if n_open > 1:
         raise ProtocolError(
             "multiple_actions", "turn must contain exactly one action block"
         )
     if n_open == 0:
-        raise ProtocolError("malformed_action", "turn has no <tool_call> or <final>")
+        raise ProtocolError(
+            "malformed_action",
+            f"turn has no {TOOL_CALL_OPEN} or {FINAL_OPEN}",
+        )
 
     if n_tool_open == 1:
         if n_tool_close != 1 or n_final_close != 0:
-            raise ProtocolError("malformed_action", "unbalanced <tool_call> tags")
+            raise ProtocolError(
+                "malformed_action",
+                f"unbalanced {TOOL_CALL_OPEN} tags",
+            )
         match = _TOOL_CALL_RE.fullmatch(stripped)
         if match is None:
             raise ProtocolError(
                 "multiple_actions",
-                "extra text around <tool_call> is not allowed",
+                f"extra text around {TOOL_CALL_OPEN} is not allowed",
             )
         return _parse_tool_call(_load_strict_json(match.group(1)))
 
     if n_final_close != 1 or n_tool_close != 0:
-        raise ProtocolError("malformed_action", "unbalanced <final> tags")
+        raise ProtocolError("malformed_action", f"unbalanced {FINAL_OPEN} tags")
     match = _FINAL_RE.fullmatch(stripped)
     if match is None:
         raise ProtocolError(
             "multiple_actions",
-            "extra text around <final> is not allowed",
+            f"extra text around {FINAL_OPEN} is not allowed",
         )
     return _parse_final(_load_strict_json(match.group(1)))
 

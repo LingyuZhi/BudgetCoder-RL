@@ -54,6 +54,7 @@ one-off exception.
 | M1E dataset manifest | `manifests/swe_gym_m1e_dataset_manifest.json` (in Git; checksums, no host paths) |
 | M1E policy train/dev parquet | `processed/swe_gym/train.parquet`, `dev.parquet` (not in Git) |
 | M1E evaluator oracle sidecar | `processed/swe_gym/evaluator_oracle.parquet` (not in Git) |
+| M2C runtime prompt-length summary | `stats/swe_gym_m2c_prompt_length.json` (in Git; no issue text) |
 
 Do **not** use `SWE-Gym/SWE-Gym-Lite` or `SWE-Gym/SWE-Gym-Raw`.
 
@@ -231,4 +232,16 @@ fallback to `HEAD`.
 
 ```bash
 python scripts/smoke/smoke_repo_workspace.py
+```
+
+### M2C runtime initial-prompt length
+
+M1E audited issue-only tokens. M2C audits
+`system/tool/protocol + issue` with the real Qwen tokenizer and the same
+runtime prompt builder used by `RepoExplorationAgentLoop`. Frozen train/dev
+are not re-split. Overlong prompts are reported, not truncated.
+
+```bash
+python scripts/data/audit_runtime_prompt_length.py
+python scripts/smoke/smoke_repo_exploration_agent_loop.py
 ```
