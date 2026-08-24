@@ -45,6 +45,9 @@ one-off exception.
 | M1D-A feature summary | `manifests/swe_gym_m1d_feature_summary.json` (in Git) |
 | M1D-A per-instance features | `interim/swe_gym/m1d_features.jsonl` (not in Git; regenerable) |
 | Tiny M1D-A feature fixture | `fixtures/swe_gym_m1d_features.json` |
+| M1D-B eligibility policy | `manifests/swe_gym_m1d_policy.json` (in Git) |
+| M1D-B train/dev split | `manifests/swe_gym_m1d_split.json` (in Git; assignments, no patches) |
+| M1D-B split audit summary | `manifests/swe_gym_m1d_split_summary.json` (in Git) |
 
 Do **not** use `SWE-Gym/SWE-Gym-Lite` or `SWE-Gym/SWE-Gym-Raw`.
 
@@ -56,6 +59,7 @@ python scripts/data/extract_swe_gym_oracle.py
 python scripts/data/prepare_swe_gym_repos.py
 python scripts/data/extract_swe_gym_symbol_oracle.py
 python scripts/data/extract_swe_gym_m1d_features.py
+python scripts/data/split_swe_gym_m1d.py
 ```
 
 Download talks to Hugging Face (or `HF_ENDPOINT` if set). It does not install
@@ -160,3 +164,26 @@ gold paths/symbols are difficulty/hint features, not leakage. Correlation
 groups are connected components over the same `(repo, base_commit)` or the
 same normalized `problem_statement`; they are not a split. Filtering and
 split decisions are **M1D-B**.
+
+### M1D-B eligibility policy and train/dev split
+
+M1D-B freezes Stage-1 eligibility as **keep-all**: 2438/2438 instances are
+eligible. Zero-symbol, non-Python, non-code-only, large-patch, hint, M1B
+audit-flag, and structural-difficulty attributes are **not** drop criteria.
+Difficulty features remain analysis/sampling metadata. Curriculum is not
+enabled at the dataset stage. Reward is not implemented here.
+
+SWE-Gym is split into **train/dev only**. There is no internal `test` split;
+the external final test does not come from SWE-Gym. The atomic unit is the
+frozen M1D-A `correlation_group_id`. A group is never split across train and
+dev. Cross-repo correlation groups are a hard fail (expected 0).
+
+Repo-level ~10% dev seats use integer largest-remainder / Hamilton
+allocation. Within a repo, whole groups are selected with deterministic 0/1
+subset-sum DP. SHA256(`split_version|seed|correlation_group_id`) breaks ties.
+`split_version = swe-gym-group-repo-v1`, `seed = 42`; there is no seed search.
+
+The split manifest stores one assignment per instance (`instance_id`, `repo`,
+`correlation_group_id`, `split`) and does **not** copy `patch`, `test_patch`,
+oracle symbol details, or `problem_statement`. Secondary feature distributions
+are audited only. M1D-B does **not** materialize veRL parquet (that is M1E).

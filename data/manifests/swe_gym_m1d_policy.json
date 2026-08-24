@@ -1,0 +1,42 @@
+{
+  "dataset": "SWE-Gym",
+  "hf_repo": "SWE-Gym/SWE-Gym",
+  "revision": "26a6eae79ae9cb6d4307c3cc99c126fbf23cb3f0",
+  "sha256": "60569cea74bb281f7a5579467436a2bc1932c6e0c5f2f7fa0d084392abd9ad97",
+  "policy_version": "swe-gym-stage1-eligible-all-v1",
+  "master_pool_size": 2438,
+  "eligible_count": 2438,
+  "excluded_count": 0,
+  "excluded_instance_ids": [],
+  "primary_task": "budget-constrained repository localization",
+  "primary_supervision": "file-level localization",
+  "primary_oracle": "base_changed_files",
+  "symbol_oracle": {
+    "role": "auxiliary / where available",
+    "not_an_eligibility_criterion": true
+  },
+  "difficulty_features": "analysis/sampling metadata, not eligibility criteria",
+  "curriculum": "not enabled at dataset stage",
+  "external_final_test": "not from SWE-Gym",
+  "not_drop_criteria": [
+    "zero_symbol_oracle",
+    "non_python_target",
+    "non_code_only_taxonomy",
+    "large_patch",
+    "many_gold_or_base_changed_files",
+    "added_heavy_patch",
+    "issue_filename_or_symbol_hints",
+    "m1b_test_metadata_audit_flags",
+    "structural_difficulty"
+  ],
+  "reward": "not implemented in M1D-B",
+  "notes": {
+    "keep_all": true,
+    "no_filter": true,
+    "no_internal_test": true,
+    "no_verl_parquet": true,
+    "not_m1e": true,
+    "no_curriculum": true,
+    "no_weighted_sampler": true
+  }
+}

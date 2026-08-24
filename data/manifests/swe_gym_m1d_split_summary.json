@@ -1,0 +1,420 @@
+{
+  "dataset": "SWE-Gym",
+  "hf_repo": "SWE-Gym/SWE-Gym",
+  "revision": "26a6eae79ae9cb6d4307c3cc99c126fbf23cb3f0",
+  "sha256": "60569cea74bb281f7a5579467436a2bc1932c6e0c5f2f7fa0d084392abd9ad97",
+  "split_version": "swe-gym-group-repo-v1",
+  "seed": 42,
+  "n_rows": 2438,
+  "denominator": 2438,
+  "global": {
+    "train_rows": 2194,
+    "dev_rows": 244,
+    "train_groups": 1925,
+    "dev_groups": 211,
+    "target_dev_rows": 244,
+    "actual_dev_rows": 244,
+    "delta": 0,
+    "correlation_leakage_count": 0,
+    "denominator": 2438
+  },
+  "cross_repo_correlation_groups": 0,
+  "repo_distributions": [
+    {
+      "repo": "Project-MONAI/MONAI",
+      "n_rows": 374,
+      "target_dev_rows": 37,
+      "actual_dev_rows": 37,
+      "quota_delta": 0,
+      "exact": true,
+      "train_rows": 337,
+      "dev_rows": 37,
+      "train_groups": 328,
+      "dev_groups": 36,
+      "denominator": 374
+    },
+    {
+      "repo": "bokeh/bokeh",
+      "n_rows": 26,
+      "target_dev_rows": 3,
+      "actual_dev_rows": 3,
+      "quota_delta": 0,
+      "exact": true,
+      "train_rows": 23,
+      "dev_rows": 3,
+      "train_groups": 23,
+      "dev_groups": 3,
+      "denominator": 26
+    },
+    {
+      "repo": "conan-io/conan",
+      "n_rows": 75,
+      "target_dev_rows": 8,
+      "actual_dev_rows": 8,
+      "quota_delta": 0,
+      "exact": true,
+      "train_rows": 67,
+      "dev_rows": 8,
+      "train_groups": 64,
+      "dev_groups": 8,
+      "denominator": 75
+    },
+    {
+      "repo": "dask/dask",
+      "n_rows": 145,
+      "target_dev_rows": 14,
+      "actual_dev_rows": 14,
+      "quota_delta": 0,
+      "exact": true,
+      "train_rows": 131,
+      "dev_rows": 14,
+      "train_groups": 120,
+      "dev_groups": 13,
+      "denominator": 145
+    },
+    {
+      "repo": "facebookresearch/hydra",
+      "n_rows": 66,
+      "target_dev_rows": 7,
+      "actual_dev_rows": 7,
+      "quota_delta": 0,
+      "exact": true,
+      "train_rows": 59,
+      "dev_rows": 7,
+      "train_groups": 58,
+      "dev_groups": 7,
+      "denominator": 66
+    },
+    {
+      "repo": "getmoto/moto",
+      "n_rows": 343,
+      "target_dev_rows": 34,
+      "actual_dev_rows": 34,
+      "quota_delta": 0,
+      "exact": true,
+      "train_rows": 309,
+      "dev_rows": 34,
+      "train_groups": 272,
+      "dev_groups": 31,
+      "denominator": 343
+    },
+    {
+      "repo": "iterative/dvc",
+      "n_rows": 225,
+      "target_dev_rows": 22,
+      "actual_dev_rows": 22,
+      "quota_delta": 0,
+      "exact": true,
+      "train_rows": 203,
+      "dev_rows": 22,
+      "train_groups": 192,
+      "dev_groups": 20,
+      "denominator": 225
+    },
+    {
+      "repo": "modin-project/modin",
+      "n_rows": 107,
+      "target_dev_rows": 11,
+      "actual_dev_rows": 11,
+      "quota_delta": 0,
+      "exact": true,
+      "train_rows": 96,
+      "dev_rows": 11,
+      "train_groups": 72,
+      "dev_groups": 11,
+      "denominator": 107
+    },
+    {
+      "repo": "pandas-dev/pandas",
+      "n_rows": 737,
+      "target_dev_rows": 74,
+      "actual_dev_rows": 74,
+      "quota_delta": 0,
+      "exact": true,
+      "train_rows": 663,
+      "dev_rows": 74,
+      "train_groups": 523,
+      "dev_groups": 52,
+      "denominator": 737
+    },
+    {
+      "repo": "pydantic/pydantic",
+      "n_rows": 83,
+      "target_dev_rows": 8,
+      "actual_dev_rows": 8,
+      "quota_delta": 0,
+      "exact": true,
+      "train_rows": 75,
+      "dev_rows": 8,
+      "train_groups": 71,
+      "dev_groups": 8,
+      "denominator": 83
+    },
+    {
+      "repo": "python/mypy",
+      "n_rows": 257,
+      "target_dev_rows": 26,
+      "actual_dev_rows": 26,
+      "quota_delta": 0,
+      "exact": true,
+      "train_rows": 231,
+      "dev_rows": 26,
+      "train_groups": 202,
+      "dev_groups": 22,
+      "denominator": 257
+    }
+  ],
+  "repos_in_train": [
+    "Project-MONAI/MONAI",
+    "bokeh/bokeh",
+    "conan-io/conan",
+    "dask/dask",
+    "facebookresearch/hydra",
+    "getmoto/moto",
+    "iterative/dvc",
+    "modin-project/modin",
+    "pandas-dev/pandas",
+    "pydantic/pydantic",
+    "python/mypy"
+  ],
+  "repos_in_dev": [
+    "Project-MONAI/MONAI",
+    "bokeh/bokeh",
+    "conan-io/conan",
+    "dask/dask",
+    "facebookresearch/hydra",
+    "getmoto/moto",
+    "iterative/dvc",
+    "modin-project/modin",
+    "pandas-dev/pandas",
+    "pydantic/pydantic",
+    "python/mypy"
+  ],
+  "exact_quota_misses": [],
+  "spotlight": {
+    "instance_ids": [
+      "pandas-dev__pandas-53805",
+      "pandas-dev__pandas-53809",
+      "pandas-dev__pandas-53830"
+    ],
+    "present": [
+      "pandas-dev__pandas-53805",
+      "pandas-dev__pandas-53809",
+      "pandas-dev__pandas-53830"
+    ],
+    "missing": [],
+    "present_in_input": true,
+    "same_split": true,
+    "same_group": true,
+    "split": "train",
+    "correlation_group_id": "cg:pandas-dev__pandas-53805",
+    "correlation_group_size": 3,
+    "members": [
+      {
+        "instance_id": "pandas-dev__pandas-53805",
+        "repo": "pandas-dev/pandas",
+        "correlation_group_id": "cg:pandas-dev__pandas-53805",
+        "split": "train"
+      },
+      {
+        "instance_id": "pandas-dev__pandas-53809",
+        "repo": "pandas-dev/pandas",
+        "correlation_group_id": "cg:pandas-dev__pandas-53805",
+        "split": "train"
+      },
+      {
+        "instance_id": "pandas-dev__pandas-53830",
+        "repo": "pandas-dev/pandas",
+        "correlation_group_id": "cg:pandas-dev__pandas-53805",
+        "split": "train"
+      }
+    ]
+  },
+  "secondary": {
+    "train": {
+      "n_rows": 2194,
+      "denominator": 2194,
+      "symbol_capability": {
+        "symbol_oracle_available": {
+          "n": 2049,
+          "denominator": 2194,
+          "rate": 0.933911
+        }
+      },
+      "target_scope": {
+        "base_changed_file_count": {
+          "n": 2194,
+          "mean": 2.3651,
+          "p50": 2.0,
+          "p90": 4.0,
+          "p95": 6.0,
+          "max": 67
+        },
+        "oracle_symbol_count": {
+          "n": 2194,
+          "mean": 3.8213,
+          "p50": 2.0,
+          "p90": 8.0
+        }
+      },
+      "search_space": {
+        "repo_tracked_files": {
+          "n": 2194,
+          "p50": 1461.0,
+          "p90": 2535.0
+        },
+        "file_target_density": {
+          "n": 2194,
+          "p50": 0.0011966524,
+          "p90": 0.0046061745
+        }
+      },
+      "hint_strength": {
+        "gold_full_path_mentioned": {
+          "n": 54,
+          "denominator": 2194,
+          "rate": 0.024613
+        },
+        "gold_basename_mentioned": {
+          "n": 586,
+          "denominator": 2194,
+          "rate": 0.267092
+        },
+        "gold_qualified_symbol_mentioned": {
+          "n": 122,
+          "denominator": 2194,
+          "rate": 0.055606
+        },
+        "gold_symbol_name_mentioned": {
+          "n": 938,
+          "denominator": 2194,
+          "rate": 0.42753
+        }
+      },
+      "modality": {
+        "has_python_ast_target": {
+          "n": 2121,
+          "denominator": 2194,
+          "rate": 0.966727
+        },
+        "has_code_like_target": {
+          "n": 2192,
+          "denominator": 2194,
+          "rate": 0.999088
+        },
+        "symbol_oracle_available": {
+          "n": 2049,
+          "denominator": 2194,
+          "rate": 0.933911
+        }
+      },
+      "notes": {
+        "gold_symbol_name_mentioned_is_not_a_balancing_criterion": true,
+        "secondary_features_not_optimized": true
+      }
+    },
+    "dev": {
+      "n_rows": 244,
+      "denominator": 244,
+      "symbol_capability": {
+        "symbol_oracle_available": {
+          "n": 231,
+          "denominator": 244,
+          "rate": 0.946721
+        }
+      },
+      "target_scope": {
+        "base_changed_file_count": {
+          "n": 244,
+          "mean": 2.2008,
+          "p50": 2.0,
+          "p90": 4.0,
+          "p95": 5.0,
+          "max": 28
+        },
+        "oracle_symbol_count": {
+          "n": 244,
+          "mean": 3.0123,
+          "p50": 2.0,
+          "p90": 8.0
+        }
+      },
+      "search_space": {
+        "repo_tracked_files": {
+          "n": 244,
+          "p50": 1435.0,
+          "p90": 2533.0
+        },
+        "file_target_density": {
+          "n": 244,
+          "p50": 0.0011709617,
+          "p90": 0.0042732556
+        }
+      },
+      "hint_strength": {
+        "gold_full_path_mentioned": {
+          "n": 11,
+          "denominator": 244,
+          "rate": 0.045082
+        },
+        "gold_basename_mentioned": {
+          "n": 71,
+          "denominator": 244,
+          "rate": 0.290984
+        },
+        "gold_qualified_symbol_mentioned": {
+          "n": 13,
+          "denominator": 244,
+          "rate": 0.053279
+        },
+        "gold_symbol_name_mentioned": {
+          "n": 108,
+          "denominator": 244,
+          "rate": 0.442623
+        }
+      },
+      "modality": {
+        "has_python_ast_target": {
+          "n": 239,
+          "denominator": 244,
+          "rate": 0.979508
+        },
+        "has_code_like_target": {
+          "n": 244,
+          "denominator": 244,
+          "rate": 1.0
+        },
+        "symbol_oracle_available": {
+          "n": 231,
+          "denominator": 244,
+          "rate": 0.946721
+        }
+      },
+      "notes": {
+        "gold_symbol_name_mentioned_is_not_a_balancing_criterion": true,
+        "secondary_features_not_optimized": true
+      }
+    },
+    "pathological_flags": [],
+    "binary_rate_shift_threshold": 0.1,
+    "notes": {
+      "secondary_features_not_optimized": true,
+      "seed_was_not_changed_to_balance_distributions": true,
+      "gold_symbol_name_mentioned_is_reported_but_not_a_balancing_criterion": true
+    }
+  },
+  "invariants": {
+    "assigned_once": true,
+    "train_dev_disjoint": true,
+    "union_complete": true,
+    "correlation_leakage": 0,
+    "no_internal_test": true
+  },
+  "notes": {
+    "no_internal_test": true,
+    "no_verl_parquet": true,
+    "not_m1e": true,
+    "seed_search": false,
+    "secondary_features_not_optimized": true
+  }
+}
