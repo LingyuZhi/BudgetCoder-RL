@@ -4,3 +4,7 @@ def test_package_import():
 
 def test_agent_loop_import():
     from budget_coder_rl.agent_loop import DummyTwoTurnAgentLoop  # noqa: F401
+
+
+def test_env_import():
+    from budget_coder_rl.env import RepoEnvironment, TaskRef  # noqa: F401

@@ -25,7 +25,8 @@ CACHE_RELPATH = "repos/swe_gym"
 REMOTE_TEMPLATE = "https://github.com/{repo}.git"
 CLONE_KIND = "bare"
 NETWORK_GIT_VERBS = frozenset({"clone", "fetch", "pull", "push", "remote"})
-SAFE_OFFLINE_GIT_VERBS = frozenset({"rev-parse", "cat-file", "ls-tree"})
+SAFE_OFFLINE_GIT_VERBS = frozenset({"rev-parse", "cat-file", "ls-tree", "archive"})
+ARCHIVE_TIMEOUT_SECONDS = 1800
 
 
 class GitError(RuntimeError):
@@ -85,6 +86,12 @@ def is_safe_repo_path(path: str) -> bool:
     if any(part == ".." for part in parts):
         return False
     return True
+
+
+def is_git_meta_path(path: str) -> bool:
+    """True if ``path`` is ``.git`` or lives under it."""
+    parts = [part for part in path.replace("\\", "/").split("/") if part]
+    return bool(parts) and parts[0] == ".git"
 
 
 def _git_env() -> dict[str, str]:
@@ -206,6 +213,170 @@ def resolve_commit(repo_path: Path, sha: str) -> str | None:
     if result.returncode != 0:
         return None
     return result.stdout.decode("ascii", errors="replace").strip() or None
+
+
+def resolve_tree(repo_path: Path, sha: str) -> str | None:
+    """Resolve ``sha^{tree}`` offline. Returns None if missing."""
+    if not sha or not str(sha).strip():
+        return None
+    result = run_git(
+        ["rev-parse", "--verify", f"{sha}^{{tree}}"],
+        cwd=Path(repo_path),
+        allow_network=False,
+        check=False,
+        timeout=30,
+    )
+    if result.returncode != 0:
+        return None
+    return result.stdout.decode("ascii", errors="replace").strip() or None
+
+
+def _readexactly(stream: Any, size: int) -> bytes:
+    buf = bytearray()
+    while len(buf) < size:
+        chunk = stream.read(size - len(buf))
+        if not chunk:
+            raise GitError("unexpected EOF from git cat-file --batch")
+        buf.extend(chunk)
+    return bytes(buf)
+
+
+def _parse_ls_tree_z(payload: bytes) -> list[tuple[str, str, str, str]]:
+    entries: list[tuple[str, str, str, str]] = []
+    for rec in payload.split(b"\0"):
+        if not rec:
+            continue
+        meta, path_b = rec.split(b"\t", 1)
+        parts = meta.split(b" ")
+        if len(parts) != 3:
+            raise GitError(f"unusable ls-tree entry: {rec!r}")
+        mode = parts[0].decode("ascii")
+        typ = parts[1].decode("ascii")
+        obj = parts[2].decode("ascii")
+        path = path_b.decode("utf-8", errors="surrogateescape")
+        entries.append((mode, typ, obj, path))
+    return entries
+
+
+def archive_commit_to_dir(
+    repo_path: Path,
+    commit: str,
+    dest: Path,
+    *,
+    timeout: int = ARCHIVE_TIMEOUT_SECONDS,
+) -> None:
+    """Materialize the exact Git tree of ``commit`` into ``dest``.
+
+    Uses offline ``ls-tree`` + ``cat-file --batch`` so the snapshot matches
+    object-store blob bytes. This is **not** ``git archive``: archive honors
+    ``export-ignore`` / ``export-subst`` in ``.gitattributes`` and would omit
+    or rewrite paths that exist at ``base_commit``. Does not move HEAD or
+    write the object-store index. Refuses unsafe paths and ``.git``.
+    ``dest`` must be an empty directory.
+    """
+    dest = Path(dest)
+    dest.mkdir(parents=True, exist_ok=True)
+    if any(dest.iterdir()):
+        raise GitError(f"archive dest is not empty: {dest}")
+    if not commit or not str(commit).strip():
+        raise GitError("empty commit for tree materialize")
+
+    listing = run_git(
+        ["ls-tree", "-r", "-z", str(commit)],
+        cwd=Path(repo_path),
+        allow_network=False,
+        timeout=timeout,
+    )
+    entries = _parse_ls_tree_z(listing.stdout)
+    blobs: list[tuple[str, str, str]] = []
+    for mode, typ, obj, path in entries:
+        if typ == "commit":
+            continue
+        if typ != "blob":
+            raise GitError(f"unsupported ls-tree type {typ!r} at {path!r}")
+        if not is_safe_repo_path(path) or is_git_meta_path(path):
+            raise GitError(f"unsafe tree path: {path!r}")
+        if mode not in {"100644", "100755", "100664", "120000"}:
+            if not mode.startswith("100") and mode != "120000":
+                raise GitError(f"unsupported ls-tree mode {mode!r} at {path!r}")
+        blobs.append((mode, obj, path))
+
+    if not blobs:
+        raise GitError(f"commit has no blobs to materialize: {commit}")
+
+    command = ["git", "-C", str(repo_path), "cat-file", "--batch"]
+    proc = subprocess.Popen(
+        command,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        env=_git_env(),
+    )
+    assert proc.stdin is not None
+    assert proc.stdout is not None
+    extracted = 0
+    extract_error: Exception | None = None
+    try:
+        for mode, obj, path in blobs:
+            proc.stdin.write(obj.encode("ascii") + b"\n")
+            proc.stdin.flush()
+            header = proc.stdout.readline()
+            if not header:
+                raise GitError(f"git cat-file EOF for {obj} ({path})")
+            fields = header.decode("ascii", errors="replace").strip().split()
+            if len(fields) == 2 and fields[1] == "missing":
+                raise GitError(f"blob missing: {obj} ({path})")
+            if len(fields) < 3 or fields[1] != "blob":
+                raise GitError(
+                    f"unexpected cat-file header for {path}: {header!r}"
+                )
+            size = int(fields[2])
+            content = _readexactly(proc.stdout, size)
+            trailer = _readexactly(proc.stdout, 1)
+            if trailer != b"\n":
+                raise GitError(f"malformed cat-file trailer for {path}")
+            out_path = dest.joinpath(*path.replace("\\", "/").split("/"))
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            if mode == "120000":
+                if out_path.exists() or out_path.is_symlink():
+                    out_path.unlink()
+                os.symlink(os.fsdecode(content), out_path)
+            else:
+                out_path.write_bytes(content)
+            extracted += 1
+    except (GitError, OSError, ValueError) as exc:
+        extract_error = exc
+        if proc.poll() is None:
+            proc.kill()
+    finally:
+        try:
+            proc.stdin.close()
+        except OSError:
+            pass
+
+    try:
+        returncode = proc.wait(timeout=timeout)
+    except subprocess.TimeoutExpired as exc:
+        proc.kill()
+        proc.wait(timeout=30)
+        raise GitError(f"git cat-file --batch timed out after {timeout}s") from exc
+
+    stderr = b""
+    if proc.stderr is not None:
+        stderr = proc.stderr.read()
+        proc.stderr.close()
+    err_text = stderr.decode("utf-8", errors="replace").strip()
+    if extract_error is not None:
+        raise GitError(
+            f"tree materialize failed: {extract_error}"
+            + (f" ({err_text})" if err_text else "")
+        ) from extract_error
+    if returncode != 0:
+        raise GitError(
+            f"git cat-file --batch failed (exit {returncode}): {err_text or commit}"
+        )
+    if extracted == 0:
+        raise GitError(f"tree materialize produced no files for {commit}")
 
 
 def fetch_commit(repo_path: Path, sha: str, *, allow_network: bool = True) -> bool:

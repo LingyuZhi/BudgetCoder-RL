@@ -18,7 +18,9 @@ Gitignored working-tree data (see `.gitignore`):
 
 Repository clones / worktrees, Docker / executable images, model weights,
 checkpoints, full trajectories, and Hub caches live **outside** `data/`, under
-`$BCRL_DATA_ROOT` (on this server: `~/my_data/budget-coder-rl`).
+`$BCRL_DATA_ROOT` (on this server: `~/my_data/budget-coder-rl`). M1 bare
+object stores are `$BCRL_DATA_ROOT/repos/swe_gym/`. M2A read-only snapshots
+are `$BCRL_DATA_ROOT/repos/swe_gym_snapshots/` (not under `data/`).
 
 ## Official SWE-Gym parquet
 
@@ -215,3 +217,18 @@ kept (`symbol_applicable=False`). Future reward is not implemented here.
 Pinned veRL `RLHFDataset` smoke must set `filter_overlong_prompts=false`;
 the constructor default would drop long issues. Training config should
 do the same. Do not upgrade veRL for M1E.
+
+### M2A repository snapshots (runtime, not dataset)
+
+M2A does **not** add tables under `data/`. Given M1E `extra_info`
+(`instance_id`, `repo`, `base_commit`), `RepoEnvironment` materializes a
+read-only exact-tree snapshot of that commit from the M1 bare store via
+`ls-tree` + `cat-file` (not `git archive`: several SWE-Gym repos use
+`export-ignore` / `export-subst`). Cache key is `(repo, 40-char SHA)`,
+not `instance_id`. Snapshots contain no `.git` and never apply the gold
+patch. Prepare is offline: missing repos/commits fail; there is no
+fallback to `HEAD`.
+
+```bash
+python scripts/smoke/smoke_repo_workspace.py
+```
