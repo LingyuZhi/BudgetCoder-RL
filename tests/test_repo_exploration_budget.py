@@ -66,6 +66,8 @@ def test_hidden_unlimited_matches_inserted_observation_ids(tokenizer, tmp_path: 
     assert output.extra_fields["obs_tokens_used"] == len(obs[0])
     assert output.extra_fields["observation_token_count"] == len(obs[0])
     assert output.extra_fields["tool_observation_token_count"] == len(obs[0])
+    assert output.extra_fields["budget_metadata_tokens"] == 0
+    assert output.extra_fields["budget_accounting_version"] == "bcrl-bobs-v2"
     assert output.extra_fields["obs_tokens_limit"] is None
     assert output.extra_fields["budget_visible"] is False
     assert output.extra_fields["termination"] == "finish"
@@ -287,13 +289,18 @@ def test_visible_remaining_after_matches_inserted_ids(tokenizer, tmp_path: Path)
             remaining = int(line.split(": ", 1)[1])
         if line.startswith("obs_tokens_used: "):
             used = int(line.split(": ", 1)[1])
-    assert used == len(obs)
-    assert remaining == 8000 - len(obs)
-    assert output.extra_fields["obs_tokens_used"] == len(obs)
+    assert used == output.extra_fields["tool_observation_token_count"]
+    assert remaining == 8000 - used
+    assert output.extra_fields["obs_tokens_used"] == used
+    assert output.extra_fields["budget_accounting_version"] == "bcrl-bobs-v2"
     assert (
         output.extra_fields["tool_observation_token_count"]
         < output.extra_fields["observation_token_count"]
     )
+    assert output.extra_fields["repo_observation_tokens"] == used
+    assert output.extra_fields["total_env_tokens"] == len(obs)
+    assert output.extra_fields["budget_metadata_tokens"] == len(obs) - used
+    assert output.extra_fields["budget_metadata_tokens"] > 0
     prompt_text = tokenizer.decode(output.prompt_ids, skip_special_tokens=True)
     assert BUDGET_OBS_VERSION in prompt_text
     assert "Issue:" in prompt_text
@@ -388,6 +395,30 @@ def test_oracle_sentinels_do_not_enter_prompt_or_observations(tokenizer, tmp_pat
     assert "base_changed_files" not in keys
 
 
+def test_sampling_seed_injected_and_do_sample_stripped(tokenizer, tmp_path: Path):
+    env, extra = _prepare_workspace(tmp_path)
+    extra = dict(extra)
+    extra["sampling_seed"] = 20260825
+    finish = _final({"locations": [{"path": "pkg.py"}]})
+    server = FakeServerManager(
+        [TokenOutput(token_ids=_encode_action(tokenizer, finish))]
+    )
+    loop = _build_loop(tokenizer, server, env)
+    output = loop.loop.run_until_complete(
+        loop.run(
+            {"temperature": 0.7, "top_p": 0.8, "top_k": 20, "do_sample": True},
+            raw_prompt=[{"role": "user", "content": "locate version"}],
+            extra_info=extra,
+        )
+    )
+    params = server.calls[0]["sampling_params"]
+    assert "do_sample" not in params
+    assert params["seed"] == 20260825
+    assert params["temperature"] == 0.7
+    assert output.extra_fields["sampling_params"]["seed"] == 20260825
+    assert output.extra_fields["sampling_seed"] == 20260825
+
+
 def test_agent_loop_source_does_not_import_evaluator_oracle():
     text = (
         Path(__file__).resolve().parents[1]
@@ -418,3 +449,28 @@ def test_m3a_yaml_has_smoke_limit_not_frozen_training_budget():
     assert configs[0].max_new_tokens_per_turn == 2048
     m2 = OmegaConf.load(str(AGENT_LOOP_CONFIG))
     assert "obs_tokens_limit" not in m2[0]
+
+
+def test_m3b_yaml_is_provisional_8192_not_frozen_training_budget():
+    configs = OmegaConf.load(
+        str(
+            Path(__file__).resolve().parents[1]
+            / "configs"
+            / "agent_loop"
+            / "repo_exploration_m3b.yaml"
+        )
+    )
+    assert configs[0].name == "repo_exploration"
+    assert configs[0].obs_tokens_limit == 8192
+    assert configs[0].budget_visible is False
+    assert configs[0].max_turns == 6
+    assert configs[0].max_new_tokens_per_turn == 2048
+    m3a = OmegaConf.load(
+        str(
+            Path(__file__).resolve().parents[1]
+            / "configs"
+            / "agent_loop"
+            / "repo_exploration_m3a.yaml"
+        )
+    )
+    assert m3a[0].obs_tokens_limit == 8192

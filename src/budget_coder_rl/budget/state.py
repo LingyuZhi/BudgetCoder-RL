@@ -2,6 +2,11 @@
 
 ``# bcrl-obs-v1`` tool bodies are unchanged. Visible remaining-budget text is a
 separate ``# bcrl-budget-v1`` envelope assembled at encode time.
+
+Accounting version ``bcrl-bobs-v2`` (M3B): primary ``B_obs`` / ``C_obs`` is the
+inserted ``# bcrl-obs-v1`` chat-template token count. Envelope metadata does
+not consume the primary budget. M3A JSONL used envelope-inclusive
+``obs_tokens_used`` and must not be silently reinterpreted.
 """
 
 from __future__ import annotations
@@ -11,6 +16,7 @@ from dataclasses import dataclass
 from typing import Any
 
 BUDGET_OBS_VERSION = "bcrl-budget-v1"
+BUDGET_ACCOUNTING_VERSION = "bcrl-bobs-v2"
 BUDGET_HEADER_MAX_ITERS = 4
 
 
@@ -24,7 +30,11 @@ class BudgetVisibleRequiresLimitError(ValueError):
 
 @dataclass
 class BudgetState:
-    """Cumulative inserted observation-token usage and turn safety cap."""
+    """Cumulative primary repo-observation-token usage and turn safety cap.
+
+    ``obs_tokens_used`` is primary ``C_obs`` (inserted ``# bcrl-obs-v1`` tokens),
+    not envelope-inclusive environment tokens.
+    """
 
     obs_tokens_used: int = 0
     obs_tokens_limit: int | None = None
@@ -64,11 +74,15 @@ class BudgetState:
             "turns_used": self.turns_used,
             "turns_limit": self.turns_limit,
             "turns_remaining": self.turns_remaining,
+            "budget_accounting_version": BUDGET_ACCOUNTING_VERSION,
         }
 
 
 def format_budget_state(state: BudgetState) -> str:
-    """Frozen ``bcrl-budget-v1`` text. Requires a numeric obs-token limit."""
+    """Frozen ``bcrl-budget-v1`` text. Requires a numeric obs-token limit.
+
+    Displayed ``obs_tokens_used`` / remaining are primary ``C_obs`` (v2).
+    """
     if state.obs_tokens_limit is None:
         raise BudgetVisibleRequiresLimitError(
             "cannot format budget state without obs_tokens_limit"
@@ -100,36 +114,32 @@ def converge_visible_observation(
     turns_limit: int,
     encode: Callable[[str], Sequence[int]],
     max_iters: int = BUDGET_HEADER_MAX_ITERS,
-) -> tuple[list[int], str]:
-    """Encode visible observation with remaining-after numbers.
+) -> tuple[list[int], str, int]:
+    """Encode a visible observation under ``bcrl-bobs-v2``.
 
-    Displayed ``obs_tokens_used`` is the post-insert total so the next generate
-    sees an up-to-date remaining value. Digit-length effects are resolved by
-    iterating the displayed used count; failure hard-fails.
+    Displayed ``obs_tokens_used`` is primary ``C_obs`` after this insert
+    (``used_before + len(v1_ids)``). Envelope tokens are not part of that
+    number, so header digit length does not depend on the wrapped encoding
+    and no envelope-inclusive fixpoint is required.
+
+    Returns ``(wrapped_ids, content, v1_token_count)``.
+    ``max_iters`` is accepted for call-site compatibility and ignored.
     """
+    del max_iters
     if limit < 0:
         raise ValueError(f"obs_tokens_limit must be >= 0, got {limit}")
-    displayed_used = used_before
-    last_ids: list[int] | None = None
-    for _ in range(max_iters):
-        state = BudgetState(
-            obs_tokens_used=displayed_used,
-            obs_tokens_limit=limit,
-            turns_used=turns_used,
-            turns_limit=turns_limit,
-        )
-        content = wrap_observation_with_budget(v1_text, state)
-        ids = list(encode(content))
-        last_ids = ids
-        used_after = used_before + len(ids)
-        if displayed_used == used_after:
-            return ids, content
-        displayed_used = used_after
-    raise BudgetHeaderFixpointError(
-        "bcrl-budget-v1 header fixpoint did not converge after "
-        f"{max_iters} iterations (used_before={used_before}, "
-        f"last_encoded={0 if last_ids is None else len(last_ids)})"
+    v1_ids = list(encode(v1_text))
+    v1_n = len(v1_ids)
+    displayed_used = used_before + v1_n
+    state = BudgetState(
+        obs_tokens_used=displayed_used,
+        obs_tokens_limit=limit,
+        turns_used=turns_used,
+        turns_limit=turns_limit,
     )
+    content = wrap_observation_with_budget(v1_text, state)
+    ids = list(encode(content))
+    return ids, content, v1_n
 
 
 def resolve_episode_budget(

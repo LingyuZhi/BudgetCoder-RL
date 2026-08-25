@@ -189,12 +189,30 @@ def verify_loop_output(output, *, expect_termination: str | None = None) -> list
     obs_total = sum(
         len(item["token_ids"]) for item in segments if item["kind"] == "observation"
     )
-    if extra.get("obs_tokens_used") != obs_total:
+    repo_obs = extra.get("tool_observation_token_count")
+    if extra.get("budget_accounting_version") != "bcrl-bobs-v2":
         errors.append(
-            f"obs_tokens_used {extra.get('obs_tokens_used')} != inserted obs {obs_total}"
+            f"budget_accounting_version={extra.get('budget_accounting_version')!r}"
+        )
+    if extra.get("obs_tokens_used") != repo_obs:
+        errors.append(
+            f"obs_tokens_used {extra.get('obs_tokens_used')} != repo obs {repo_obs}"
         )
     if extra.get("observation_token_count") != obs_total:
         errors.append("observation_token_count != inserted observation ids")
+    if extra.get("total_env_tokens") != obs_total:
+        errors.append("total_env_tokens != inserted observation ids")
+    if extra.get("repo_observation_tokens") != repo_obs:
+        errors.append("repo_observation_tokens != tool_observation_token_count")
+    metadata = extra.get("budget_metadata_tokens")
+    if metadata is None:
+        errors.append("budget_metadata_tokens missing")
+    elif int(metadata) != int(obs_total) - int(repo_obs or 0):
+        errors.append("budget_metadata_tokens != total_env - repo_obs")
+    if extra.get("budget_visible") and obs_total > 0 and int(metadata or 0) <= 0:
+        errors.append("visible inserted obs missing envelope metadata tokens")
+    if extra.get("budget_visible") is False and int(metadata or 0) != 0:
+        errors.append("hidden episode has nonzero budget_metadata_tokens")
     if extra.get("policy_token_count") != output.response_mask.count(1):
         errors.append("policy_token_count != mask==1 count")
     if expect_termination is not None and extra.get("termination") != expect_termination:
@@ -504,13 +522,19 @@ def run_gpu(args: argparse.Namespace) -> dict[str, Any]:
             if termination not in {"finish", "max_turns", "response_length", "budget_exhausted"}:
                 row_errors.append(f"{label}: unexpected termination {termination!r}")
             obs_used = extra_keys.get("obs_tokens_used", [None] * 2)[index]
+            repo_obs = extra_keys.get("tool_observation_token_count", [None] * 2)[index]
             obs_total = sum(
                 len(item["token_ids"]) for item in segments if item["kind"] == "observation"
             )
-            if obs_used != obs_total:
+            if obs_used != repo_obs:
                 row_errors.append(
-                    f"{label}: obs_tokens_used {obs_used} != inserted {obs_total}"
+                    f"{label}: obs_tokens_used {obs_used} != repo obs {repo_obs}"
                 )
+            if extra_keys.get("total_env_tokens", [None] * 2)[index] not in {None, obs_total}:
+                if extra_keys.get("total_env_tokens", [None] * 2)[index] != obs_total:
+                    row_errors.append(
+                        f"{label}: total_env_tokens != inserted {obs_total}"
+                    )
             visible_flag = extra_keys.get("budget_visible", [None] * 2)[index]
             obs_segments = [item for item in segments if item["kind"] == "observation"]
             if obs_segments:
@@ -547,12 +571,17 @@ def run_gpu(args: argparse.Namespace) -> dict[str, Any]:
                 "policy_token_count",
                 "observation_token_count",
                 "tool_observation_token_count",
+                "repo_observation_tokens",
+                "budget_metadata_tokens",
+                "total_env_tokens",
                 "obs_tokens_used",
                 "obs_tokens_limit",
                 "obs_tokens_remaining",
+                "budget_accounting_version",
                 "budget_visible",
                 "budget_exhausted",
                 "sampling_params",
+                "sampling_seed",
                 "max_turns",
                 "max_new_tokens_per_turn",
                 "model_name_or_path",

@@ -1,4 +1,5 @@
 from budget_coder_rl.budget.state import (
+    BUDGET_ACCOUNTING_VERSION,
     BUDGET_OBS_VERSION,
     BudgetHeaderFixpointError,
     BudgetState,
@@ -10,6 +11,7 @@ from budget_coder_rl.budget.state import (
 )
 
 __all__ = [
+    "BUDGET_ACCOUNTING_VERSION",
     "BUDGET_OBS_VERSION",
     "BudgetHeaderFixpointError",
     "BudgetState",

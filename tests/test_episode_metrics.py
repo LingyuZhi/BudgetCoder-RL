@@ -34,12 +34,18 @@ def test_behavior_stats_from_events():
             "action_arguments": {"path": "src/foo.py", "start_line": 1, "end_line": 2},
             "error_kind": None,
         },
+        {
+            "action_name": "read",
+            "action_arguments": {"path": "src/foo.py", "start_line": 1, "end_line": 2},
+            "error_kind": None,
+        },
     ]
     stats = behavior_stats(events)
     assert stats["n_search"] == 2
     assert stats["n_empty_search_hits"] == 1
     assert stats["n_repeated_search_queries"] == 1
     assert stats["unique_read_paths"] == 1
+    assert stats["n_repeated_reads"] == 1
     assert stats["read_paths"] == ["src/foo.py"]
 
 

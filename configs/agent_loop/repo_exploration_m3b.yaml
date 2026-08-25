@@ -1,0 +1,9 @@
+# M3B frozen base-policy baseline registry. Same loop class as M3A.
+# obs_tokens_limit=8192 is a provisional M3B budget, NOT a frozen Stage-1
+# training budget. Do not treat this file as a 4K/8K/16K sweep result.
+- name: repo_exploration
+  _target_: budget_coder_rl.agent_loop.repo_exploration.RepoExplorationAgentLoop
+  max_turns: 6
+  max_new_tokens_per_turn: 2048
+  obs_tokens_limit: 8192
+  budget_visible: false

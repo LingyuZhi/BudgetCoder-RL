@@ -1,12 +1,12 @@
-"""BudgetState formatting, remaining-after fixpoint, extra_info knobs."""
+"""BudgetState formatting, remaining-after v2 header, extra_info knobs."""
 
 from __future__ import annotations
 
 import pytest
 
 from budget_coder_rl.budget.state import (
+    BUDGET_ACCOUNTING_VERSION,
     BUDGET_OBS_VERSION,
-    BudgetHeaderFixpointError,
     BudgetState,
     BudgetVisibleRequiresLimitError,
     converge_visible_observation,
@@ -58,13 +58,13 @@ def test_format_and_wrap_keep_v1_body():
     assert "# bcrl-obs-v1" in wrapped
 
 
-def test_converge_visible_header_matches_post_insert_used():
+def test_visible_header_uses_v1_primary_cost_not_wrapped_length():
     v1 = "# bcrl-obs-v1\nbody\n"
 
     def encode(content: str) -> list[int]:
         return [1] * len(content)
 
-    ids, content = converge_visible_observation(
+    ids, content, v1_n = converge_visible_observation(
         v1,
         used_before=0,
         limit=10_000,
@@ -72,30 +72,19 @@ def test_converge_visible_header_matches_post_insert_used():
         turns_limit=6,
         encode=encode,
     )
+    assert v1_n == len(v1)
     assert len(ids) == len(content)
-    assert f"obs_tokens_used: {len(ids)}" in content
-    remaining = 10_000 - len(ids)
-    assert f"obs_tokens_remaining: {remaining}" in content
+    assert len(ids) > v1_n
+    assert f"obs_tokens_used: {v1_n}" in content
+    assert f"obs_tokens_remaining: {10_000 - v1_n}" in content
+    assert f"obs_tokens_used: {len(ids)}" not in content
     assert content.endswith(v1)
 
 
-def test_converge_raises_when_length_oscillates():
-    flip = {"n": 0}
-
-    def encode(_content: str) -> list[int]:
-        flip["n"] += 1
-        return [0] * (10 if flip["n"] % 2 else 11)
-
-    with pytest.raises(BudgetHeaderFixpointError):
-        converge_visible_observation(
-            "v1",
-            used_before=0,
-            limit=100,
-            turns_used=0,
-            turns_limit=6,
-            encode=encode,
-            max_iters=4,
-        )
+def test_as_dict_includes_accounting_version():
+    state = BudgetState(obs_tokens_used=1, obs_tokens_limit=8)
+    payload = state.as_dict()
+    assert payload["budget_accounting_version"] == BUDGET_ACCOUNTING_VERSION
 
 
 def test_resolve_episode_budget_override_and_visible_requires_limit():

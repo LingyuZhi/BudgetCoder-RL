@@ -1,0 +1,2248 @@
+{
+  "schema_version": "bcrl-m3b-tasks-v1",
+  "split": "dev",
+  "selection_algorithm": "repo_name_sort + instance_id_lexicographic + repo_round_robin",
+  "oracle_used": false,
+  "gold_used": false,
+  "paired_seed_base": 20260825,
+  "paired_seed_formula": "PAIRED_SEED_BASE + task_index",
+  "provisional_obs_tokens_limit": 8192,
+  "obs_tokens_limit_note": "provisional M3B budget; not a frozen Stage-1 training budget",
+  "n_universe": 244,
+  "n_primary": 80,
+  "n_remainder": 164,
+  "ordered_ids": [
+    "Project-MONAI__MONAI-1065",
+    "bokeh__bokeh-13198",
+    "conan-io__conan-11666",
+    "dask__dask-10211",
+    "facebookresearch__hydra-1542",
+    "getmoto__moto-4846",
+    "iterative__dvc-10359",
+    "modin-project__modin-5952",
+    "pandas-dev__pandas-47351",
+    "pydantic__pydantic-5624",
+    "python__mypy-10174",
+    "Project-MONAI__MONAI-1079",
+    "bokeh__bokeh-13328",
+    "conan-io__conan-12086",
+    "dask__dask-10380",
+    "facebookresearch__hydra-1551",
+    "getmoto__moto-4849",
+    "iterative__dvc-1681",
+    "modin-project__modin-6298",
+    "pandas-dev__pandas-47387",
+    "pydantic__pydantic-5744",
+    "python__mypy-10424",
+    "Project-MONAI__MONAI-1765",
+    "bokeh__bokeh-13391",
+    "conan-io__conan-13450",
+    "dask__dask-10404",
+    "facebookresearch__hydra-1569",
+    "getmoto__moto-4853",
+    "iterative__dvc-1690",
+    "modin-project__modin-6545",
+    "pandas-dev__pandas-47504",
+    "pydantic__pydantic-6043",
+    "python__mypy-11119",
+    "Project-MONAI__MONAI-2096",
+    "conan-io__conan-13757",
+    "dask__dask-10785",
+    "facebookresearch__hydra-1731",
+    "getmoto__moto-4890",
+    "iterative__dvc-2118",
+    "modin-project__modin-6612",
+    "pandas-dev__pandas-47881",
+    "pydantic__pydantic-6274",
+    "python__mypy-11125",
+    "Project-MONAI__MONAI-2325",
+    "conan-io__conan-14164",
+    "dask__dask-10800",
+    "facebookresearch__hydra-1842",
+    "getmoto__moto-4986",
+    "iterative__dvc-3677",
+    "modin-project__modin-6613",
+    "pandas-dev__pandas-48050",
+    "pydantic__pydantic-6283",
+    "python__mypy-11247",
+    "Project-MONAI__MONAI-2326",
+    "conan-io__conan-14177",
+    "dask__dask-6776",
+    "facebookresearch__hydra-2011",
+    "getmoto__moto-4990",
+    "iterative__dvc-3876",
+    "modin-project__modin-6673",
+    "pandas-dev__pandas-48111",
+    "pydantic__pydantic-6293",
+    "python__mypy-11290",
+    "Project-MONAI__MONAI-2553",
+    "conan-io__conan-14532",
+    "dask__dask-6818",
+    "facebookresearch__hydra-625",
+    "getmoto__moto-5020",
+    "iterative__dvc-3914",
+    "modin-project__modin-6763",
+    "pandas-dev__pandas-48178",
+    "pydantic__pydantic-8437",
+    "python__mypy-11292",
+    "Project-MONAI__MONAI-3042",
+    "conan-io__conan-14709",
+    "dask__dask-7073",
+    "getmoto__moto-5117",
+    "iterative__dvc-3992",
+    "modin-project__modin-6884",
+    "pandas-dev__pandas-48246",
+    "pydantic__pydantic-9137",
+    "python__mypy-11361",
+    "Project-MONAI__MONAI-3289",
+    "dask__dask-7092",
+    "getmoto__moto-5202",
+    "iterative__dvc-4059",
+    "modin-project__modin-6957",
+    "pandas-dev__pandas-48555",
+    "python__mypy-11457",
+    "Project-MONAI__MONAI-3419",
+    "dask__dask-8283",
+    "getmoto__moto-5216",
+    "iterative__dvc-4066",
+    "modin-project__modin-7018",
+    "pandas-dev__pandas-48640",
+    "python__mypy-12048",
+    "Project-MONAI__MONAI-3469",
+    "dask__dask-8525",
+    "getmoto__moto-5460",
+    "iterative__dvc-4185",
+    "modin-project__modin-7140",
+    "pandas-dev__pandas-48643",
+    "python__mypy-12951",
+    "Project-MONAI__MONAI-3478",
+    "dask__dask-8785",
+    "getmoto__moto-5562",
+    "iterative__dvc-4961",
+    "pandas-dev__pandas-48995",
+    "python__mypy-13678",
+    "Project-MONAI__MONAI-3547",
+    "dask__dask-9272",
+    "getmoto__moto-5582",
+    "iterative__dvc-4976",
+    "pandas-dev__pandas-49080",
+    "python__mypy-14206",
+    "Project-MONAI__MONAI-3619",
+    "dask__dask-9349",
+    "getmoto__moto-5634",
+    "iterative__dvc-4977",
+    "pandas-dev__pandas-49290",
+    "python__mypy-15128",
+    "Project-MONAI__MONAI-3837",
+    "getmoto__moto-5701",
+    "iterative__dvc-4978",
+    "pandas-dev__pandas-49378",
+    "python__mypy-15131",
+    "Project-MONAI__MONAI-4249",
+    "getmoto__moto-5731",
+    "iterative__dvc-5148",
+    "pandas-dev__pandas-49486",
+    "python__mypy-15208",
+    "Project-MONAI__MONAI-4567",
+    "getmoto__moto-5745",
+    "iterative__dvc-5161",
+    "pandas-dev__pandas-49579",
+    "python__mypy-15327",
+    "Project-MONAI__MONAI-459",
+    "getmoto__moto-6019",
+    "iterative__dvc-5264",
+    "pandas-dev__pandas-49658",
+    "python__mypy-15355",
+    "Project-MONAI__MONAI-4601",
+    "getmoto__moto-6049",
+    "iterative__dvc-5550",
+    "pandas-dev__pandas-50148",
+    "python__mypy-15366",
+    "Project-MONAI__MONAI-4843",
+    "getmoto__moto-6106",
+    "iterative__dvc-6566",
+    "pandas-dev__pandas-50151",
+    "python__mypy-15490",
+    "Project-MONAI__MONAI-5182",
+    "getmoto__moto-6350",
+    "iterative__dvc-6600",
+    "pandas-dev__pandas-50316",
+    "python__mypy-15624",
+    "Project-MONAI__MONAI-5208",
+    "getmoto__moto-6352",
+    "iterative__dvc-8129",
+    "pandas-dev__pandas-50319",
+    "python__mypy-15700",
+    "Project-MONAI__MONAI-524",
+    "getmoto__moto-6376",
+    "pandas-dev__pandas-50322",
+    "python__mypy-15876",
+    "Project-MONAI__MONAI-5428",
+    "getmoto__moto-6535",
+    "pandas-dev__pandas-50435",
+    "python__mypy-16154",
+    "Project-MONAI__MONAI-5507",
+    "getmoto__moto-6536",
+    "pandas-dev__pandas-50444",
+    "python__mypy-5617",
+    "Project-MONAI__MONAI-5856",
+    "getmoto__moto-6567",
+    "pandas-dev__pandas-50505",
+    "python__mypy-9097",
+    "Project-MONAI__MONAI-5932",
+    "getmoto__moto-6716",
+    "pandas-dev__pandas-50506",
+    "Project-MONAI__MONAI-5950",
+    "getmoto__moto-6746",
+    "pandas-dev__pandas-50507",
+    "Project-MONAI__MONAI-5980",
+    "getmoto__moto-6802",
+    "pandas-dev__pandas-50876",
+    "Project-MONAI__MONAI-6034",
+    "getmoto__moto-6884",
+    "pandas-dev__pandas-50930",
+    "Project-MONAI__MONAI-6144",
+    "getmoto__moto-6885",
+    "pandas-dev__pandas-51048",
+    "Project-MONAI__MONAI-6271",
+    "getmoto__moto-6919",
+    "pandas-dev__pandas-51057",
+    "Project-MONAI__MONAI-6459",
+    "getmoto__moto-7102",
+    "pandas-dev__pandas-51398",
+    "Project-MONAI__MONAI-646",
+    "getmoto__moto-7490",
+    "pandas-dev__pandas-51542",
+    "Project-MONAI__MONAI-6975",
+    "pandas-dev__pandas-51548",
+    "Project-MONAI__MONAI-6977",
+    "pandas-dev__pandas-51756",
+    "Project-MONAI__MONAI-7749",
+    "pandas-dev__pandas-52096",
+    "pandas-dev__pandas-52174",
+    "pandas-dev__pandas-52177",
+    "pandas-dev__pandas-52180",
+    "pandas-dev__pandas-52337",
+    "pandas-dev__pandas-52518",
+    "pandas-dev__pandas-52528",
+    "pandas-dev__pandas-53060",
+    "pandas-dev__pandas-53419",
+    "pandas-dev__pandas-53443",
+    "pandas-dev__pandas-53458",
+    "pandas-dev__pandas-53769",
+    "pandas-dev__pandas-53962",
+    "pandas-dev__pandas-54087",
+    "pandas-dev__pandas-54234",
+    "pandas-dev__pandas-54388",
+    "pandas-dev__pandas-55249",
+    "pandas-dev__pandas-55257",
+    "pandas-dev__pandas-55258",
+    "pandas-dev__pandas-55259",
+    "pandas-dev__pandas-55395",
+    "pandas-dev__pandas-55562",
+    "pandas-dev__pandas-55568",
+    "pandas-dev__pandas-55678",
+    "pandas-dev__pandas-55793",
+    "pandas-dev__pandas-55929",
+    "pandas-dev__pandas-56291",
+    "pandas-dev__pandas-56352",
+    "pandas-dev__pandas-56371",
+    "pandas-dev__pandas-56412",
+    "pandas-dev__pandas-56788",
+    "pandas-dev__pandas-57232",
+    "pandas-dev__pandas-57372",
+    "pandas-dev__pandas-57375",
+    "pandas-dev__pandas-57474",
+    "pandas-dev__pandas-57865",
+    "pandas-dev__pandas-58172",
+    "pandas-dev__pandas-58250"
+  ],
+  "primary_ids": [
+    "Project-MONAI__MONAI-1065",
+    "bokeh__bokeh-13198",
+    "conan-io__conan-11666",
+    "dask__dask-10211",
+    "facebookresearch__hydra-1542",
+    "getmoto__moto-4846",
+    "iterative__dvc-10359",
+    "modin-project__modin-5952",
+    "pandas-dev__pandas-47351",
+    "pydantic__pydantic-5624",
+    "python__mypy-10174",
+    "Project-MONAI__MONAI-1079",
+    "bokeh__bokeh-13328",
+    "conan-io__conan-12086",
+    "dask__dask-10380",
+    "facebookresearch__hydra-1551",
+    "getmoto__moto-4849",
+    "iterative__dvc-1681",
+    "modin-project__modin-6298",
+    "pandas-dev__pandas-47387",
+    "pydantic__pydantic-5744",
+    "python__mypy-10424",
+    "Project-MONAI__MONAI-1765",
+    "bokeh__bokeh-13391",
+    "conan-io__conan-13450",
+    "dask__dask-10404",
+    "facebookresearch__hydra-1569",
+    "getmoto__moto-4853",
+    "iterative__dvc-1690",
+    "modin-project__modin-6545",
+    "pandas-dev__pandas-47504",
+    "pydantic__pydantic-6043",
+    "python__mypy-11119",
+    "Project-MONAI__MONAI-2096",
+    "conan-io__conan-13757",
+    "dask__dask-10785",
+    "facebookresearch__hydra-1731",
+    "getmoto__moto-4890",
+    "iterative__dvc-2118",
+    "modin-project__modin-6612",
+    "pandas-dev__pandas-47881",
+    "pydantic__pydantic-6274",
+    "python__mypy-11125",
+    "Project-MONAI__MONAI-2325",
+    "conan-io__conan-14164",
+    "dask__dask-10800",
+    "facebookresearch__hydra-1842",
+    "getmoto__moto-4986",
+    "iterative__dvc-3677",
+    "modin-project__modin-6613",
+    "pandas-dev__pandas-48050",
+    "pydantic__pydantic-6283",
+    "python__mypy-11247",
+    "Project-MONAI__MONAI-2326",
+    "conan-io__conan-14177",
+    "dask__dask-6776",
+    "facebookresearch__hydra-2011",
+    "getmoto__moto-4990",
+    "iterative__dvc-3876",
+    "modin-project__modin-6673",
+    "pandas-dev__pandas-48111",
+    "pydantic__pydantic-6293",
+    "python__mypy-11290",
+    "Project-MONAI__MONAI-2553",
+    "conan-io__conan-14532",
+    "dask__dask-6818",
+    "facebookresearch__hydra-625",
+    "getmoto__moto-5020",
+    "iterative__dvc-3914",
+    "modin-project__modin-6763",
+    "pandas-dev__pandas-48178",
+    "pydantic__pydantic-8437",
+    "python__mypy-11292",
+    "Project-MONAI__MONAI-3042",
+    "conan-io__conan-14709",
+    "dask__dask-7073",
+    "getmoto__moto-5117",
+    "iterative__dvc-3992",
+    "modin-project__modin-6884",
+    "pandas-dev__pandas-48246"
+  ],
+  "remainder_ids": [
+    "pydantic__pydantic-9137",
+    "python__mypy-11361",
+    "Project-MONAI__MONAI-3289",
+    "dask__dask-7092",
+    "getmoto__moto-5202",
+    "iterative__dvc-4059",
+    "modin-project__modin-6957",
+    "pandas-dev__pandas-48555",
+    "python__mypy-11457",
+    "Project-MONAI__MONAI-3419",
+    "dask__dask-8283",
+    "getmoto__moto-5216",
+    "iterative__dvc-4066",
+    "modin-project__modin-7018",
+    "pandas-dev__pandas-48640",
+    "python__mypy-12048",
+    "Project-MONAI__MONAI-3469",
+    "dask__dask-8525",
+    "getmoto__moto-5460",
+    "iterative__dvc-4185",
+    "modin-project__modin-7140",
+    "pandas-dev__pandas-48643",
+    "python__mypy-12951",
+    "Project-MONAI__MONAI-3478",
+    "dask__dask-8785",
+    "getmoto__moto-5562",
+    "iterative__dvc-4961",
+    "pandas-dev__pandas-48995",
+    "python__mypy-13678",
+    "Project-MONAI__MONAI-3547",
+    "dask__dask-9272",
+    "getmoto__moto-5582",
+    "iterative__dvc-4976",
+    "pandas-dev__pandas-49080",
+    "python__mypy-14206",
+    "Project-MONAI__MONAI-3619",
+    "dask__dask-9349",
+    "getmoto__moto-5634",
+    "iterative__dvc-4977",
+    "pandas-dev__pandas-49290",
+    "python__mypy-15128",
+    "Project-MONAI__MONAI-3837",
+    "getmoto__moto-5701",
+    "iterative__dvc-4978",
+    "pandas-dev__pandas-49378",
+    "python__mypy-15131",
+    "Project-MONAI__MONAI-4249",
+    "getmoto__moto-5731",
+    "iterative__dvc-5148",
+    "pandas-dev__pandas-49486",
+    "python__mypy-15208",
+    "Project-MONAI__MONAI-4567",
+    "getmoto__moto-5745",
+    "iterative__dvc-5161",
+    "pandas-dev__pandas-49579",
+    "python__mypy-15327",
+    "Project-MONAI__MONAI-459",
+    "getmoto__moto-6019",
+    "iterative__dvc-5264",
+    "pandas-dev__pandas-49658",
+    "python__mypy-15355",
+    "Project-MONAI__MONAI-4601",
+    "getmoto__moto-6049",
+    "iterative__dvc-5550",
+    "pandas-dev__pandas-50148",
+    "python__mypy-15366",
+    "Project-MONAI__MONAI-4843",
+    "getmoto__moto-6106",
+    "iterative__dvc-6566",
+    "pandas-dev__pandas-50151",
+    "python__mypy-15490",
+    "Project-MONAI__MONAI-5182",
+    "getmoto__moto-6350",
+    "iterative__dvc-6600",
+    "pandas-dev__pandas-50316",
+    "python__mypy-15624",
+    "Project-MONAI__MONAI-5208",
+    "getmoto__moto-6352",
+    "iterative__dvc-8129",
+    "pandas-dev__pandas-50319",
+    "python__mypy-15700",
+    "Project-MONAI__MONAI-524",
+    "getmoto__moto-6376",
+    "pandas-dev__pandas-50322",
+    "python__mypy-15876",
+    "Project-MONAI__MONAI-5428",
+    "getmoto__moto-6535",
+    "pandas-dev__pandas-50435",
+    "python__mypy-16154",
+    "Project-MONAI__MONAI-5507",
+    "getmoto__moto-6536",
+    "pandas-dev__pandas-50444",
+    "python__mypy-5617",
+    "Project-MONAI__MONAI-5856",
+    "getmoto__moto-6567",
+    "pandas-dev__pandas-50505",
+    "python__mypy-9097",
+    "Project-MONAI__MONAI-5932",
+    "getmoto__moto-6716",
+    "pandas-dev__pandas-50506",
+    "Project-MONAI__MONAI-5950",
+    "getmoto__moto-6746",
+    "pandas-dev__pandas-50507",
+    "Project-MONAI__MONAI-5980",
+    "getmoto__moto-6802",
+    "pandas-dev__pandas-50876",
+    "Project-MONAI__MONAI-6034",
+    "getmoto__moto-6884",
+    "pandas-dev__pandas-50930",
+    "Project-MONAI__MONAI-6144",
+    "getmoto__moto-6885",
+    "pandas-dev__pandas-51048",
+    "Project-MONAI__MONAI-6271",
+    "getmoto__moto-6919",
+    "pandas-dev__pandas-51057",
+    "Project-MONAI__MONAI-6459",
+    "getmoto__moto-7102",
+    "pandas-dev__pandas-51398",
+    "Project-MONAI__MONAI-646",
+    "getmoto__moto-7490",
+    "pandas-dev__pandas-51542",
+    "Project-MONAI__MONAI-6975",
+    "pandas-dev__pandas-51548",
+    "Project-MONAI__MONAI-6977",
+    "pandas-dev__pandas-51756",
+    "Project-MONAI__MONAI-7749",
+    "pandas-dev__pandas-52096",
+    "pandas-dev__pandas-52174",
+    "pandas-dev__pandas-52177",
+    "pandas-dev__pandas-52180",
+    "pandas-dev__pandas-52337",
+    "pandas-dev__pandas-52518",
+    "pandas-dev__pandas-52528",
+    "pandas-dev__pandas-53060",
+    "pandas-dev__pandas-53419",
+    "pandas-dev__pandas-53443",
+    "pandas-dev__pandas-53458",
+    "pandas-dev__pandas-53769",
+    "pandas-dev__pandas-53962",
+    "pandas-dev__pandas-54087",
+    "pandas-dev__pandas-54234",
+    "pandas-dev__pandas-54388",
+    "pandas-dev__pandas-55249",
+    "pandas-dev__pandas-55257",
+    "pandas-dev__pandas-55258",
+    "pandas-dev__pandas-55259",
+    "pandas-dev__pandas-55395",
+    "pandas-dev__pandas-55562",
+    "pandas-dev__pandas-55568",
+    "pandas-dev__pandas-55678",
+    "pandas-dev__pandas-55793",
+    "pandas-dev__pandas-55929",
+    "pandas-dev__pandas-56291",
+    "pandas-dev__pandas-56352",
+    "pandas-dev__pandas-56371",
+    "pandas-dev__pandas-56412",
+    "pandas-dev__pandas-56788",
+    "pandas-dev__pandas-57232",
+    "pandas-dev__pandas-57372",
+    "pandas-dev__pandas-57375",
+    "pandas-dev__pandas-57474",
+    "pandas-dev__pandas-57865",
+    "pandas-dev__pandas-58172",
+    "pandas-dev__pandas-58250"
+  ],
+  "ordered_ids_sha256": "c25b29585d4f1a14f850d98f093e19f85614229a299cca787e3b78dadb499576",
+  "primary_ids_sha256": "df9cbc82ad615d05e319eceea555f788c0bd1dde2a2d2ca43402accbde773dd7",
+  "repo_counts_universe": {
+    "Project-MONAI/MONAI": 37,
+    "bokeh/bokeh": 3,
+    "conan-io/conan": 8,
+    "dask/dask": 14,
+    "facebookresearch/hydra": 7,
+    "getmoto/moto": 34,
+    "iterative/dvc": 22,
+    "modin-project/modin": 11,
+    "pandas-dev/pandas": 74,
+    "pydantic/pydantic": 8,
+    "python/mypy": 26
+  },
+  "repo_counts_primary": {
+    "Project-MONAI/MONAI": 8,
+    "bokeh/bokeh": 3,
+    "conan-io/conan": 8,
+    "dask/dask": 8,
+    "facebookresearch/hydra": 7,
+    "getmoto/moto": 8,
+    "iterative/dvc": 8,
+    "modin-project/modin": 8,
+    "pandas-dev/pandas": 8,
+    "pydantic/pydantic": 7,
+    "python/mypy": 7
+  },
+  "n_repos_universe": 11,
+  "n_repos_primary": 11,
+  "tasks": [
+    {
+      "task_index": 0,
+      "instance_id": "Project-MONAI__MONAI-1065",
+      "repo": "Project-MONAI/MONAI",
+      "set": "primary",
+      "sampling_seed": 20260825
+    },
+    {
+      "task_index": 1,
+      "instance_id": "bokeh__bokeh-13198",
+      "repo": "bokeh/bokeh",
+      "set": "primary",
+      "sampling_seed": 20260826
+    },
+    {
+      "task_index": 2,
+      "instance_id": "conan-io__conan-11666",
+      "repo": "conan-io/conan",
+      "set": "primary",
+      "sampling_seed": 20260827
+    },
+    {
+      "task_index": 3,
+      "instance_id": "dask__dask-10211",
+      "repo": "dask/dask",
+      "set": "primary",
+      "sampling_seed": 20260828
+    },
+    {
+      "task_index": 4,
+      "instance_id": "facebookresearch__hydra-1542",
+      "repo": "facebookresearch/hydra",
+      "set": "primary",
+      "sampling_seed": 20260829
+    },
+    {
+      "task_index": 5,
+      "instance_id": "getmoto__moto-4846",
+      "repo": "getmoto/moto",
+      "set": "primary",
+      "sampling_seed": 20260830
+    },
+    {
+      "task_index": 6,
+      "instance_id": "iterative__dvc-10359",
+      "repo": "iterative/dvc",
+      "set": "primary",
+      "sampling_seed": 20260831
+    },
+    {
+      "task_index": 7,
+      "instance_id": "modin-project__modin-5952",
+      "repo": "modin-project/modin",
+      "set": "primary",
+      "sampling_seed": 20260832
+    },
+    {
+      "task_index": 8,
+      "instance_id": "pandas-dev__pandas-47351",
+      "repo": "pandas-dev/pandas",
+      "set": "primary",
+      "sampling_seed": 20260833
+    },
+    {
+      "task_index": 9,
+      "instance_id": "pydantic__pydantic-5624",
+      "repo": "pydantic/pydantic",
+      "set": "primary",
+      "sampling_seed": 20260834
+    },
+    {
+      "task_index": 10,
+      "instance_id": "python__mypy-10174",
+      "repo": "python/mypy",
+      "set": "primary",
+      "sampling_seed": 20260835
+    },
+    {
+      "task_index": 11,
+      "instance_id": "Project-MONAI__MONAI-1079",
+      "repo": "Project-MONAI/MONAI",
+      "set": "primary",
+      "sampling_seed": 20260836
+    },
+    {
+      "task_index": 12,
+      "instance_id": "bokeh__bokeh-13328",
+      "repo": "bokeh/bokeh",
+      "set": "primary",
+      "sampling_seed": 20260837
+    },
+    {
+      "task_index": 13,
+      "instance_id": "conan-io__conan-12086",
+      "repo": "conan-io/conan",
+      "set": "primary",
+      "sampling_seed": 20260838
+    },
+    {
+      "task_index": 14,
+      "instance_id": "dask__dask-10380",
+      "repo": "dask/dask",
+      "set": "primary",
+      "sampling_seed": 20260839
+    },
+    {
+      "task_index": 15,
+      "instance_id": "facebookresearch__hydra-1551",
+      "repo": "facebookresearch/hydra",
+      "set": "primary",
+      "sampling_seed": 20260840
+    },
+    {
+      "task_index": 16,
+      "instance_id": "getmoto__moto-4849",
+      "repo": "getmoto/moto",
+      "set": "primary",
+      "sampling_seed": 20260841
+    },
+    {
+      "task_index": 17,
+      "instance_id": "iterative__dvc-1681",
+      "repo": "iterative/dvc",
+      "set": "primary",
+      "sampling_seed": 20260842
+    },
+    {
+      "task_index": 18,
+      "instance_id": "modin-project__modin-6298",
+      "repo": "modin-project/modin",
+      "set": "primary",
+      "sampling_seed": 20260843
+    },
+    {
+      "task_index": 19,
+      "instance_id": "pandas-dev__pandas-47387",
+      "repo": "pandas-dev/pandas",
+      "set": "primary",
+      "sampling_seed": 20260844
+    },
+    {
+      "task_index": 20,
+      "instance_id": "pydantic__pydantic-5744",
+      "repo": "pydantic/pydantic",
+      "set": "primary",
+      "sampling_seed": 20260845
+    },
+    {
+      "task_index": 21,
+      "instance_id": "python__mypy-10424",
+      "repo": "python/mypy",
+      "set": "primary",
+      "sampling_seed": 20260846
+    },
+    {
+      "task_index": 22,
+      "instance_id": "Project-MONAI__MONAI-1765",
+      "repo": "Project-MONAI/MONAI",
+      "set": "primary",
+      "sampling_seed": 20260847
+    },
+    {
+      "task_index": 23,
+      "instance_id": "bokeh__bokeh-13391",
+      "repo": "bokeh/bokeh",
+      "set": "primary",
+      "sampling_seed": 20260848
+    },
+    {
+      "task_index": 24,
+      "instance_id": "conan-io__conan-13450",
+      "repo": "conan-io/conan",
+      "set": "primary",
+      "sampling_seed": 20260849
+    },
+    {
+      "task_index": 25,
+      "instance_id": "dask__dask-10404",
+      "repo": "dask/dask",
+      "set": "primary",
+      "sampling_seed": 20260850
+    },
+    {
+      "task_index": 26,
+      "instance_id": "facebookresearch__hydra-1569",
+      "repo": "facebookresearch/hydra",
+      "set": "primary",
+      "sampling_seed": 20260851
+    },
+    {
+      "task_index": 27,
+      "instance_id": "getmoto__moto-4853",
+      "repo": "getmoto/moto",
+      "set": "primary",
+      "sampling_seed": 20260852
+    },
+    {
+      "task_index": 28,
+      "instance_id": "iterative__dvc-1690",
+      "repo": "iterative/dvc",
+      "set": "primary",
+      "sampling_seed": 20260853
+    },
+    {
+      "task_index": 29,
+      "instance_id": "modin-project__modin-6545",
+      "repo": "modin-project/modin",
+      "set": "primary",
+      "sampling_seed": 20260854
+    },
+    {
+      "task_index": 30,
+      "instance_id": "pandas-dev__pandas-47504",
+      "repo": "pandas-dev/pandas",
+      "set": "primary",
+      "sampling_seed": 20260855
+    },
+    {
+      "task_index": 31,
+      "instance_id": "pydantic__pydantic-6043",
+      "repo": "pydantic/pydantic",
+      "set": "primary",
+      "sampling_seed": 20260856
+    },
+    {
+      "task_index": 32,
+      "instance_id": "python__mypy-11119",
+      "repo": "python/mypy",
+      "set": "primary",
+      "sampling_seed": 20260857
+    },
+    {
+      "task_index": 33,
+      "instance_id": "Project-MONAI__MONAI-2096",
+      "repo": "Project-MONAI/MONAI",
+      "set": "primary",
+      "sampling_seed": 20260858
+    },
+    {
+      "task_index": 34,
+      "instance_id": "conan-io__conan-13757",
+      "repo": "conan-io/conan",
+      "set": "primary",
+      "sampling_seed": 20260859
+    },
+    {
+      "task_index": 35,
+      "instance_id": "dask__dask-10785",
+      "repo": "dask/dask",
+      "set": "primary",
+      "sampling_seed": 20260860
+    },
+    {
+      "task_index": 36,
+      "instance_id": "facebookresearch__hydra-1731",
+      "repo": "facebookresearch/hydra",
+      "set": "primary",
+      "sampling_seed": 20260861
+    },
+    {
+      "task_index": 37,
+      "instance_id": "getmoto__moto-4890",
+      "repo": "getmoto/moto",
+      "set": "primary",
+      "sampling_seed": 20260862
+    },
+    {
+      "task_index": 38,
+      "instance_id": "iterative__dvc-2118",
+      "repo": "iterative/dvc",
+      "set": "primary",
+      "sampling_seed": 20260863
+    },
+    {
+      "task_index": 39,
+      "instance_id": "modin-project__modin-6612",
+      "repo": "modin-project/modin",
+      "set": "primary",
+      "sampling_seed": 20260864
+    },
+    {
+      "task_index": 40,
+      "instance_id": "pandas-dev__pandas-47881",
+      "repo": "pandas-dev/pandas",
+      "set": "primary",
+      "sampling_seed": 20260865
+    },
+    {
+      "task_index": 41,
+      "instance_id": "pydantic__pydantic-6274",
+      "repo": "pydantic/pydantic",
+      "set": "primary",
+      "sampling_seed": 20260866
+    },
+    {
+      "task_index": 42,
+      "instance_id": "python__mypy-11125",
+      "repo": "python/mypy",
+      "set": "primary",
+      "sampling_seed": 20260867
+    },
+    {
+      "task_index": 43,
+      "instance_id": "Project-MONAI__MONAI-2325",
+      "repo": "Project-MONAI/MONAI",
+      "set": "primary",
+      "sampling_seed": 20260868
+    },
+    {
+      "task_index": 44,
+      "instance_id": "conan-io__conan-14164",
+      "repo": "conan-io/conan",
+      "set": "primary",
+      "sampling_seed": 20260869
+    },
+    {
+      "task_index": 45,
+      "instance_id": "dask__dask-10800",
+      "repo": "dask/dask",
+      "set": "primary",
+      "sampling_seed": 20260870
+    },
+    {
+      "task_index": 46,
+      "instance_id": "facebookresearch__hydra-1842",
+      "repo": "facebookresearch/hydra",
+      "set": "primary",
+      "sampling_seed": 20260871
+    },
+    {
+      "task_index": 47,
+      "instance_id": "getmoto__moto-4986",
+      "repo": "getmoto/moto",
+      "set": "primary",
+      "sampling_seed": 20260872
+    },
+    {
+      "task_index": 48,
+      "instance_id": "iterative__dvc-3677",
+      "repo": "iterative/dvc",
+      "set": "primary",
+      "sampling_seed": 20260873
+    },
+    {
+      "task_index": 49,
+      "instance_id": "modin-project__modin-6613",
+      "repo": "modin-project/modin",
+      "set": "primary",
+      "sampling_seed": 20260874
+    },
+    {
+      "task_index": 50,
+      "instance_id": "pandas-dev__pandas-48050",
+      "repo": "pandas-dev/pandas",
+      "set": "primary",
+      "sampling_seed": 20260875
+    },
+    {
+      "task_index": 51,
+      "instance_id": "pydantic__pydantic-6283",
+      "repo": "pydantic/pydantic",
+      "set": "primary",
+      "sampling_seed": 20260876
+    },
+    {
+      "task_index": 52,
+      "instance_id": "python__mypy-11247",
+      "repo": "python/mypy",
+      "set": "primary",
+      "sampling_seed": 20260877
+    },
+    {
+      "task_index": 53,
+      "instance_id": "Project-MONAI__MONAI-2326",
+      "repo": "Project-MONAI/MONAI",
+      "set": "primary",
+      "sampling_seed": 20260878
+    },
+    {
+      "task_index": 54,
+      "instance_id": "conan-io__conan-14177",
+      "repo": "conan-io/conan",
+      "set": "primary",
+      "sampling_seed": 20260879
+    },
+    {
+      "task_index": 55,
+      "instance_id": "dask__dask-6776",
+      "repo": "dask/dask",
+      "set": "primary",
+      "sampling_seed": 20260880
+    },
+    {
+      "task_index": 56,
+      "instance_id": "facebookresearch__hydra-2011",
+      "repo": "facebookresearch/hydra",
+      "set": "primary",
+      "sampling_seed": 20260881
+    },
+    {
+      "task_index": 57,
+      "instance_id": "getmoto__moto-4990",
+      "repo": "getmoto/moto",
+      "set": "primary",
+      "sampling_seed": 20260882
+    },
+    {
+      "task_index": 58,
+      "instance_id": "iterative__dvc-3876",
+      "repo": "iterative/dvc",
+      "set": "primary",
+      "sampling_seed": 20260883
+    },
+    {
+      "task_index": 59,
+      "instance_id": "modin-project__modin-6673",
+      "repo": "modin-project/modin",
+      "set": "primary",
+      "sampling_seed": 20260884
+    },
+    {
+      "task_index": 60,
+      "instance_id": "pandas-dev__pandas-48111",
+      "repo": "pandas-dev/pandas",
+      "set": "primary",
+      "sampling_seed": 20260885
+    },
+    {
+      "task_index": 61,
+      "instance_id": "pydantic__pydantic-6293",
+      "repo": "pydantic/pydantic",
+      "set": "primary",
+      "sampling_seed": 20260886
+    },
+    {
+      "task_index": 62,
+      "instance_id": "python__mypy-11290",
+      "repo": "python/mypy",
+      "set": "primary",
+      "sampling_seed": 20260887
+    },
+    {
+      "task_index": 63,
+      "instance_id": "Project-MONAI__MONAI-2553",
+      "repo": "Project-MONAI/MONAI",
+      "set": "primary",
+      "sampling_seed": 20260888
+    },
+    {
+      "task_index": 64,
+      "instance_id": "conan-io__conan-14532",
+      "repo": "conan-io/conan",
+      "set": "primary",
+      "sampling_seed": 20260889
+    },
+    {
+      "task_index": 65,
+      "instance_id": "dask__dask-6818",
+      "repo": "dask/dask",
+      "set": "primary",
+      "sampling_seed": 20260890
+    },
+    {
+      "task_index": 66,
+      "instance_id": "facebookresearch__hydra-625",
+      "repo": "facebookresearch/hydra",
+      "set": "primary",
+      "sampling_seed": 20260891
+    },
+    {
+      "task_index": 67,
+      "instance_id": "getmoto__moto-5020",
+      "repo": "getmoto/moto",
+      "set": "primary",
+      "sampling_seed": 20260892
+    },
+    {
+      "task_index": 68,
+      "instance_id": "iterative__dvc-3914",
+      "repo": "iterative/dvc",
+      "set": "primary",
+      "sampling_seed": 20260893
+    },
+    {
+      "task_index": 69,
+      "instance_id": "modin-project__modin-6763",
+      "repo": "modin-project/modin",
+      "set": "primary",
+      "sampling_seed": 20260894
+    },
+    {
+      "task_index": 70,
+      "instance_id": "pandas-dev__pandas-48178",
+      "repo": "pandas-dev/pandas",
+      "set": "primary",
+      "sampling_seed": 20260895
+    },
+    {
+      "task_index": 71,
+      "instance_id": "pydantic__pydantic-8437",
+      "repo": "pydantic/pydantic",
+      "set": "primary",
+      "sampling_seed": 20260896
+    },
+    {
+      "task_index": 72,
+      "instance_id": "python__mypy-11292",
+      "repo": "python/mypy",
+      "set": "primary",
+      "sampling_seed": 20260897
+    },
+    {
+      "task_index": 73,
+      "instance_id": "Project-MONAI__MONAI-3042",
+      "repo": "Project-MONAI/MONAI",
+      "set": "primary",
+      "sampling_seed": 20260898
+    },
+    {
+      "task_index": 74,
+      "instance_id": "conan-io__conan-14709",
+      "repo": "conan-io/conan",
+      "set": "primary",
+      "sampling_seed": 20260899
+    },
+    {
+      "task_index": 75,
+      "instance_id": "dask__dask-7073",
+      "repo": "dask/dask",
+      "set": "primary",
+      "sampling_seed": 20260900
+    },
+    {
+      "task_index": 76,
+      "instance_id": "getmoto__moto-5117",
+      "repo": "getmoto/moto",
+      "set": "primary",
+      "sampling_seed": 20260901
+    },
+    {
+      "task_index": 77,
+      "instance_id": "iterative__dvc-3992",
+      "repo": "iterative/dvc",
+      "set": "primary",
+      "sampling_seed": 20260902
+    },
+    {
+      "task_index": 78,
+      "instance_id": "modin-project__modin-6884",
+      "repo": "modin-project/modin",
+      "set": "primary",
+      "sampling_seed": 20260903
+    },
+    {
+      "task_index": 79,
+      "instance_id": "pandas-dev__pandas-48246",
+      "repo": "pandas-dev/pandas",
+      "set": "primary",
+      "sampling_seed": 20260904
+    },
+    {
+      "task_index": 80,
+      "instance_id": "pydantic__pydantic-9137",
+      "repo": "pydantic/pydantic",
+      "set": "remainder",
+      "sampling_seed": 20260905
+    },
+    {
+      "task_index": 81,
+      "instance_id": "python__mypy-11361",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260906
+    },
+    {
+      "task_index": 82,
+      "instance_id": "Project-MONAI__MONAI-3289",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260907
+    },
+    {
+      "task_index": 83,
+      "instance_id": "dask__dask-7092",
+      "repo": "dask/dask",
+      "set": "remainder",
+      "sampling_seed": 20260908
+    },
+    {
+      "task_index": 84,
+      "instance_id": "getmoto__moto-5202",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260909
+    },
+    {
+      "task_index": 85,
+      "instance_id": "iterative__dvc-4059",
+      "repo": "iterative/dvc",
+      "set": "remainder",
+      "sampling_seed": 20260910
+    },
+    {
+      "task_index": 86,
+      "instance_id": "modin-project__modin-6957",
+      "repo": "modin-project/modin",
+      "set": "remainder",
+      "sampling_seed": 20260911
+    },
+    {
+      "task_index": 87,
+      "instance_id": "pandas-dev__pandas-48555",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260912
+    },
+    {
+      "task_index": 88,
+      "instance_id": "python__mypy-11457",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260913
+    },
+    {
+      "task_index": 89,
+      "instance_id": "Project-MONAI__MONAI-3419",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260914
+    },
+    {
+      "task_index": 90,
+      "instance_id": "dask__dask-8283",
+      "repo": "dask/dask",
+      "set": "remainder",
+      "sampling_seed": 20260915
+    },
+    {
+      "task_index": 91,
+      "instance_id": "getmoto__moto-5216",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260916
+    },
+    {
+      "task_index": 92,
+      "instance_id": "iterative__dvc-4066",
+      "repo": "iterative/dvc",
+      "set": "remainder",
+      "sampling_seed": 20260917
+    },
+    {
+      "task_index": 93,
+      "instance_id": "modin-project__modin-7018",
+      "repo": "modin-project/modin",
+      "set": "remainder",
+      "sampling_seed": 20260918
+    },
+    {
+      "task_index": 94,
+      "instance_id": "pandas-dev__pandas-48640",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260919
+    },
+    {
+      "task_index": 95,
+      "instance_id": "python__mypy-12048",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260920
+    },
+    {
+      "task_index": 96,
+      "instance_id": "Project-MONAI__MONAI-3469",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260921
+    },
+    {
+      "task_index": 97,
+      "instance_id": "dask__dask-8525",
+      "repo": "dask/dask",
+      "set": "remainder",
+      "sampling_seed": 20260922
+    },
+    {
+      "task_index": 98,
+      "instance_id": "getmoto__moto-5460",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260923
+    },
+    {
+      "task_index": 99,
+      "instance_id": "iterative__dvc-4185",
+      "repo": "iterative/dvc",
+      "set": "remainder",
+      "sampling_seed": 20260924
+    },
+    {
+      "task_index": 100,
+      "instance_id": "modin-project__modin-7140",
+      "repo": "modin-project/modin",
+      "set": "remainder",
+      "sampling_seed": 20260925
+    },
+    {
+      "task_index": 101,
+      "instance_id": "pandas-dev__pandas-48643",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260926
+    },
+    {
+      "task_index": 102,
+      "instance_id": "python__mypy-12951",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260927
+    },
+    {
+      "task_index": 103,
+      "instance_id": "Project-MONAI__MONAI-3478",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260928
+    },
+    {
+      "task_index": 104,
+      "instance_id": "dask__dask-8785",
+      "repo": "dask/dask",
+      "set": "remainder",
+      "sampling_seed": 20260929
+    },
+    {
+      "task_index": 105,
+      "instance_id": "getmoto__moto-5562",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260930
+    },
+    {
+      "task_index": 106,
+      "instance_id": "iterative__dvc-4961",
+      "repo": "iterative/dvc",
+      "set": "remainder",
+      "sampling_seed": 20260931
+    },
+    {
+      "task_index": 107,
+      "instance_id": "pandas-dev__pandas-48995",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260932
+    },
+    {
+      "task_index": 108,
+      "instance_id": "python__mypy-13678",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260933
+    },
+    {
+      "task_index": 109,
+      "instance_id": "Project-MONAI__MONAI-3547",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260934
+    },
+    {
+      "task_index": 110,
+      "instance_id": "dask__dask-9272",
+      "repo": "dask/dask",
+      "set": "remainder",
+      "sampling_seed": 20260935
+    },
+    {
+      "task_index": 111,
+      "instance_id": "getmoto__moto-5582",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260936
+    },
+    {
+      "task_index": 112,
+      "instance_id": "iterative__dvc-4976",
+      "repo": "iterative/dvc",
+      "set": "remainder",
+      "sampling_seed": 20260937
+    },
+    {
+      "task_index": 113,
+      "instance_id": "pandas-dev__pandas-49080",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260938
+    },
+    {
+      "task_index": 114,
+      "instance_id": "python__mypy-14206",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260939
+    },
+    {
+      "task_index": 115,
+      "instance_id": "Project-MONAI__MONAI-3619",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260940
+    },
+    {
+      "task_index": 116,
+      "instance_id": "dask__dask-9349",
+      "repo": "dask/dask",
+      "set": "remainder",
+      "sampling_seed": 20260941
+    },
+    {
+      "task_index": 117,
+      "instance_id": "getmoto__moto-5634",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260942
+    },
+    {
+      "task_index": 118,
+      "instance_id": "iterative__dvc-4977",
+      "repo": "iterative/dvc",
+      "set": "remainder",
+      "sampling_seed": 20260943
+    },
+    {
+      "task_index": 119,
+      "instance_id": "pandas-dev__pandas-49290",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260944
+    },
+    {
+      "task_index": 120,
+      "instance_id": "python__mypy-15128",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260945
+    },
+    {
+      "task_index": 121,
+      "instance_id": "Project-MONAI__MONAI-3837",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260946
+    },
+    {
+      "task_index": 122,
+      "instance_id": "getmoto__moto-5701",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260947
+    },
+    {
+      "task_index": 123,
+      "instance_id": "iterative__dvc-4978",
+      "repo": "iterative/dvc",
+      "set": "remainder",
+      "sampling_seed": 20260948
+    },
+    {
+      "task_index": 124,
+      "instance_id": "pandas-dev__pandas-49378",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260949
+    },
+    {
+      "task_index": 125,
+      "instance_id": "python__mypy-15131",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260950
+    },
+    {
+      "task_index": 126,
+      "instance_id": "Project-MONAI__MONAI-4249",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260951
+    },
+    {
+      "task_index": 127,
+      "instance_id": "getmoto__moto-5731",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260952
+    },
+    {
+      "task_index": 128,
+      "instance_id": "iterative__dvc-5148",
+      "repo": "iterative/dvc",
+      "set": "remainder",
+      "sampling_seed": 20260953
+    },
+    {
+      "task_index": 129,
+      "instance_id": "pandas-dev__pandas-49486",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260954
+    },
+    {
+      "task_index": 130,
+      "instance_id": "python__mypy-15208",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260955
+    },
+    {
+      "task_index": 131,
+      "instance_id": "Project-MONAI__MONAI-4567",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260956
+    },
+    {
+      "task_index": 132,
+      "instance_id": "getmoto__moto-5745",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260957
+    },
+    {
+      "task_index": 133,
+      "instance_id": "iterative__dvc-5161",
+      "repo": "iterative/dvc",
+      "set": "remainder",
+      "sampling_seed": 20260958
+    },
+    {
+      "task_index": 134,
+      "instance_id": "pandas-dev__pandas-49579",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260959
+    },
+    {
+      "task_index": 135,
+      "instance_id": "python__mypy-15327",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260960
+    },
+    {
+      "task_index": 136,
+      "instance_id": "Project-MONAI__MONAI-459",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260961
+    },
+    {
+      "task_index": 137,
+      "instance_id": "getmoto__moto-6019",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260962
+    },
+    {
+      "task_index": 138,
+      "instance_id": "iterative__dvc-5264",
+      "repo": "iterative/dvc",
+      "set": "remainder",
+      "sampling_seed": 20260963
+    },
+    {
+      "task_index": 139,
+      "instance_id": "pandas-dev__pandas-49658",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260964
+    },
+    {
+      "task_index": 140,
+      "instance_id": "python__mypy-15355",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260965
+    },
+    {
+      "task_index": 141,
+      "instance_id": "Project-MONAI__MONAI-4601",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260966
+    },
+    {
+      "task_index": 142,
+      "instance_id": "getmoto__moto-6049",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260967
+    },
+    {
+      "task_index": 143,
+      "instance_id": "iterative__dvc-5550",
+      "repo": "iterative/dvc",
+      "set": "remainder",
+      "sampling_seed": 20260968
+    },
+    {
+      "task_index": 144,
+      "instance_id": "pandas-dev__pandas-50148",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260969
+    },
+    {
+      "task_index": 145,
+      "instance_id": "python__mypy-15366",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260970
+    },
+    {
+      "task_index": 146,
+      "instance_id": "Project-MONAI__MONAI-4843",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260971
+    },
+    {
+      "task_index": 147,
+      "instance_id": "getmoto__moto-6106",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260972
+    },
+    {
+      "task_index": 148,
+      "instance_id": "iterative__dvc-6566",
+      "repo": "iterative/dvc",
+      "set": "remainder",
+      "sampling_seed": 20260973
+    },
+    {
+      "task_index": 149,
+      "instance_id": "pandas-dev__pandas-50151",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260974
+    },
+    {
+      "task_index": 150,
+      "instance_id": "python__mypy-15490",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260975
+    },
+    {
+      "task_index": 151,
+      "instance_id": "Project-MONAI__MONAI-5182",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260976
+    },
+    {
+      "task_index": 152,
+      "instance_id": "getmoto__moto-6350",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260977
+    },
+    {
+      "task_index": 153,
+      "instance_id": "iterative__dvc-6600",
+      "repo": "iterative/dvc",
+      "set": "remainder",
+      "sampling_seed": 20260978
+    },
+    {
+      "task_index": 154,
+      "instance_id": "pandas-dev__pandas-50316",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260979
+    },
+    {
+      "task_index": 155,
+      "instance_id": "python__mypy-15624",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260980
+    },
+    {
+      "task_index": 156,
+      "instance_id": "Project-MONAI__MONAI-5208",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260981
+    },
+    {
+      "task_index": 157,
+      "instance_id": "getmoto__moto-6352",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260982
+    },
+    {
+      "task_index": 158,
+      "instance_id": "iterative__dvc-8129",
+      "repo": "iterative/dvc",
+      "set": "remainder",
+      "sampling_seed": 20260983
+    },
+    {
+      "task_index": 159,
+      "instance_id": "pandas-dev__pandas-50319",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260984
+    },
+    {
+      "task_index": 160,
+      "instance_id": "python__mypy-15700",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260985
+    },
+    {
+      "task_index": 161,
+      "instance_id": "Project-MONAI__MONAI-524",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260986
+    },
+    {
+      "task_index": 162,
+      "instance_id": "getmoto__moto-6376",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260987
+    },
+    {
+      "task_index": 163,
+      "instance_id": "pandas-dev__pandas-50322",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260988
+    },
+    {
+      "task_index": 164,
+      "instance_id": "python__mypy-15876",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260989
+    },
+    {
+      "task_index": 165,
+      "instance_id": "Project-MONAI__MONAI-5428",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260990
+    },
+    {
+      "task_index": 166,
+      "instance_id": "getmoto__moto-6535",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260991
+    },
+    {
+      "task_index": 167,
+      "instance_id": "pandas-dev__pandas-50435",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260992
+    },
+    {
+      "task_index": 168,
+      "instance_id": "python__mypy-16154",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260993
+    },
+    {
+      "task_index": 169,
+      "instance_id": "Project-MONAI__MONAI-5507",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260994
+    },
+    {
+      "task_index": 170,
+      "instance_id": "getmoto__moto-6536",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260995
+    },
+    {
+      "task_index": 171,
+      "instance_id": "pandas-dev__pandas-50444",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20260996
+    },
+    {
+      "task_index": 172,
+      "instance_id": "python__mypy-5617",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20260997
+    },
+    {
+      "task_index": 173,
+      "instance_id": "Project-MONAI__MONAI-5856",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20260998
+    },
+    {
+      "task_index": 174,
+      "instance_id": "getmoto__moto-6567",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20260999
+    },
+    {
+      "task_index": 175,
+      "instance_id": "pandas-dev__pandas-50505",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261000
+    },
+    {
+      "task_index": 176,
+      "instance_id": "python__mypy-9097",
+      "repo": "python/mypy",
+      "set": "remainder",
+      "sampling_seed": 20261001
+    },
+    {
+      "task_index": 177,
+      "instance_id": "Project-MONAI__MONAI-5932",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20261002
+    },
+    {
+      "task_index": 178,
+      "instance_id": "getmoto__moto-6716",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20261003
+    },
+    {
+      "task_index": 179,
+      "instance_id": "pandas-dev__pandas-50506",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261004
+    },
+    {
+      "task_index": 180,
+      "instance_id": "Project-MONAI__MONAI-5950",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20261005
+    },
+    {
+      "task_index": 181,
+      "instance_id": "getmoto__moto-6746",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20261006
+    },
+    {
+      "task_index": 182,
+      "instance_id": "pandas-dev__pandas-50507",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261007
+    },
+    {
+      "task_index": 183,
+      "instance_id": "Project-MONAI__MONAI-5980",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20261008
+    },
+    {
+      "task_index": 184,
+      "instance_id": "getmoto__moto-6802",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20261009
+    },
+    {
+      "task_index": 185,
+      "instance_id": "pandas-dev__pandas-50876",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261010
+    },
+    {
+      "task_index": 186,
+      "instance_id": "Project-MONAI__MONAI-6034",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20261011
+    },
+    {
+      "task_index": 187,
+      "instance_id": "getmoto__moto-6884",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20261012
+    },
+    {
+      "task_index": 188,
+      "instance_id": "pandas-dev__pandas-50930",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261013
+    },
+    {
+      "task_index": 189,
+      "instance_id": "Project-MONAI__MONAI-6144",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20261014
+    },
+    {
+      "task_index": 190,
+      "instance_id": "getmoto__moto-6885",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20261015
+    },
+    {
+      "task_index": 191,
+      "instance_id": "pandas-dev__pandas-51048",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261016
+    },
+    {
+      "task_index": 192,
+      "instance_id": "Project-MONAI__MONAI-6271",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20261017
+    },
+    {
+      "task_index": 193,
+      "instance_id": "getmoto__moto-6919",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20261018
+    },
+    {
+      "task_index": 194,
+      "instance_id": "pandas-dev__pandas-51057",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261019
+    },
+    {
+      "task_index": 195,
+      "instance_id": "Project-MONAI__MONAI-6459",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20261020
+    },
+    {
+      "task_index": 196,
+      "instance_id": "getmoto__moto-7102",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20261021
+    },
+    {
+      "task_index": 197,
+      "instance_id": "pandas-dev__pandas-51398",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261022
+    },
+    {
+      "task_index": 198,
+      "instance_id": "Project-MONAI__MONAI-646",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20261023
+    },
+    {
+      "task_index": 199,
+      "instance_id": "getmoto__moto-7490",
+      "repo": "getmoto/moto",
+      "set": "remainder",
+      "sampling_seed": 20261024
+    },
+    {
+      "task_index": 200,
+      "instance_id": "pandas-dev__pandas-51542",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261025
+    },
+    {
+      "task_index": 201,
+      "instance_id": "Project-MONAI__MONAI-6975",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20261026
+    },
+    {
+      "task_index": 202,
+      "instance_id": "pandas-dev__pandas-51548",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261027
+    },
+    {
+      "task_index": 203,
+      "instance_id": "Project-MONAI__MONAI-6977",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20261028
+    },
+    {
+      "task_index": 204,
+      "instance_id": "pandas-dev__pandas-51756",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261029
+    },
+    {
+      "task_index": 205,
+      "instance_id": "Project-MONAI__MONAI-7749",
+      "repo": "Project-MONAI/MONAI",
+      "set": "remainder",
+      "sampling_seed": 20261030
+    },
+    {
+      "task_index": 206,
+      "instance_id": "pandas-dev__pandas-52096",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261031
+    },
+    {
+      "task_index": 207,
+      "instance_id": "pandas-dev__pandas-52174",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261032
+    },
+    {
+      "task_index": 208,
+      "instance_id": "pandas-dev__pandas-52177",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261033
+    },
+    {
+      "task_index": 209,
+      "instance_id": "pandas-dev__pandas-52180",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261034
+    },
+    {
+      "task_index": 210,
+      "instance_id": "pandas-dev__pandas-52337",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261035
+    },
+    {
+      "task_index": 211,
+      "instance_id": "pandas-dev__pandas-52518",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261036
+    },
+    {
+      "task_index": 212,
+      "instance_id": "pandas-dev__pandas-52528",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261037
+    },
+    {
+      "task_index": 213,
+      "instance_id": "pandas-dev__pandas-53060",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261038
+    },
+    {
+      "task_index": 214,
+      "instance_id": "pandas-dev__pandas-53419",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261039
+    },
+    {
+      "task_index": 215,
+      "instance_id": "pandas-dev__pandas-53443",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261040
+    },
+    {
+      "task_index": 216,
+      "instance_id": "pandas-dev__pandas-53458",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261041
+    },
+    {
+      "task_index": 217,
+      "instance_id": "pandas-dev__pandas-53769",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261042
+    },
+    {
+      "task_index": 218,
+      "instance_id": "pandas-dev__pandas-53962",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261043
+    },
+    {
+      "task_index": 219,
+      "instance_id": "pandas-dev__pandas-54087",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261044
+    },
+    {
+      "task_index": 220,
+      "instance_id": "pandas-dev__pandas-54234",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261045
+    },
+    {
+      "task_index": 221,
+      "instance_id": "pandas-dev__pandas-54388",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261046
+    },
+    {
+      "task_index": 222,
+      "instance_id": "pandas-dev__pandas-55249",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261047
+    },
+    {
+      "task_index": 223,
+      "instance_id": "pandas-dev__pandas-55257",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261048
+    },
+    {
+      "task_index": 224,
+      "instance_id": "pandas-dev__pandas-55258",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261049
+    },
+    {
+      "task_index": 225,
+      "instance_id": "pandas-dev__pandas-55259",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261050
+    },
+    {
+      "task_index": 226,
+      "instance_id": "pandas-dev__pandas-55395",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261051
+    },
+    {
+      "task_index": 227,
+      "instance_id": "pandas-dev__pandas-55562",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261052
+    },
+    {
+      "task_index": 228,
+      "instance_id": "pandas-dev__pandas-55568",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261053
+    },
+    {
+      "task_index": 229,
+      "instance_id": "pandas-dev__pandas-55678",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261054
+    },
+    {
+      "task_index": 230,
+      "instance_id": "pandas-dev__pandas-55793",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261055
+    },
+    {
+      "task_index": 231,
+      "instance_id": "pandas-dev__pandas-55929",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261056
+    },
+    {
+      "task_index": 232,
+      "instance_id": "pandas-dev__pandas-56291",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261057
+    },
+    {
+      "task_index": 233,
+      "instance_id": "pandas-dev__pandas-56352",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261058
+    },
+    {
+      "task_index": 234,
+      "instance_id": "pandas-dev__pandas-56371",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261059
+    },
+    {
+      "task_index": 235,
+      "instance_id": "pandas-dev__pandas-56412",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261060
+    },
+    {
+      "task_index": 236,
+      "instance_id": "pandas-dev__pandas-56788",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261061
+    },
+    {
+      "task_index": 237,
+      "instance_id": "pandas-dev__pandas-57232",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261062
+    },
+    {
+      "task_index": 238,
+      "instance_id": "pandas-dev__pandas-57372",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261063
+    },
+    {
+      "task_index": 239,
+      "instance_id": "pandas-dev__pandas-57375",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261064
+    },
+    {
+      "task_index": 240,
+      "instance_id": "pandas-dev__pandas-57474",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261065
+    },
+    {
+      "task_index": 241,
+      "instance_id": "pandas-dev__pandas-57865",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261066
+    },
+    {
+      "task_index": 242,
+      "instance_id": "pandas-dev__pandas-58172",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261067
+    },
+    {
+      "task_index": 243,
+      "instance_id": "pandas-dev__pandas-58250",
+      "repo": "pandas-dev/pandas",
+      "set": "remainder",
+      "sampling_seed": 20261068
+    }
+  ]
+}

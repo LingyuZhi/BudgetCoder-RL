@@ -6,8 +6,9 @@ ground truth. Observations are encoded once via ``apply_chat_template``
 (``role=user``, ``remove_system_prompt=True``) and appended. History is
 never decoded and re-encoded.
 
-Does not look up evaluator oracles or compute reward. Observation-token
-budget accounting uses inserted observation token IDs only.
+Does not look up evaluator oracles or compute reward. Primary observation
+budget (``bcrl-bobs-v2``) counts inserted ``# bcrl-obs-v1`` tokens only.
+Visible ``# bcrl-budget-v1`` envelope tokens are logged separately.
 """
 
 from __future__ import annotations
@@ -24,8 +25,7 @@ from verl.workers.rollout.replica import TokenOutput
 
 from budget_coder_rl.agent_loop.tokenization import decode_for_parser
 from budget_coder_rl.budget.state import (
-    BUDGET_HEADER_MAX_ITERS,
-    BudgetHeaderFixpointError,
+    BUDGET_ACCOUNTING_VERSION,
     BudgetState,
     resolve_episode_budget,
     wrap_observation_with_budget,
@@ -107,11 +107,14 @@ class RepoExplorationAgentLoop(AgentLoopBase):
         )
         request_id = uuid4().hex
         metrics: dict[str, Any] = {}
+        sampling_seed = _coerce_optional_seed(extra_info.get("sampling_seed"))
         sampling_record = {
             "temperature": sampling_params.get("temperature"),
             "top_p": sampling_params.get("top_p"),
             "top_k": sampling_params.get("top_k"),
         }
+        if sampling_seed is not None:
+            sampling_record["seed"] = sampling_seed
 
         prompt_ids = await self.apply_chat_template(messages)
         if len(prompt_ids) > self.prompt_length:
@@ -134,8 +137,8 @@ class RepoExplorationAgentLoop(AgentLoopBase):
         submission: dict[str, Any] | None = None
         assistant_turns = 0
         observation_turns = 0
-        inserted_obs_tokens = 0
-        inserted_tool_obs_tokens = 0
+        inserted_env_tokens = 0
+        inserted_repo_obs_tokens = 0
         num_preempted = -1
 
         for _turn in range(self.max_turns):
@@ -150,6 +153,9 @@ class RepoExplorationAgentLoop(AgentLoopBase):
                 **sampling_params,
                 "max_tokens": max_tokens,
             }
+            turn_params.pop("do_sample", None)
+            if sampling_seed is not None:
+                turn_params["seed"] = sampling_seed
             with simple_timer("generate_sequences", metrics):
                 output: TokenOutput = await self.server_manager.generate(
                     request_id=request_id,
@@ -221,9 +227,10 @@ class RepoExplorationAgentLoop(AgentLoopBase):
             event = research_events[-1]
             event["observation_token_count"] = len(obs_ids)
             event["tool_observation_token_count"] = tool_obs_n
+            event["budget_metadata_token_count"] = len(obs_ids) - tool_obs_n
             event["would_be_observation_token_count"] = len(obs_ids)
 
-            if not budget.can_insert(len(obs_ids)):
+            if not budget.can_insert(tool_obs_n):
                 termination = "budget_exhausted"
                 event["inserted"] = False
                 event["budget_after"] = budget.as_dict()
@@ -237,9 +244,9 @@ class RepoExplorationAgentLoop(AgentLoopBase):
             response_ids.extend(obs_ids)
             response_mask.extend([0] * len(obs_ids))
             observation_turns += 1
-            budget.consume(len(obs_ids))
-            inserted_obs_tokens += len(obs_ids)
-            inserted_tool_obs_tokens += tool_obs_n
+            budget.consume(tool_obs_n)
+            inserted_env_tokens += len(obs_ids)
+            inserted_repo_obs_tokens += tool_obs_n
             segments.append({"kind": "observation", "token_ids": list(obs_ids)})
             event["inserted"] = True
             event["budget_after"] = budget.as_dict()
@@ -253,10 +260,14 @@ class RepoExplorationAgentLoop(AgentLoopBase):
         metrics["num_preempted"] = num_preempted
         assert len(response_ids) == len(response_mask)
         policy_token_count = int(sum(response_mask))
-        assert inserted_obs_tokens == sum(
+        inserted_env_check = sum(
             len(item["token_ids"]) for item in segments if item["kind"] == "observation"
         )
-        assert inserted_obs_tokens == budget.obs_tokens_used
+        assert inserted_env_tokens == inserted_env_check
+        assert inserted_repo_obs_tokens == budget.obs_tokens_used
+        inserted_metadata_tokens = inserted_env_tokens - inserted_repo_obs_tokens
+        if inserted_metadata_tokens < 0:
+            raise RuntimeError("budget metadata token count went negative")
 
         output = AgentLoopOutput(
             prompt_ids=prompt_ids,
@@ -281,14 +292,19 @@ class RepoExplorationAgentLoop(AgentLoopBase):
                 "unpadded_prompt_ids": list(prompt_ids),
                 "prompt_token_count": len(prompt_ids),
                 "policy_token_count": policy_token_count,
-                "observation_token_count": inserted_obs_tokens,
-                "tool_observation_token_count": inserted_tool_obs_tokens,
+                "observation_token_count": inserted_env_tokens,
+                "tool_observation_token_count": inserted_repo_obs_tokens,
+                "repo_observation_tokens": inserted_repo_obs_tokens,
+                "budget_metadata_tokens": inserted_metadata_tokens,
+                "total_env_tokens": inserted_env_tokens,
                 "obs_tokens_used": budget.obs_tokens_used,
                 "obs_tokens_limit": obs_tokens_limit,
                 "obs_tokens_remaining": budget.obs_tokens_remaining,
+                "budget_accounting_version": BUDGET_ACCOUNTING_VERSION,
                 "budget_visible": budget_visible,
                 "budget_exhausted": termination == "budget_exhausted",
                 "sampling_params": sampling_record,
+                "sampling_seed": sampling_seed,
                 "max_turns": self.max_turns,
                 "max_new_tokens_per_turn": self.max_new_tokens_per_turn,
                 "model_name_or_path": getattr(self.tokenizer, "name_or_path", None),
@@ -312,35 +328,23 @@ class RepoExplorationAgentLoop(AgentLoopBase):
         budget: BudgetState,
         visible: bool,
     ) -> tuple[list[int], str, int]:
+        v1_ids = await self._encode_user_message(v1_text)
+        v1_n = len(v1_ids)
         if not visible:
-            ids = await self._encode_user_message(v1_text)
-            return ids, v1_text, len(ids)
+            return v1_ids, v1_text, v1_n
 
         if budget.obs_tokens_limit is None:
             raise RuntimeError("visible observation encode requires obs_tokens_limit")
-        used_before = budget.obs_tokens_used
-        displayed_used = used_before
-        last_ids: list[int] | None = None
-        for _ in range(BUDGET_HEADER_MAX_ITERS):
-            tentative = BudgetState(
-                obs_tokens_used=displayed_used,
-                obs_tokens_limit=budget.obs_tokens_limit,
-                turns_used=budget.turns_used,
-                turns_limit=budget.turns_limit,
-            )
-            content = wrap_observation_with_budget(v1_text, tentative)
-            ids = await self._encode_user_message(content)
-            last_ids = ids
-            used_after = used_before + len(ids)
-            if displayed_used == used_after:
-                v1_ids = await self._encode_user_message(v1_text)
-                return ids, content, len(v1_ids)
-            displayed_used = used_after
-        raise BudgetHeaderFixpointError(
-            "bcrl-budget-v1 header fixpoint did not converge after "
-            f"{BUDGET_HEADER_MAX_ITERS} iterations (used_before={used_before}, "
-            f"last_encoded={0 if last_ids is None else len(last_ids)})"
+        displayed_used = budget.obs_tokens_used + v1_n
+        tentative = BudgetState(
+            obs_tokens_used=displayed_used,
+            obs_tokens_limit=budget.obs_tokens_limit,
+            turns_used=budget.turns_used,
+            turns_limit=budget.turns_limit,
         )
+        content = wrap_observation_with_budget(v1_text, tentative)
+        ids = await self._encode_user_message(content)
+        return ids, content, v1_n
 
 
 def _research_action(text: str) -> tuple[str | None, dict[str, Any] | None, str | None]:
@@ -393,3 +397,23 @@ def _coerce_mapping(value: Any) -> dict[str, Any]:
     if hasattr(value, "items"):
         return {str(key): val for key, val in value.items()}
     return {}
+
+
+def _coerce_optional_seed(value: Any) -> int | None:
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        raise ValueError("sampling_seed must be an int or None, not bool")
+    if hasattr(value, "item") and not isinstance(value, (bytes, str)):
+        try:
+            value = value.item()
+        except (TypeError, ValueError):
+            pass
+        if isinstance(value, bool):
+            raise ValueError("sampling_seed must be an int or None, not bool")
+    if isinstance(value, str):
+        stripped = value.strip().lower()
+        if stripped in {"", "none", "null"}:
+            return None
+        return int(stripped)
+    return int(value)
