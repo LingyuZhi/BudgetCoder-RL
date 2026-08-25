@@ -1,0 +1,10 @@
+{
+  "path": "configs/experiments/stage1_m5b_e011_runtime.json",
+  "sha256": "69f149b74e0a39276655bc0f832a16c0535724ef4a302f18a6d0a8aedc6a2804",
+  "parent_path": "configs/experiments/stage1_m5_main.json",
+  "parent_sha256": "fac90e49b1c3d6bc42beff57cdc73a407b2d9f88cb83f748dc4670d6dfc9837b",
+  "experiment_id": "E011",
+  "milestone": "M5B",
+  "scope": "resource/systems only",
+  "note": "Do not edit stage1_m5_main.json. Overlay hash is independent provenance for E011 2-GPU launch."
+}

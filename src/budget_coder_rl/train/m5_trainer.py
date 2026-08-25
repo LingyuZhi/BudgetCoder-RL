@@ -22,6 +22,7 @@ from budget_coder_rl.eval.m5a import (
     compact_episode_from_extra,
     compute_bcrl_step_metrics,
 )
+from budget_coder_rl.eval.m5b import HARD_STOP_ENV, PLACEMENT_ENV
 from budget_coder_rl.train.m4b_trainer import (
     _row_extra_fields,
     m4b_collate_fn,
@@ -192,7 +193,16 @@ def install_metrics_jsonl_logger(output_dir: Path) -> None:
                 {"error": f"{type(exc).__name__}: {exc}"},
             )
         _persist_wandb_run(output_dir)
-        return original_log(self, data, step, backend=backend)
+        result = original_log(self, data, step, backend=backend)
+        if os.environ.get(HARD_STOP_ENV) == "1":
+            from budget_coder_rl.eval.m5b import inspect_step_metrics_for_hard_stop
+
+            inspect_step_metrics_for_hard_stop(
+                data if isinstance(data, MappingABC) else payload["metrics"],
+                step=int(step),
+                output_dir=output_dir,
+            )
+        return result
 
     wrapped_init._bcrl_m5 = True
     wrapped_log._bcrl_m5 = True
@@ -312,4 +322,60 @@ class M5TaskRunner(TaskRunner):
             train_sampler=train_sampler,
         )
         trainer.init_workers()
+        if os.environ.get(PLACEMENT_ENV) == "1":
+            _dump_placement(trainer, config, output_dir)
         trainer.fit()
+
+
+def _dump_placement(trainer, config, output_dir: Path) -> None:
+    from budget_coder_rl.eval.m5b import expected_hybrid_placement, placement_errors
+
+    n_gpus = int(config.trainer.n_gpus_per_node)
+    rollout = config.actor_rollout_ref.rollout
+    tp = int(rollout.tensor_model_parallel_size)
+    dp = int(getattr(rollout, "data_parallel_size", 1) or 1)
+    pp = int(getattr(rollout, "pipeline_model_parallel_size", 1) or 1)
+    expected = expected_hybrid_placement(
+        n_gpus=n_gpus,
+        tensor_model_parallel_size=tp,
+        data_parallel_size=dp,
+        pipeline_model_parallel_size=pp,
+    )
+    resources: dict[str, Any] = {}
+    try:
+        resources = dict(ray.cluster_resources())
+    except Exception as exc:
+        resources = {"error": f"{type(exc).__name__}: {exc}"}
+    wg = getattr(trainer, "actor_rollout_wg", None)
+    world = getattr(wg, "world_size", None)
+    payload = {
+        "hostname": socket.gethostname(),
+        "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
+        "trainer.n_gpus_per_node": n_gpus,
+        "trainer.nnodes": int(config.trainer.nnodes),
+        "rollout.tensor_model_parallel_size": tp,
+        "rollout.data_parallel_size": dp,
+        "rollout.n": int(getattr(rollout, "n", 0) or 0),
+        "actor_rollout_wg.world_size": world,
+        "ray_cluster_resources_gpu": resources.get("GPU"),
+        "ray_cluster_resources": {
+            key: resources.get(key)
+            for key in ("GPU", "CPU", "memory", "object_store_memory")
+            if key in resources
+        },
+        "expected": expected,
+        "fsdp_world_size": world if world is not None else n_gpus,
+        "n_vllm_replicas": expected["n_vllm_replicas"],
+        "vllm_tensor_model_parallel_size": tp,
+    }
+    payload["placement_errors"] = placement_errors(
+        {
+            "fsdp_world_size": payload["fsdp_world_size"],
+            "vllm_tensor_model_parallel_size": tp,
+            "n_vllm_replicas": expected["n_vllm_replicas"],
+        },
+        n_gpus=n_gpus,
+        tensor_model_parallel_size=tp,
+    )
+    write_json(Path(output_dir) / "placement.json", payload)
+    print(f"E011 placement: {payload}")

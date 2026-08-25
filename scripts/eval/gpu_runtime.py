@@ -119,6 +119,94 @@ def pick_free_gpu() -> dict[str, Any]:
     }
 
 
+def require_visible_gpus(n: int = 2, *, idle: bool = True) -> dict[str, Any]:
+    """Require exactly ``n`` visible GPUs. Never silently fall back to 1 GPU."""
+    existing = os.environ.get("CUDA_VISIBLE_DEVICES")
+    try:
+        raw = subprocess.check_output(
+            [
+                "nvidia-smi",
+                "--query-gpu=index,name,memory.used,memory.total,utilization.gpu",
+                "--format=csv,noheader,nounits",
+            ],
+            text=True,
+        )
+    except Exception as exc:
+        raise SystemExit(f"HARD FAIL: nvidia-smi failed while requiring {n} GPUs: {exc}") from exc
+    physical: list[dict[str, Any]] = []
+    for line in raw.splitlines():
+        parts = [item.strip() for item in line.split(",")]
+        if len(parts) < 4:
+            continue
+        physical.append(
+            {
+                "index": int(float(parts[0])),
+                "name": parts[1],
+                "memory_used_mi": int(float(parts[2])),
+                "memory_total_mi": int(float(parts[3])),
+                "util": int(float(parts[4])) if len(parts) > 4 and parts[4] else 0,
+            }
+        )
+    if existing not in {None, ""}:
+        wanted = [item.strip() for item in str(existing).split(",") if item.strip()]
+        if len(wanted) != int(n):
+            raise SystemExit(
+                f"HARD FAIL: CUDA_VISIBLE_DEVICES={existing!r} does not list exactly {n} GPUs"
+            )
+        selected = []
+        for token in wanted:
+            match = next((row for row in physical if str(row["index"]) == token), None)
+            if match is None and token.isdigit() and int(token) < len(physical):
+                match = physical[int(token)]
+                match = {**match, "visible_index": int(token)}
+            if match is None:
+                raise SystemExit(
+                    f"HARD FAIL: CUDA_VISIBLE_DEVICES token {token!r} is not a visible GPU"
+                )
+            selected.append(match)
+        if idle:
+            busy = [
+                row
+                for row in selected
+                if int(row["memory_used_mi"]) >= 512 or int(row["util"]) >= 5
+            ]
+            if busy:
+                raise SystemExit(
+                    f"HARD FAIL: required GPUs are busy: {busy}. "
+                    "Unset leftover jobs or set CUDA_VISIBLE_DEVICES to idle devices."
+                )
+        os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(wanted)
+        return {
+            "cuda_visible_devices": ",".join(wanted),
+            "n_gpus": int(n),
+            "source": "env",
+            "physical": physical,
+            "selected": selected,
+        }
+    if len(physical) < int(n):
+        raise SystemExit(
+            f"HARD FAIL: need {n} GPUs, nvidia-smi reports {len(physical)}: {physical}"
+        )
+    selected = physical[: int(n)]
+    if idle:
+        busy = [
+            row
+            for row in selected
+            if int(row["memory_used_mi"]) >= 512 or int(row["util"]) >= 5
+        ]
+        if busy:
+            raise SystemExit(f"HARD FAIL: first {n} GPUs are busy: {busy}")
+    visible = ",".join(str(row["index"]) for row in selected)
+    os.environ["CUDA_VISIBLE_DEVICES"] = visible
+    return {
+        "cuda_visible_devices": visible,
+        "n_gpus": int(n),
+        "source": "nvidia-smi",
+        "physical": physical,
+        "selected": selected,
+    }
+
+
 def build_config(
     model_path: str,
     *,
