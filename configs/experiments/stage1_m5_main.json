@@ -1,0 +1,302 @@
+{
+  "schema_version": "bcrl-stage1-m5-main-v1",
+  "milestone": "M5B",
+  "experiment_id": "E011",
+  "inherits_m3c_freeze": {
+    "path": "/data/home/zdhs0148/my_proj/budget-coder-rl/configs/experiments/stage1_m3c_freeze.json",
+    "sha256": "49084af1c792e2049af72d4c98291dc546b829122034dba9e698cea8f7284185",
+    "schema_version": "bcrl-stage1-m3c-freeze-v1"
+  },
+  "train_candidate_manifest": {
+    "path": "/data/home/zdhs0148/my_proj/budget-coder-rl/data/manifests/m3c_train_candidates.json",
+    "sha256": "3ece05681486bf28dc99637f98674723ddf4797024e0af856f5725fb71c7e81b",
+    "expected_sha256": "3ece05681486bf28dc99637f98674723ddf4797024e0af856f5725fb71c7e81b",
+    "n_selected": 256,
+    "ordered_ids_sha256": "8c3c25db97daae005646352284959353b7473cdf487f364f07bf2b33bfca3710"
+  },
+  "inherited_m3c": {
+    "model": "Qwen/Qwen3-4B-Instruct-2507",
+    "primary_training_B_obs": 4096,
+    "budget_visible": true,
+    "sampling": {
+      "do_sample": true,
+      "temperature": 0.7,
+      "top_p": 0.8,
+      "top_k": 20,
+      "n": 1
+    },
+    "validate": false,
+    "vllm_rollout_n": 1,
+    "proposed_grpo_rollout_n": 4,
+    "max_turns": 6,
+    "max_new_tokens_per_turn": 2048,
+    "envelope": {
+      "prompt_length": 16384,
+      "response_length": 16384,
+      "max_model_len": 32768
+    },
+    "localization_reward": {
+      "formula": "0.5 * file_f1 + 0.5 * symbol_f1",
+      "symbol_unavailable": "file-only localization_score; symbol_status=unavailable",
+      "invalid_parse": 0,
+      "budget_exhausted_without_valid_final": 0,
+      "read_search_bonus": false,
+      "token_penalty": false
+    },
+    "verl": {
+      "version": "0.8.0.dev0",
+      "fork_commit": "8481f9f9880d0f46a75b3db0329d3de8abad3d81",
+      "core_commit": "60546ef2a7464a158cd170f58f852a62a4e552ba"
+    }
+  },
+  "inherited_m4_runtime": {
+    "lora_rank": 16,
+    "lora_alpha": 16,
+    "lora_target_modules": "all-linear",
+    "actor_strategy": "fsdp",
+    "fsdp_param_offload": true,
+    "fsdp_optimizer_offload": true,
+    "model_dtype": "bf16",
+    "enable_gradient_checkpointing": true,
+    "actor_lr": 1e-06,
+    "entropy_coeff": 0.0,
+    "use_kl_loss": false,
+    "use_kl_in_reward": false,
+    "load_format": "safetensors",
+    "gpu_memory_utilization": 0.5,
+    "checkpoint_path": "RayPPOTrainer._save_checkpoint / FSDPCheckpointManager",
+    "no_m4c_lora_fingerprint_hooks": true,
+    "no_custom_vllm_server": true
+  },
+  "newly_frozen": {
+    "gpu": {
+      "n_gpus": 1,
+      "nnodes": 1,
+      "tensor_model_parallel_size": 1,
+      "device": "1xA100-40GB"
+    },
+    "data": {
+      "train_batch_size": 8,
+      "shuffle": false,
+      "filter_overlong_prompts": false,
+      "truncation": "error",
+      "max_prompt_length": 16384,
+      "max_response_length": 16384
+    },
+    "actor": {
+      "ppo_mini_batch_size": 8,
+      "ppo_epochs": 1,
+      "use_dynamic_bsz": true,
+      "ppo_max_token_len_per_gpu": 16384,
+      "log_prob_max_token_len_per_gpu": 32768,
+      "calculate_entropy": true,
+      "entropy_coeff": 0.0,
+      "use_kl_loss": false,
+      "optim_lr": 1e-06,
+      "lr_warmup_steps": 0
+    },
+    "algorithm": {
+      "adv_estimator": "grpo",
+      "use_kl_in_reward": false,
+      "rollout_n": 4,
+      "vllm_n": 1
+    },
+    "trainer": {
+      "total_epochs": 1,
+      "total_training_steps": 32,
+      "val_before_train": false,
+      "test_freq": -1,
+      "save_freq": 8,
+      "max_actor_ckpt_to_keep": 2,
+      "resume_mode": "auto",
+      "logger": [
+        "console",
+        "wandb"
+      ],
+      "project_name": "budget-coder-rl",
+      "experiment_name": "E011-m5-main",
+      "seed": 20260826,
+      "critic_enable": false
+    },
+    "checkpoint": {
+      "backend": "FSDPCheckpointManager",
+      "contents": [
+        "model",
+        "optimizer",
+        "extra"
+      ],
+      "approx_size_gib": 9.2,
+      "retention_n": 2,
+      "directory_template": "$BCRL_DATA_ROOT/checkpoints/stage1_m5_main",
+      "no_lora_only_migration": true
+    },
+    "hard_stop": {
+      "one_pass_over_frozen_pool": true,
+      "silent_second_epoch": false,
+      "continuation_requires_new_version": true,
+      "abort_on": [
+        "OOM",
+        "veRL pin mismatch",
+        "M3C freeze hash mismatch",
+        "shared dirty veRL import"
+      ]
+    }
+  },
+  "token_length": {
+    "n_episode_rows": 337,
+    "n_budget_rows": 337,
+    "n_candidate_overlap_rows": 329,
+    "obs_tokens_limit": 4096,
+    "prompt": {
+      "n": 337,
+      "min": 466.0,
+      "mean": 1103.4718100890207,
+      "median": 786.0,
+      "p95": 1866.0,
+      "p99": 9588.639999999878,
+      "max": 12811.0,
+      "quantiles": {
+        "p10": 494.0,
+        "p25": 588.0,
+        "p50": 786.0,
+        "p75": 1136.0,
+        "p90": 1589.0,
+        "p95": 1866.0,
+        "p99": 9588.639999999878
+      }
+    },
+    "policy": {
+      "n": 337,
+      "min": 57.0,
+      "mean": 129.15430267062314,
+      "median": 131.0,
+      "p95": 189.0,
+      "p99": 222.0,
+      "max": 459.0,
+      "quantiles": {
+        "p10": 72.6,
+        "p25": 102.0,
+        "p50": 131.0,
+        "p75": 151.0,
+        "p90": 170.40000000000003,
+        "p95": 189.0,
+        "p99": 222.0
+      }
+    },
+    "observation": {
+      "n": 337,
+      "min": 349.0,
+      "mean": 2646.0089020771516,
+      "median": 2902.0,
+      "p95": 4157.0,
+      "p99": 4332.0,
+      "max": 4358.0,
+      "quantiles": {
+        "p10": 1032.2,
+        "p25": 1845.0,
+        "p50": 2902.0,
+        "p75": 3451.0,
+        "p90": 3917.400000000003,
+        "p95": 4157.0,
+        "p99": 4332.0
+      }
+    },
+    "training_seq_proxy": {
+      "n": 337,
+      "min": 1185.0,
+      "mean": 3878.635014836795,
+      "median": 3913.0,
+      "p95": 5981.599999999997,
+      "p99": 11983.919999999893,
+      "max": 15251.0,
+      "quantiles": {
+        "p10": 2016.2,
+        "p25": 2756.0,
+        "p50": 3913.0,
+        "p75": 4699.0,
+        "p90": 5346.000000000001,
+        "p95": 5981.599999999997,
+        "p99": 11983.919999999893
+      }
+    },
+    "e003_unpadded_response": {
+      "n": 8,
+      "min": 2289.0,
+      "mean": 2699.625,
+      "median": 2614.0,
+      "p95": 3169.5,
+      "p99": 3228.2999999999997,
+      "max": 3243.0,
+      "quantiles": {
+        "p10": 2489.9,
+        "p25": 2604.5,
+        "p50": 2614.0,
+        "p75": 2718.75,
+        "p90": 3096.0,
+        "p95": 3169.5,
+        "p99": 3228.2999999999997
+      }
+    },
+    "candidate_overlap_training_seq_proxy": {
+      "n": 329,
+      "min": 1185.0,
+      "mean": 3911.3313069908813,
+      "median": 3934.0,
+      "p95": 6096.79999999999,
+      "p99": 12618.159999999767,
+      "max": 15251.0,
+      "quantiles": {
+        "p10": 1978.0000000000002,
+        "p25": 2766.0,
+        "p50": 3934.0,
+        "p75": 4707.0,
+        "p90": 5378.399999999999,
+        "p95": 6096.79999999999,
+        "p99": 12618.159999999767
+      }
+    },
+    "measured_max": 15251.0,
+    "proposed_ppo_max_token_len_per_gpu": 16384,
+    "assert_risk_if_8192": true,
+    "packing_oom_risk_if_32768": true,
+    "sources": [
+      "/data/home/zdhs0148/my_data/budget-coder-rl/trajectories/m3c/E007/episodes.jsonl",
+      "/data/home/zdhs0148/my_proj/budget-coder-rl/outputs/experiments/E008/episodes.jsonl",
+      "/data/home/zdhs0148/my_proj/budget-coder-rl/outputs/experiments/E009/episodes.jsonl",
+      "/data/home/zdhs0148/my_proj/budget-coder-rl/outputs/experiments/E003/loss_mask_evidence.json"
+    ],
+    "note": "training_seq_proxy = prompt+policy+observation from research JSONL; not a substitute for training token IDs"
+  },
+  "runtime_provenance": {
+    "budget_coder_rl_commit": "8a42508d43afb6c51fed1e7fa8e96ba806ebd95b",
+    "verl": {
+      "path": "/data/home/zdhs0148/my_data/budget-coder-rl/runtimes/verl-8481f9f",
+      "commit": "8481f9f9880d0f46a75b3db0329d3de8abad3d81",
+      "dirty": false,
+      "dirty_files": [],
+      "n_dirty_files": 0,
+      "isolated_root": "/data/home/zdhs0148/my_data/budget-coder-rl/runtimes/verl-8481f9f",
+      "source_git": "/data/home/zdhs0148/verl",
+      "created": false,
+      "matches_pin": true
+    }
+  },
+  "notes": [
+    "Do not silently edit this file after READY_FOR_M5B=true.",
+    "Second pass over the 256-task pool is a versioned continuation.",
+    "Pilot weights are not M6 candidates."
+  ],
+  "gate": {
+    "READY_FOR_M5B": true,
+    "immutable": true,
+    "pilot_experiment_id": "E010",
+    "m5b_experiment_id": "E011",
+    "evidence_dir": "outputs/experiments/E010",
+    "ready_for_m5b_path": "outputs/experiments/E010/READY_FOR_M5B.json",
+    "n_pilot_steps": 4,
+    "n_steps_nonzero_advantage": 4,
+    "ppo_max_token_len_per_gpu": 16384,
+    "wandb_run_id": "wjc2fr45",
+    "stamped_at": "2026-08-25T16:59:12.235064+00:00"
+  }
+}

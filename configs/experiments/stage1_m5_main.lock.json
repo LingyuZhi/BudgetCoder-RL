@@ -1,0 +1,9 @@
+{
+  "path": "configs/experiments/stage1_m5_main.json",
+  "sha256": "fac90e49b1c3d6bc42beff57cdc73a407b2d9f88cb83f748dc4670d6dfc9837b",
+  "READY_FOR_M5B": true,
+  "immutable": true,
+  "frozen_after": "E010",
+  "m5b_experiment_id": "E011",
+  "note": "Do not edit stage1_m5_main.json after this lock. Second pass = new version."
+}

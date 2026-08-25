@@ -1,0 +1,30 @@
+{
+  "schema_version": "bcrl-stage1-m5a-pilot-v1",
+  "milestone": "M5A",
+  "experiment_id": "E010",
+  "disposable": true,
+  "not_m6_candidate": true,
+  "inherits": "configs/experiments/stage1_m5_main.json",
+  "n_pilot_tasks": 32,
+  "n_pilot_steps": 4,
+  "pilot_instance_policy": "frozen ordered_ids prefix; no mixed-reward cherry-pick",
+  "overrides": {
+    "experiment_id": "E010",
+    "trainer": {
+      "total_training_steps": 4,
+      "experiment_name": "E010-m5a-pilot",
+      "default_local_dir": "/data/home/zdhs0148/my_proj/budget-coder-rl/outputs/experiments/E010/checkpoints",
+      "save_freq": 1,
+      "max_actor_ckpt_to_keep": 1,
+      "resume_mode": "disable"
+    },
+    "checkpoint": {
+      "directory_template": "/data/home/zdhs0148/my_proj/budget-coder-rl/outputs/experiments/E010/checkpoints",
+      "retention_n": 1
+    }
+  },
+  "notes": [
+    "Pilot uses the same LoRA/LR/batch/token/GPU knobs as stage1_m5_main.json.",
+    "Only duration, experiment id, and checkpoint retention differ."
+  ]
+}

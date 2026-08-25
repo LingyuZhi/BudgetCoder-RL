@@ -4,6 +4,7 @@ M3B/M3C default: RewardLoop skipped, ``rollout.n=1``.
 M4A: optional RewardLoop handles and trainer-level ``rollout.n=4``.
 M4B: LoRA + one-step ``RayPPOTrainer`` config on the same freeze envelope.
 M4C: official FSDP save_freq=1 then resume_path reload; same freeze envelope.
+M5: main-run / pilot GRPO+LoRA from stage1_m5_main.json knobs.
 """
 
 from __future__ import annotations
@@ -372,6 +373,80 @@ def apply_m4c_reload_config(
             "HARD FAIL: resume_from_path must contain global_step_ "
             f"(got {resume_from_path!r})"
         )
+    return config
+
+
+def apply_m5_train_config(
+    config: Any,
+    *,
+    train_files: str,
+    val_files: str,
+    n_tasks: int,
+    n_gpus: int,
+    ppo_max_token_len_per_gpu: int,
+    total_training_steps: int,
+    experiment_name: str,
+    default_local_dir: str,
+    save_freq: int,
+    max_actor_ckpt_to_keep: int,
+    resume_mode: str = "disable",
+    lora_rank: int = 16,
+    lora_alpha: int = 16,
+    actor_lr: float = 1e-6,
+    seed: int = 20260826,
+    calculate_entropy: bool = True,
+    wandb: bool = True,
+    wandb_proxy: str | None = None,
+) -> Any:
+    """M5 GRPO+LoRA trainer settings. Does not edit freeze JSON."""
+    from omegaconf import open_dict
+
+    apply_m4b_train_config(
+        config,
+        train_files=train_files,
+        val_files=val_files,
+        n_tasks=n_tasks,
+        n_gpus=n_gpus,
+        lora_rank=lora_rank,
+        lora_alpha=lora_alpha,
+        default_local_dir=default_local_dir,
+    )
+    logger = ["console", "wandb"] if wandb else ["console"]
+    with open_dict(config):
+        config.actor_rollout_ref.actor.ppo_mini_batch_size = int(n_tasks)
+        config.actor_rollout_ref.actor.ppo_max_token_len_per_gpu = int(
+            ppo_max_token_len_per_gpu
+        )
+        config.actor_rollout_ref.actor.optim.lr = float(actor_lr)
+        config.actor_rollout_ref.actor.optim.lr_warmup_steps = 0
+        config.actor_rollout_ref.actor.calculate_entropy = bool(calculate_entropy)
+        config.actor_rollout_ref.actor.entropy_coeff = 0.0
+        config.actor_rollout_ref.actor.use_kl_loss = False
+        config.actor_rollout_ref.actor.use_dynamic_bsz = True
+        config.actor_rollout_ref.actor.data_loader_seed = int(seed)
+        config.actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu = MAX_MODEL_LEN
+        config.actor_rollout_ref.rollout.gpu_memory_utilization = 0.5
+        config.data.train_batch_size = int(n_tasks)
+        config.data.seed = int(seed)
+        config.data.shuffle = False
+        config.trainer.total_epochs = 1
+        config.trainer.total_training_steps = int(total_training_steps)
+        config.trainer.val_before_train = False
+        config.trainer.test_freq = -1
+        config.trainer.save_freq = int(save_freq)
+        config.trainer.max_actor_ckpt_to_keep = int(max_actor_ckpt_to_keep)
+        config.trainer.logger = list(logger)
+        config.trainer.resume_mode = str(resume_mode)
+        config.trainer.nnodes = 1
+        config.trainer.n_gpus_per_node = int(n_gpus)
+        config.trainer.project_name = "budget-coder-rl"
+        config.trainer.experiment_name = str(experiment_name)
+        config.trainer.default_local_dir = str(default_local_dir)
+        config.trainer.del_local_ckpt_after_load = False
+        config.algorithm.adv_estimator = "grpo"
+        config.algorithm.use_kl_in_reward = False
+        if wandb_proxy:
+            config.trainer.wandb_proxy = str(wandb_proxy)
     return config
 
 

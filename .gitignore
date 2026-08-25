@@ -18,3 +18,6 @@ data/processed/
 __pycache__/
 *.egg-info/
 .pytest_cache/
+
+# Local W&B run directories (never commit API artifacts)
+wandb/
