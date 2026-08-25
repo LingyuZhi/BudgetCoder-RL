@@ -1,4 +1,4 @@
-"""Shared GPU AgentLoopManager bootstrap for M3B (M2D/M3A path, no RewardLoop)."""
+"""Shared GPU AgentLoopManager bootstrap for M3B/M3C (M2D/M3A path, no RewardLoop)."""
 
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ PROMPT_LENGTH = 16384
 RESPONSE_LENGTH = 16384
 MAX_MODEL_LEN = 32768
 AGENT_LOOP_CONFIG_RELPATH = "configs/agent_loop/repo_exploration_m3b.yaml"
+M3C_AGENT_LOOP_CONFIG_RELPATH = "configs/agent_loop/repo_exploration_m3c.yaml"
 
 
 def resolve_model_path(cli_path: str | None) -> str:
@@ -182,10 +183,13 @@ def assert_sampling_config(config: Any) -> dict[str, Any]:
     if recorded["temperature"] == 0:
         raise SystemExit(
             "HARD FAIL: rollout.temperature==0 would make vLLM greedy; "
-            "M3B must use Qwen3 sampling 0.7/0.8/20"
+            "M3B/M3C must use Qwen3 sampling 0.7/0.8/20"
         )
     if recorded["n"] != 1:
-        raise SystemExit("HARD FAIL: M3B forbids grouped n>1")
+        raise SystemExit(
+            "HARD FAIL: AgentLoop measurement forbids vLLM n>1; "
+            "grouped rollouts expand tasks with distinct sampling_seed"
+        )
     if abs(recorded["temperature"] - QWEN3_SAMPLING["temperature"]) > 1e-6:
         raise SystemExit(f"HARD FAIL: unexpected temperature {recorded['temperature']}")
     if abs(recorded["top_p"] - QWEN3_SAMPLING["top_p"]) > 1e-6:

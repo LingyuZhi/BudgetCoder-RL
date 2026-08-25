@@ -1,0 +1,83 @@
+{
+  "schema_version": "bcrl-stage1-m3c-freeze-v1",
+  "milestone": "M3C",
+  "not_trained": true,
+  "reward_loop_wired": false,
+  "grpo_optimizer": false,
+  "lora_update": false,
+  "primary_training_B_obs": 4096,
+  "budget_regimes": {
+    "tight": 2048,
+    "medium": 4096,
+    "loose": 8192
+  },
+  "final_evaluation_budget_set": [
+    2048,
+    4096,
+    8192
+  ],
+  "budget_visible": true,
+  "budget_accounting_version": "bcrl-bobs-v2",
+  "sampling": {
+    "do_sample": true,
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "top_k": 20,
+    "n": 1
+  },
+  "validate": false,
+  "vllm_rollout_n": 1,
+  "proposed_grpo_rollout_n": 4,
+  "max_turns": 6,
+  "max_new_tokens_per_turn": 2048,
+  "envelope": {
+    "prompt_length": 16384,
+    "response_length": 16384,
+    "max_model_len": 32768
+  },
+  "localization_reward": {
+    "formula": "0.5 * file_f1 + 0.5 * symbol_f1",
+    "symbol_unavailable": "file-only localization_score; symbol_status=unavailable",
+    "invalid_parse": 0,
+    "budget_exhausted_without_valid_final": 0,
+    "read_search_bonus": false,
+    "token_penalty": false
+  },
+  "train_candidate_manifest": {
+    "path": "data/manifests/m3c_train_candidates.json",
+    "schema_version": "bcrl-m3c-train-candidates-v1",
+    "n_selected": 256,
+    "ordered_ids_sha256": "8c3c25db97daae005646352284959353b7473cdf487f364f07bf2b33bfca3710",
+    "rule_text_sha256": "11a1a7fc7fcd106d2cdc434d70fb2639ba6a151a48b9b69be9a0c34f4ce6aa34",
+    "file_sha256": "3ece05681486bf28dc99637f98674723ddf4797024e0af856f5725fb71c7e81b"
+  },
+  "overlong_train_sample_policy": {
+    "filter_overlong_prompts": false,
+    "truncation": "error",
+    "agent_loop": "PromptTooLongError; no silent truncate",
+    "excluded_instance_ids": [
+      "Project-MONAI__MONAI-6344"
+    ]
+  },
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "verl": {
+    "version": "0.8.0.dev0",
+    "fork_commit": "8481f9f9880d0f46a75b3db0329d3de8abad3d81",
+    "core_commit": "60546ef2a7464a158cd170f58f852a62a4e552ba"
+  },
+  "m1e_dataset_manifest_sha256": "5b1606760c4864cafb8c4d421472c51ff5f8582e0d6dae9185902095fc17da0c",
+  "e007_group_signal": {
+    "mixed_fraction": 0.35,
+    "zero_variance_fraction": 0.65,
+    "all_zero_fraction": 0.4625,
+    "mean_group_std": 0.0799757467979185,
+    "median_group_std": 0.0,
+    "needs_n8_probe": false,
+    "grpo_signal_plausible": true
+  },
+  "notes": [
+    "Do not silently edit this freeze after M3C. M4/M5 consume it.",
+    "Reward, tools, and prompt were not changed to chase trajectories.",
+    "vLLM n stays 1; GRPO group size is proposed_grpo_rollout_n."
+  ]
+}

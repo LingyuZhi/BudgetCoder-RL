@@ -1,0 +1,1723 @@
+{
+  "schema_version": "bcrl-m3c-train-candidates-v1",
+  "split": "train",
+  "selection_algorithm": "repo_name_sort + instance_id_lexicographic + repo_round_robin",
+  "oracle_used_for_class_filter": true,
+  "gold_used_for_cherry_pick": false,
+  "zero_variance_used_as_drop": false,
+  "rule_text": "Start from frozen M1E train (2194). Exclude runtime-incompatible prompts with tokenizer length > 16384 (Project-MONAI__MONAI-6344). Require evaluator sidecar symbol_applicable=true as the default file+symbol reward pool. Do not drop a task solely because one n=4 grouped rollout was zero-variance. Do not cherry-pick by gold patch or per-task reward. Order remaining identities with repo_name_sort + instance_id_lexicographic + repo_round_robin and take the first target_n tasks for repo balance.",
+  "rule_text_sha256": "11a1a7fc7fcd106d2cdc434d70fb2639ba6a151a48b9b69be9a0c34f4ce6aa34",
+  "n_universe": 2194,
+  "n_eligible": 2048,
+  "n_selected": 256,
+  "target_n": 256,
+  "skipped": {
+    "overlong_prompt": [
+      "Project-MONAI__MONAI-6344"
+    ],
+    "symbol_unavailable": [
+      "Project-MONAI__MONAI-1086",
+      "Project-MONAI__MONAI-1690",
+      "Project-MONAI__MONAI-3135",
+      "Project-MONAI__MONAI-4676",
+      "Project-MONAI__MONAI-6523",
+      "bokeh__bokeh-13641",
+      "conan-io__conan-10213",
+      "conan-io__conan-10959",
+      "dask__dask-10695",
+      "dask__dask-10784",
+      "dask__dask-10803",
+      "dask__dask-10827",
+      "dask__dask-7125",
+      "dask__dask-8687",
+      "dask__dask-8820",
+      "dask__dask-8920",
+      "dask__dask-9212",
+      "dask__dask-9213",
+      "dask__dask-9528",
+      "facebookresearch__hydra-1540",
+      "getmoto__moto-4918",
+      "getmoto__moto-5110",
+      "getmoto__moto-5136",
+      "getmoto__moto-5338",
+      "getmoto__moto-5347",
+      "getmoto__moto-5504",
+      "getmoto__moto-5545",
+      "getmoto__moto-5699",
+      "getmoto__moto-5794",
+      "getmoto__moto-5809",
+      "getmoto__moto-5841",
+      "getmoto__moto-5870",
+      "getmoto__moto-5885",
+      "getmoto__moto-6222",
+      "getmoto__moto-6509",
+      "getmoto__moto-6854",
+      "getmoto__moto-6920",
+      "getmoto__moto-6924",
+      "getmoto__moto-7012",
+      "getmoto__moto-7393",
+      "getmoto__moto-7495",
+      "iterative__dvc-1817",
+      "iterative__dvc-1944",
+      "iterative__dvc-2017",
+      "iterative__dvc-4125",
+      "iterative__dvc-4517",
+      "iterative__dvc-4670",
+      "modin-project__modin-6324",
+      "modin-project__modin-6802",
+      "modin-project__modin-7071",
+      "modin-project__modin-7075",
+      "modin-project__modin-7142",
+      "modin-project__modin-7200",
+      "modin-project__modin-7225",
+      "pandas-dev__pandas-47475",
+      "pandas-dev__pandas-47528",
+      "pandas-dev__pandas-47763",
+      "pandas-dev__pandas-47780",
+      "pandas-dev__pandas-47860",
+      "pandas-dev__pandas-47894",
+      "pandas-dev__pandas-48008",
+      "pandas-dev__pandas-48676",
+      "pandas-dev__pandas-48686",
+      "pandas-dev__pandas-48691",
+      "pandas-dev__pandas-48820",
+      "pandas-dev__pandas-48890",
+      "pandas-dev__pandas-48954",
+      "pandas-dev__pandas-49078",
+      "pandas-dev__pandas-49127",
+      "pandas-dev__pandas-49147",
+      "pandas-dev__pandas-49155",
+      "pandas-dev__pandas-49182",
+      "pandas-dev__pandas-49610",
+      "pandas-dev__pandas-49747",
+      "pandas-dev__pandas-49933",
+      "pandas-dev__pandas-50020",
+      "pandas-dev__pandas-50024",
+      "pandas-dev__pandas-50038",
+      "pandas-dev__pandas-50109",
+      "pandas-dev__pandas-50232",
+      "pandas-dev__pandas-50238",
+      "pandas-dev__pandas-50252",
+      "pandas-dev__pandas-50309",
+      "pandas-dev__pandas-50366",
+      "pandas-dev__pandas-50464",
+      "pandas-dev__pandas-50530",
+      "pandas-dev__pandas-50545",
+      "pandas-dev__pandas-50586",
+      "pandas-dev__pandas-50622",
+      "pandas-dev__pandas-50793",
+      "pandas-dev__pandas-50901",
+      "pandas-dev__pandas-50949",
+      "pandas-dev__pandas-50988",
+      "pandas-dev__pandas-50992",
+      "pandas-dev__pandas-51157",
+      "pandas-dev__pandas-51414",
+      "pandas-dev__pandas-51477",
+      "pandas-dev__pandas-51538",
+      "pandas-dev__pandas-51869",
+      "pandas-dev__pandas-52112",
+      "pandas-dev__pandas-52220",
+      "pandas-dev__pandas-52330",
+      "pandas-dev__pandas-52567",
+      "pandas-dev__pandas-52964",
+      "pandas-dev__pandas-53073",
+      "pandas-dev__pandas-53257",
+      "pandas-dev__pandas-53375",
+      "pandas-dev__pandas-53421",
+      "pandas-dev__pandas-53623",
+      "pandas-dev__pandas-53672",
+      "pandas-dev__pandas-53678",
+      "pandas-dev__pandas-53681",
+      "pandas-dev__pandas-53682",
+      "pandas-dev__pandas-53698",
+      "pandas-dev__pandas-53795",
+      "pandas-dev__pandas-53958",
+      "pandas-dev__pandas-54098",
+      "pandas-dev__pandas-54102",
+      "pandas-dev__pandas-54687",
+      "pandas-dev__pandas-55495",
+      "pandas-dev__pandas-55518",
+      "pandas-dev__pandas-55712",
+      "pandas-dev__pandas-55844",
+      "pandas-dev__pandas-56017",
+      "pandas-dev__pandas-56051",
+      "pandas-dev__pandas-56281",
+      "pandas-dev__pandas-56594",
+      "pandas-dev__pandas-56849",
+      "pandas-dev__pandas-56926",
+      "pandas-dev__pandas-57061",
+      "pandas-dev__pandas-57314",
+      "pandas-dev__pandas-57333",
+      "pandas-dev__pandas-57471",
+      "pandas-dev__pandas-57489",
+      "pandas-dev__pandas-57536",
+      "pandas-dev__pandas-57548",
+      "pandas-dev__pandas-58226",
+      "pandas-dev__pandas-58360",
+      "pydantic__pydantic-8190",
+      "pydantic__pydantic-8262",
+      "python__mypy-10430",
+      "python__mypy-11828",
+      "python__mypy-15118",
+      "python__mypy-16869",
+      "python__mypy-17071"
+    ],
+    "missing_oracle": []
+  },
+  "ordered_ids": [
+    "Project-MONAI__MONAI-1010",
+    "bokeh__bokeh-12779",
+    "dask__dask-10009",
+    "facebookresearch__hydra-1006",
+    "getmoto__moto-4787",
+    "iterative__dvc-10213",
+    "modin-project__modin-5507",
+    "pandas-dev__pandas-47157",
+    "pydantic__pydantic-4882",
+    "python__mypy-10032",
+    "Project-MONAI__MONAI-1011",
+    "bokeh__bokeh-12841",
+    "conan-io__conan-10408",
+    "dask__dask-10027",
+    "facebookresearch__hydra-1265",
+    "getmoto__moto-4792",
+    "iterative__dvc-10218",
+    "modin-project__modin-5940",
+    "pandas-dev__pandas-47222",
+    "pydantic__pydantic-4911",
+    "python__mypy-10036",
+    "Project-MONAI__MONAI-1012",
+    "bokeh__bokeh-12867",
+    "conan-io__conan-10686",
+    "dask__dask-10042",
+    "facebookresearch__hydra-1276",
+    "getmoto__moto-4793",
+    "iterative__dvc-10277",
+    "modin-project__modin-5946",
+    "pandas-dev__pandas-47231",
+    "pydantic__pydantic-4920",
+    "python__mypy-10053",
+    "Project-MONAI__MONAI-1030",
+    "bokeh__bokeh-12902",
+    "conan-io__conan-10812",
+    "dask__dask-10054",
+    "facebookresearch__hydra-1372",
+    "getmoto__moto-4799",
+    "iterative__dvc-10365",
+    "modin-project__modin-5949",
+    "pandas-dev__pandas-47273",
+    "pydantic__pydantic-5021",
+    "python__mypy-10057",
+    "Project-MONAI__MONAI-1037",
+    "bokeh__bokeh-13041",
+    "conan-io__conan-10874",
+    "dask__dask-10064",
+    "facebookresearch__hydra-1401",
+    "getmoto__moto-4808",
+    "iterative__dvc-10386",
+    "modin-project__modin-5983",
+    "pandas-dev__pandas-47361",
+    "pydantic__pydantic-5138",
+    "python__mypy-10154",
+    "Project-MONAI__MONAI-1070",
+    "bokeh__bokeh-13147",
+    "conan-io__conan-10875",
+    "dask__dask-10128",
+    "facebookresearch__hydra-1404",
+    "getmoto__moto-4809",
+    "iterative__dvc-1603",
+    "modin-project__modin-6043",
+    "pandas-dev__pandas-47371",
+    "pydantic__pydantic-5177",
+    "python__mypy-10284",
+    "bokeh__bokeh-13239",
+    "conan-io__conan-10917",
+    "dask__dask-10149",
+    "facebookresearch__hydra-1422",
+    "getmoto__moto-4817",
+    "iterative__dvc-1637",
+    "modin-project__modin-6057",
+    "pandas-dev__pandas-47434",
+    "pydantic__pydantic-5196",
+    "python__mypy-10288",
+    "Project-MONAI__MONAI-1093",
+    "bokeh__bokeh-13258",
+    "conan-io__conan-10941",
+    "dask__dask-10159",
+    "facebookresearch__hydra-1450",
+    "getmoto__moto-4833",
+    "iterative__dvc-1638",
+    "modin-project__modin-6260",
+    "pandas-dev__pandas-47446",
+    "pydantic__pydantic-5272",
+    "python__mypy-10308",
+    "Project-MONAI__MONAI-1095",
+    "bokeh__bokeh-13289",
+    "dask__dask-10212",
+    "facebookresearch__hydra-1456",
+    "getmoto__moto-4847",
+    "iterative__dvc-1650",
+    "modin-project__modin-6263",
+    "pandas-dev__pandas-47451",
+    "pydantic__pydantic-5322",
+    "python__mypy-10361",
+    "Project-MONAI__MONAI-1107",
+    "bokeh__bokeh-13298",
+    "conan-io__conan-10960",
+    "dask__dask-10294",
+    "facebookresearch__hydra-1458",
+    "getmoto__moto-4848",
+    "iterative__dvc-1651",
+    "modin-project__modin-6267",
+    "pydantic__pydantic-5362",
+    "python__mypy-10382",
+    "Project-MONAI__MONAI-1116",
+    "bokeh__bokeh-13318",
+    "conan-io__conan-10975",
+    "dask__dask-10342",
+    "facebookresearch__hydra-1487",
+    "getmoto__moto-4860",
+    "iterative__dvc-1661",
+    "modin-project__modin-6270",
+    "pandas-dev__pandas-47493",
+    "pydantic__pydantic-5386",
+    "python__mypy-10389",
+    "Project-MONAI__MONAI-1121",
+    "bokeh__bokeh-13370",
+    "conan-io__conan-10978",
+    "dask__dask-10395",
+    "facebookresearch__hydra-1488",
+    "getmoto__moto-4867",
+    "iterative__dvc-1684",
+    "modin-project__modin-6275",
+    "pandas-dev__pandas-47508",
+    "pydantic__pydantic-5390",
+    "python__mypy-10392",
+    "Project-MONAI__MONAI-1532",
+    "bokeh__bokeh-13404",
+    "conan-io__conan-11330",
+    "dask__dask-10422",
+    "facebookresearch__hydra-1531",
+    "getmoto__moto-4874",
+    "iterative__dvc-1700",
+    "modin-project__modin-6292",
+    "pydantic__pydantic-5398",
+    "python__mypy-10401",
+    "Project-MONAI__MONAI-1535",
+    "bokeh__bokeh-13422",
+    "conan-io__conan-11348",
+    "dask__dask-10441",
+    "getmoto__moto-4875",
+    "iterative__dvc-1712",
+    "pandas-dev__pandas-47547",
+    "pydantic__pydantic-5506",
+    "python__mypy-10415",
+    "Project-MONAI__MONAI-1571",
+    "bokeh__bokeh-13443",
+    "conan-io__conan-11505",
+    "dask__dask-10454",
+    "facebookresearch__hydra-1560",
+    "getmoto__moto-4881",
+    "iterative__dvc-1713",
+    "modin-project__modin-6333",
+    "pandas-dev__pandas-47550",
+    "pydantic__pydantic-5529",
+    "Project-MONAI__MONAI-1596",
+    "bokeh__bokeh-13491",
+    "conan-io__conan-11560",
+    "dask__dask-10506",
+    "facebookresearch__hydra-1601",
+    "getmoto__moto-4886",
+    "iterative__dvc-1733",
+    "modin-project__modin-6344",
+    "pandas-dev__pandas-47557",
+    "pydantic__pydantic-5587",
+    "python__mypy-10432",
+    "Project-MONAI__MONAI-1608",
+    "bokeh__bokeh-13535",
+    "conan-io__conan-11594",
+    "dask__dask-10509",
+    "facebookresearch__hydra-1616",
+    "getmoto__moto-4895",
+    "iterative__dvc-1749",
+    "modin-project__modin-6369",
+    "pandas-dev__pandas-47581",
+    "pydantic__pydantic-5589",
+    "python__mypy-10458",
+    "Project-MONAI__MONAI-1645",
+    "bokeh__bokeh-13608",
+    "conan-io__conan-11655",
+    "dask__dask-10521",
+    "facebookresearch__hydra-1655",
+    "getmoto__moto-4896",
+    "iterative__dvc-1759",
+    "modin-project__modin-6370",
+    "pandas-dev__pandas-47585",
+    "pydantic__pydantic-5591",
+    "python__mypy-10478",
+    "Project-MONAI__MONAI-1684",
+    "bokeh__bokeh-13636",
+    "conan-io__conan-11799",
+    "dask__dask-10556",
+    "facebookresearch__hydra-1661",
+    "getmoto__moto-4908",
+    "iterative__dvc-1781",
+    "modin-project__modin-6371",
+    "pandas-dev__pandas-47586",
+    "pydantic__pydantic-5662",
+    "python__mypy-10508",
+    "conan-io__conan-11803",
+    "dask__dask-10616",
+    "facebookresearch__hydra-1671",
+    "getmoto__moto-4915",
+    "iterative__dvc-1782",
+    "modin-project__modin-6381",
+    "pandas-dev__pandas-47605",
+    "pydantic__pydantic-5706",
+    "python__mypy-10560",
+    "Project-MONAI__MONAI-1746",
+    "bokeh__bokeh-13721",
+    "conan-io__conan-12307",
+    "facebookresearch__hydra-1695",
+    "iterative__dvc-1785",
+    "modin-project__modin-6400",
+    "pandas-dev__pandas-47619",
+    "pydantic__pydantic-5834",
+    "python__mypy-10572",
+    "Project-MONAI__MONAI-1777",
+    "bokeh__bokeh-13757",
+    "conan-io__conan-12353",
+    "dask__dask-10723",
+    "facebookresearch__hydra-1696",
+    "getmoto__moto-4934",
+    "iterative__dvc-1808",
+    "modin-project__modin-6403",
+    "pandas-dev__pandas-47623",
+    "pydantic__pydantic-5841",
+    "python__mypy-10579",
+    "Project-MONAI__MONAI-1805",
+    "bokeh__bokeh-13800",
+    "conan-io__conan-12397",
+    "dask__dask-10734",
+    "facebookresearch__hydra-1725",
+    "getmoto__moto-4950",
+    "iterative__dvc-1809",
+    "modin-project__modin-6404",
+    "pandas-dev__pandas-47630",
+    "pydantic__pydantic-5861",
+    "python__mypy-10582",
+    "Project-MONAI__MONAI-1829",
+    "conan-io__conan-12578",
+    "dask__dask-10750",
+    "facebookresearch__hydra-1733",
+    "getmoto__moto-4951",
+    "modin-project__modin-6426",
+    "pandas-dev__pandas-47633",
+    "pydantic__pydantic-5868",
+    "python__mypy-10609",
+    "Project-MONAI__MONAI-1832",
+    "conan-io__conan-12695",
+    "dask__dask-10754",
+    "facebookresearch__hydra-1735",
+    "getmoto__moto-4956",
+    "iterative__dvc-1829"
+  ],
+  "ordered_ids_sha256": "8c3c25db97daae005646352284959353b7473cdf487f364f07bf2b33bfca3710",
+  "eligible_ids_sha256": "f919cf157988b7b26c1767b6c30a8f7518170e6333929f575cd6f31e6c19125a",
+  "repo_counts": {
+    "Project-MONAI/MONAI": 23,
+    "bokeh/bokeh": 22,
+    "conan-io/conan": 23,
+    "dask/dask": 24,
+    "facebookresearch/hydra": 24,
+    "getmoto/moto": 24,
+    "iterative/dvc": 24,
+    "modin-project/modin": 23,
+    "pandas-dev/pandas": 22,
+    "pydantic/pydantic": 24,
+    "python/mypy": 23
+  },
+  "n_repos": 11,
+  "tasks": [
+    {
+      "task_index": 0,
+      "instance_id": "Project-MONAI__MONAI-1010",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 1,
+      "instance_id": "bokeh__bokeh-12779",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 2,
+      "instance_id": "dask__dask-10009",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 3,
+      "instance_id": "facebookresearch__hydra-1006",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 4,
+      "instance_id": "getmoto__moto-4787",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 5,
+      "instance_id": "iterative__dvc-10213",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 6,
+      "instance_id": "modin-project__modin-5507",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 7,
+      "instance_id": "pandas-dev__pandas-47157",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 8,
+      "instance_id": "pydantic__pydantic-4882",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 9,
+      "instance_id": "python__mypy-10032",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 10,
+      "instance_id": "Project-MONAI__MONAI-1011",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 11,
+      "instance_id": "bokeh__bokeh-12841",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 12,
+      "instance_id": "conan-io__conan-10408",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 13,
+      "instance_id": "dask__dask-10027",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 14,
+      "instance_id": "facebookresearch__hydra-1265",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 15,
+      "instance_id": "getmoto__moto-4792",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 16,
+      "instance_id": "iterative__dvc-10218",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 17,
+      "instance_id": "modin-project__modin-5940",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 18,
+      "instance_id": "pandas-dev__pandas-47222",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 19,
+      "instance_id": "pydantic__pydantic-4911",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 20,
+      "instance_id": "python__mypy-10036",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 21,
+      "instance_id": "Project-MONAI__MONAI-1012",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 22,
+      "instance_id": "bokeh__bokeh-12867",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 23,
+      "instance_id": "conan-io__conan-10686",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 24,
+      "instance_id": "dask__dask-10042",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 25,
+      "instance_id": "facebookresearch__hydra-1276",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 26,
+      "instance_id": "getmoto__moto-4793",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 27,
+      "instance_id": "iterative__dvc-10277",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 28,
+      "instance_id": "modin-project__modin-5946",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 29,
+      "instance_id": "pandas-dev__pandas-47231",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 30,
+      "instance_id": "pydantic__pydantic-4920",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 31,
+      "instance_id": "python__mypy-10053",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 32,
+      "instance_id": "Project-MONAI__MONAI-1030",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 33,
+      "instance_id": "bokeh__bokeh-12902",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 34,
+      "instance_id": "conan-io__conan-10812",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 35,
+      "instance_id": "dask__dask-10054",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 36,
+      "instance_id": "facebookresearch__hydra-1372",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 37,
+      "instance_id": "getmoto__moto-4799",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 38,
+      "instance_id": "iterative__dvc-10365",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 39,
+      "instance_id": "modin-project__modin-5949",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 40,
+      "instance_id": "pandas-dev__pandas-47273",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 41,
+      "instance_id": "pydantic__pydantic-5021",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 42,
+      "instance_id": "python__mypy-10057",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 43,
+      "instance_id": "Project-MONAI__MONAI-1037",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 44,
+      "instance_id": "bokeh__bokeh-13041",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 45,
+      "instance_id": "conan-io__conan-10874",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 46,
+      "instance_id": "dask__dask-10064",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 47,
+      "instance_id": "facebookresearch__hydra-1401",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 48,
+      "instance_id": "getmoto__moto-4808",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 49,
+      "instance_id": "iterative__dvc-10386",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 50,
+      "instance_id": "modin-project__modin-5983",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 51,
+      "instance_id": "pandas-dev__pandas-47361",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 52,
+      "instance_id": "pydantic__pydantic-5138",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 53,
+      "instance_id": "python__mypy-10154",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 54,
+      "instance_id": "Project-MONAI__MONAI-1070",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 55,
+      "instance_id": "bokeh__bokeh-13147",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 56,
+      "instance_id": "conan-io__conan-10875",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 57,
+      "instance_id": "dask__dask-10128",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 58,
+      "instance_id": "facebookresearch__hydra-1404",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 59,
+      "instance_id": "getmoto__moto-4809",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 60,
+      "instance_id": "iterative__dvc-1603",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 61,
+      "instance_id": "modin-project__modin-6043",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 62,
+      "instance_id": "pandas-dev__pandas-47371",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 63,
+      "instance_id": "pydantic__pydantic-5177",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 64,
+      "instance_id": "python__mypy-10284",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 65,
+      "instance_id": "bokeh__bokeh-13239",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 66,
+      "instance_id": "conan-io__conan-10917",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 67,
+      "instance_id": "dask__dask-10149",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 68,
+      "instance_id": "facebookresearch__hydra-1422",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 69,
+      "instance_id": "getmoto__moto-4817",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 70,
+      "instance_id": "iterative__dvc-1637",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 71,
+      "instance_id": "modin-project__modin-6057",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 72,
+      "instance_id": "pandas-dev__pandas-47434",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 73,
+      "instance_id": "pydantic__pydantic-5196",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 74,
+      "instance_id": "python__mypy-10288",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 75,
+      "instance_id": "Project-MONAI__MONAI-1093",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 76,
+      "instance_id": "bokeh__bokeh-13258",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 77,
+      "instance_id": "conan-io__conan-10941",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 78,
+      "instance_id": "dask__dask-10159",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 79,
+      "instance_id": "facebookresearch__hydra-1450",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 80,
+      "instance_id": "getmoto__moto-4833",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 81,
+      "instance_id": "iterative__dvc-1638",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 82,
+      "instance_id": "modin-project__modin-6260",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 83,
+      "instance_id": "pandas-dev__pandas-47446",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 84,
+      "instance_id": "pydantic__pydantic-5272",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 85,
+      "instance_id": "python__mypy-10308",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 86,
+      "instance_id": "Project-MONAI__MONAI-1095",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 87,
+      "instance_id": "bokeh__bokeh-13289",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 88,
+      "instance_id": "dask__dask-10212",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 89,
+      "instance_id": "facebookresearch__hydra-1456",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 90,
+      "instance_id": "getmoto__moto-4847",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 91,
+      "instance_id": "iterative__dvc-1650",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 92,
+      "instance_id": "modin-project__modin-6263",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 93,
+      "instance_id": "pandas-dev__pandas-47451",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 94,
+      "instance_id": "pydantic__pydantic-5322",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 95,
+      "instance_id": "python__mypy-10361",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 96,
+      "instance_id": "Project-MONAI__MONAI-1107",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 97,
+      "instance_id": "bokeh__bokeh-13298",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 98,
+      "instance_id": "conan-io__conan-10960",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 99,
+      "instance_id": "dask__dask-10294",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 100,
+      "instance_id": "facebookresearch__hydra-1458",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 101,
+      "instance_id": "getmoto__moto-4848",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 102,
+      "instance_id": "iterative__dvc-1651",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 103,
+      "instance_id": "modin-project__modin-6267",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 104,
+      "instance_id": "pydantic__pydantic-5362",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 105,
+      "instance_id": "python__mypy-10382",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 106,
+      "instance_id": "Project-MONAI__MONAI-1116",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 107,
+      "instance_id": "bokeh__bokeh-13318",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 108,
+      "instance_id": "conan-io__conan-10975",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 109,
+      "instance_id": "dask__dask-10342",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 110,
+      "instance_id": "facebookresearch__hydra-1487",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 111,
+      "instance_id": "getmoto__moto-4860",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 112,
+      "instance_id": "iterative__dvc-1661",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 113,
+      "instance_id": "modin-project__modin-6270",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 114,
+      "instance_id": "pandas-dev__pandas-47493",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 115,
+      "instance_id": "pydantic__pydantic-5386",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 116,
+      "instance_id": "python__mypy-10389",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 117,
+      "instance_id": "Project-MONAI__MONAI-1121",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 118,
+      "instance_id": "bokeh__bokeh-13370",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 119,
+      "instance_id": "conan-io__conan-10978",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 120,
+      "instance_id": "dask__dask-10395",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 121,
+      "instance_id": "facebookresearch__hydra-1488",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 122,
+      "instance_id": "getmoto__moto-4867",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 123,
+      "instance_id": "iterative__dvc-1684",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 124,
+      "instance_id": "modin-project__modin-6275",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 125,
+      "instance_id": "pandas-dev__pandas-47508",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 126,
+      "instance_id": "pydantic__pydantic-5390",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 127,
+      "instance_id": "python__mypy-10392",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 128,
+      "instance_id": "Project-MONAI__MONAI-1532",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 129,
+      "instance_id": "bokeh__bokeh-13404",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 130,
+      "instance_id": "conan-io__conan-11330",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 131,
+      "instance_id": "dask__dask-10422",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 132,
+      "instance_id": "facebookresearch__hydra-1531",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 133,
+      "instance_id": "getmoto__moto-4874",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 134,
+      "instance_id": "iterative__dvc-1700",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 135,
+      "instance_id": "modin-project__modin-6292",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 136,
+      "instance_id": "pydantic__pydantic-5398",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 137,
+      "instance_id": "python__mypy-10401",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 138,
+      "instance_id": "Project-MONAI__MONAI-1535",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 139,
+      "instance_id": "bokeh__bokeh-13422",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 140,
+      "instance_id": "conan-io__conan-11348",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 141,
+      "instance_id": "dask__dask-10441",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 142,
+      "instance_id": "getmoto__moto-4875",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 143,
+      "instance_id": "iterative__dvc-1712",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 144,
+      "instance_id": "pandas-dev__pandas-47547",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 145,
+      "instance_id": "pydantic__pydantic-5506",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 146,
+      "instance_id": "python__mypy-10415",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 147,
+      "instance_id": "Project-MONAI__MONAI-1571",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 148,
+      "instance_id": "bokeh__bokeh-13443",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 149,
+      "instance_id": "conan-io__conan-11505",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 150,
+      "instance_id": "dask__dask-10454",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 151,
+      "instance_id": "facebookresearch__hydra-1560",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 152,
+      "instance_id": "getmoto__moto-4881",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 153,
+      "instance_id": "iterative__dvc-1713",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 154,
+      "instance_id": "modin-project__modin-6333",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 155,
+      "instance_id": "pandas-dev__pandas-47550",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 156,
+      "instance_id": "pydantic__pydantic-5529",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 157,
+      "instance_id": "Project-MONAI__MONAI-1596",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 158,
+      "instance_id": "bokeh__bokeh-13491",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 159,
+      "instance_id": "conan-io__conan-11560",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 160,
+      "instance_id": "dask__dask-10506",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 161,
+      "instance_id": "facebookresearch__hydra-1601",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 162,
+      "instance_id": "getmoto__moto-4886",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 163,
+      "instance_id": "iterative__dvc-1733",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 164,
+      "instance_id": "modin-project__modin-6344",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 165,
+      "instance_id": "pandas-dev__pandas-47557",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 166,
+      "instance_id": "pydantic__pydantic-5587",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 167,
+      "instance_id": "python__mypy-10432",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 168,
+      "instance_id": "Project-MONAI__MONAI-1608",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 169,
+      "instance_id": "bokeh__bokeh-13535",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 170,
+      "instance_id": "conan-io__conan-11594",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 171,
+      "instance_id": "dask__dask-10509",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 172,
+      "instance_id": "facebookresearch__hydra-1616",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 173,
+      "instance_id": "getmoto__moto-4895",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 174,
+      "instance_id": "iterative__dvc-1749",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 175,
+      "instance_id": "modin-project__modin-6369",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 176,
+      "instance_id": "pandas-dev__pandas-47581",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 177,
+      "instance_id": "pydantic__pydantic-5589",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 178,
+      "instance_id": "python__mypy-10458",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 179,
+      "instance_id": "Project-MONAI__MONAI-1645",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 180,
+      "instance_id": "bokeh__bokeh-13608",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 181,
+      "instance_id": "conan-io__conan-11655",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 182,
+      "instance_id": "dask__dask-10521",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 183,
+      "instance_id": "facebookresearch__hydra-1655",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 184,
+      "instance_id": "getmoto__moto-4896",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 185,
+      "instance_id": "iterative__dvc-1759",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 186,
+      "instance_id": "modin-project__modin-6370",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 187,
+      "instance_id": "pandas-dev__pandas-47585",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 188,
+      "instance_id": "pydantic__pydantic-5591",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 189,
+      "instance_id": "python__mypy-10478",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 190,
+      "instance_id": "Project-MONAI__MONAI-1684",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 191,
+      "instance_id": "bokeh__bokeh-13636",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 192,
+      "instance_id": "conan-io__conan-11799",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 193,
+      "instance_id": "dask__dask-10556",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 194,
+      "instance_id": "facebookresearch__hydra-1661",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 195,
+      "instance_id": "getmoto__moto-4908",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 196,
+      "instance_id": "iterative__dvc-1781",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 197,
+      "instance_id": "modin-project__modin-6371",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 198,
+      "instance_id": "pandas-dev__pandas-47586",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 199,
+      "instance_id": "pydantic__pydantic-5662",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 200,
+      "instance_id": "python__mypy-10508",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 201,
+      "instance_id": "conan-io__conan-11803",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 202,
+      "instance_id": "dask__dask-10616",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 203,
+      "instance_id": "facebookresearch__hydra-1671",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 204,
+      "instance_id": "getmoto__moto-4915",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 205,
+      "instance_id": "iterative__dvc-1782",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 206,
+      "instance_id": "modin-project__modin-6381",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 207,
+      "instance_id": "pandas-dev__pandas-47605",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 208,
+      "instance_id": "pydantic__pydantic-5706",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 209,
+      "instance_id": "python__mypy-10560",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 210,
+      "instance_id": "Project-MONAI__MONAI-1746",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 211,
+      "instance_id": "bokeh__bokeh-13721",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 212,
+      "instance_id": "conan-io__conan-12307",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 213,
+      "instance_id": "facebookresearch__hydra-1695",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 214,
+      "instance_id": "iterative__dvc-1785",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 215,
+      "instance_id": "modin-project__modin-6400",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 216,
+      "instance_id": "pandas-dev__pandas-47619",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 217,
+      "instance_id": "pydantic__pydantic-5834",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 218,
+      "instance_id": "python__mypy-10572",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 219,
+      "instance_id": "Project-MONAI__MONAI-1777",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 220,
+      "instance_id": "bokeh__bokeh-13757",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 221,
+      "instance_id": "conan-io__conan-12353",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 222,
+      "instance_id": "dask__dask-10723",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 223,
+      "instance_id": "facebookresearch__hydra-1696",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 224,
+      "instance_id": "getmoto__moto-4934",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 225,
+      "instance_id": "iterative__dvc-1808",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 226,
+      "instance_id": "modin-project__modin-6403",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 227,
+      "instance_id": "pandas-dev__pandas-47623",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 228,
+      "instance_id": "pydantic__pydantic-5841",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 229,
+      "instance_id": "python__mypy-10579",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 230,
+      "instance_id": "Project-MONAI__MONAI-1805",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 231,
+      "instance_id": "bokeh__bokeh-13800",
+      "repo": "bokeh/bokeh"
+    },
+    {
+      "task_index": 232,
+      "instance_id": "conan-io__conan-12397",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 233,
+      "instance_id": "dask__dask-10734",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 234,
+      "instance_id": "facebookresearch__hydra-1725",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 235,
+      "instance_id": "getmoto__moto-4950",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 236,
+      "instance_id": "iterative__dvc-1809",
+      "repo": "iterative/dvc"
+    },
+    {
+      "task_index": 237,
+      "instance_id": "modin-project__modin-6404",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 238,
+      "instance_id": "pandas-dev__pandas-47630",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 239,
+      "instance_id": "pydantic__pydantic-5861",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 240,
+      "instance_id": "python__mypy-10582",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 241,
+      "instance_id": "Project-MONAI__MONAI-1829",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 242,
+      "instance_id": "conan-io__conan-12578",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 243,
+      "instance_id": "dask__dask-10750",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 244,
+      "instance_id": "facebookresearch__hydra-1733",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 245,
+      "instance_id": "getmoto__moto-4951",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 246,
+      "instance_id": "modin-project__modin-6426",
+      "repo": "modin-project/modin"
+    },
+    {
+      "task_index": 247,
+      "instance_id": "pandas-dev__pandas-47633",
+      "repo": "pandas-dev/pandas"
+    },
+    {
+      "task_index": 248,
+      "instance_id": "pydantic__pydantic-5868",
+      "repo": "pydantic/pydantic"
+    },
+    {
+      "task_index": 249,
+      "instance_id": "python__mypy-10609",
+      "repo": "python/mypy"
+    },
+    {
+      "task_index": 250,
+      "instance_id": "Project-MONAI__MONAI-1832",
+      "repo": "Project-MONAI/MONAI"
+    },
+    {
+      "task_index": 251,
+      "instance_id": "conan-io__conan-12695",
+      "repo": "conan-io/conan"
+    },
+    {
+      "task_index": 252,
+      "instance_id": "dask__dask-10754",
+      "repo": "dask/dask"
+    },
+    {
+      "task_index": 253,
+      "instance_id": "facebookresearch__hydra-1735",
+      "repo": "facebookresearch/hydra"
+    },
+    {
+      "task_index": 254,
+      "instance_id": "getmoto__moto-4956",
+      "repo": "getmoto/moto"
+    },
+    {
+      "task_index": 255,
+      "instance_id": "iterative__dvc-1829",
+      "repo": "iterative/dvc"
+    }
+  ]
+}
