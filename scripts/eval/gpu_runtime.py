@@ -1,8 +1,9 @@
-"""Shared GPU AgentLoopManager bootstrap for M3B/M3C/M4A/M4B.
+"""Shared GPU AgentLoopManager bootstrap for M3B/M3C/M4A/M4B/M4C.
 
 M3B/M3C default: RewardLoop skipped, ``rollout.n=1``.
 M4A: optional RewardLoop handles and trainer-level ``rollout.n=4``.
 M4B: LoRA + one-step ``RayPPOTrainer`` config on the same freeze envelope.
+M4C: official FSDP save_freq=1 then resume_path reload; same freeze envelope.
 """
 
 from __future__ import annotations
@@ -193,7 +194,7 @@ def assert_sampling_config(
     if recorded["temperature"] == 0:
         raise SystemExit(
             "HARD FAIL: rollout.temperature==0 would make vLLM greedy; "
-            "M3B/M3C/M4A/M4B must use Qwen3 sampling 0.7/0.8/20"
+            "M3B/M3C/M4A/M4B/M4C must use Qwen3 sampling 0.7/0.8/20"
         )
     if recorded["n"] != int(require_rollout_n):
         if int(require_rollout_n) == 1:
@@ -296,6 +297,81 @@ def apply_m4b_train_config(
         config.critic.enable = False
         config.algorithm.adv_estimator = "grpo"
         config.algorithm.use_kl_in_reward = False
+    return config
+
+
+def apply_m4c_save_config(
+    config: Any,
+    *,
+    train_files: str,
+    val_files: str,
+    n_tasks: int,
+    n_gpus: int,
+    lora_rank: int = 16,
+    lora_alpha: int = 16,
+    default_local_dir: str | None = None,
+) -> Any:
+    """M4B one-step envelope plus official ``save_freq=1`` FSDP checkpointing."""
+    apply_m4b_train_config(
+        config,
+        train_files=train_files,
+        val_files=val_files,
+        n_tasks=n_tasks,
+        n_gpus=n_gpus,
+        lora_rank=lora_rank,
+        lora_alpha=lora_alpha,
+        default_local_dir=default_local_dir,
+    )
+    from omegaconf import open_dict
+
+    with open_dict(config):
+        config.trainer.save_freq = 1
+        config.trainer.max_actor_ckpt_to_keep = 1
+        config.trainer.experiment_name = "E009-m4c"
+        config.trainer.del_local_ckpt_after_load = False
+    return config
+
+
+def apply_m4c_reload_config(
+    config: Any,
+    *,
+    train_files: str,
+    val_files: str,
+    n_tasks: int,
+    n_gpus: int,
+    resume_from_path: str,
+    lora_rank: int = 16,
+    lora_alpha: int = 16,
+    default_local_dir: str | None = None,
+) -> Any:
+    """Fresh-process FSDP resume. Does not run a second optimizer step."""
+    apply_m4b_train_config(
+        config,
+        train_files=train_files,
+        val_files=val_files,
+        n_tasks=n_tasks,
+        n_gpus=n_gpus,
+        lora_rank=lora_rank,
+        lora_alpha=lora_alpha,
+        default_local_dir=default_local_dir,
+    )
+    from omegaconf import open_dict
+
+    with open_dict(config):
+        config.actor_rollout_ref.rollout.n = 1
+        config.trainer.save_freq = -1
+        config.trainer.val_before_train = False
+        config.trainer.test_freq = -1
+        config.trainer.resume_mode = "resume_path"
+        config.trainer.resume_from_path = str(resume_from_path)
+        config.trainer.experiment_name = "E009-m4c-reload"
+        config.trainer.del_local_ckpt_after_load = False
+        config.data.train_batch_size = int(n_tasks)
+    if "global_step_" not in str(resume_from_path):
+        raise SystemExit(
+            "HARD FAIL: resume_from_path must contain global_step_ "
+            f"(got {resume_from_path!r})"
+        )
     return config
 
 
