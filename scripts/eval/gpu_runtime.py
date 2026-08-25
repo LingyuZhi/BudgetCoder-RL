@@ -1,4 +1,8 @@
-"""Shared GPU AgentLoopManager bootstrap for M3B/M3C (M2D/M3A path, no RewardLoop)."""
+"""Shared GPU AgentLoopManager bootstrap for M3B/M3C/M4A.
+
+M3B/M3C default: RewardLoop skipped, ``rollout.n=1``.
+M4A: optional RewardLoop handles and trainer-level ``rollout.n=4``.
+"""
 
 from __future__ import annotations
 
@@ -119,6 +123,7 @@ def build_config(
     tensor_model_parallel_size: int,
     agent_loop_config: str,
     sampling: Mapping[str, Any] | None = None,
+    rollout_n: int = 1,
 ) -> Any:
     import verl
     from hydra import compose, initialize_config_dir
@@ -150,7 +155,7 @@ def build_config(
     rollout.max_model_len = MAX_MODEL_LEN
     rollout.max_num_batched_tokens = MAX_MODEL_LEN
     rollout.tensor_model_parallel_size = tensor_model_parallel_size
-    rollout.n = 1
+    rollout.n = int(rollout_n)
     rollout.skip_tokenizer_init = True
     rollout.layered_summon = True
     rollout.checkpoint_engine.update_weights_bucket_megabytes = 512
@@ -171,7 +176,11 @@ def build_config(
     return config
 
 
-def assert_sampling_config(config: Any) -> dict[str, Any]:
+def assert_sampling_config(
+    config: Any,
+    *,
+    require_rollout_n: int = 1,
+) -> dict[str, Any]:
     rollout = config.actor_rollout_ref.rollout
     recorded = {
         "temperature": float(rollout.temperature),
@@ -183,12 +192,17 @@ def assert_sampling_config(config: Any) -> dict[str, Any]:
     if recorded["temperature"] == 0:
         raise SystemExit(
             "HARD FAIL: rollout.temperature==0 would make vLLM greedy; "
-            "M3B/M3C must use Qwen3 sampling 0.7/0.8/20"
+            "M3B/M3C/M4A must use Qwen3 sampling 0.7/0.8/20"
         )
-    if recorded["n"] != 1:
+    if recorded["n"] != int(require_rollout_n):
+        if int(require_rollout_n) == 1:
+            raise SystemExit(
+                "HARD FAIL: AgentLoop measurement forbids vLLM n>1; "
+                "grouped rollouts expand tasks with distinct sampling_seed"
+            )
         raise SystemExit(
-            "HARD FAIL: AgentLoop measurement forbids vLLM n>1; "
-            "grouped rollouts expand tasks with distinct sampling_seed"
+            f"HARD FAIL: expected actor_rollout_ref.rollout.n="
+            f"{require_rollout_n} (GRPO group size), got {recorded['n']}"
         )
     if abs(recorded["temperature"] - QWEN3_SAMPLING["temperature"]) > 1e-6:
         raise SystemExit(f"HARD FAIL: unexpected temperature {recorded['temperature']}")
@@ -199,8 +213,28 @@ def assert_sampling_config(config: Any) -> dict[str, Any]:
     return recorded
 
 
-def init_agent_loop_manager(config):
-    """Real veRL runtime bootstrap (public APIs only, reward loop skipped)."""
+def apply_reward_loop_config(
+    config: Any,
+    *,
+    reward_fn_path: str,
+    reward_fn_name: str = "compute_score",
+    num_workers: int = 2,
+) -> Any:
+    """Attach a rule-based RewardLoop custom function. No reward model GPU."""
+    from omegaconf import open_dict
+
+    with open_dict(config):
+        config.reward.custom_reward_function.path = str(reward_fn_path)
+        config.reward.custom_reward_function.name = str(reward_fn_name)
+        config.reward.num_workers = int(num_workers)
+        config.reward.reward_model.enable = False
+        config.algorithm.adv_estimator = "grpo"
+        config.algorithm.use_kl_in_reward = False
+    return config
+
+
+def init_agent_loop_manager(config, reward_loop_worker_handles=None):
+    """Real veRL runtime bootstrap. RewardLoop handles optional (M4A)."""
     import ray
 
     from verl.checkpoint_engine import CheckpointEngineManager
@@ -243,7 +277,7 @@ def init_agent_loop_manager(config):
     agent_loop_manager = AgentLoopManager.create(
         config=config,
         llm_client=llm_server_manager.get_client(),
-        reward_loop_worker_handles=None,
+        reward_loop_worker_handles=reward_loop_worker_handles,
     )
     checkpoint_manager = CheckpointEngineManager(
         config=omega_conf_to_dataclass(config.actor_rollout_ref.rollout.checkpoint_engine),
@@ -262,18 +296,33 @@ def build_batch(items: list[dict[str, Any]], *, validate: bool):
     extras = []
     names = []
     indices = []
+    data_sources = []
+    reward_models = []
+    has_reward_fields = False
     for offset, item in enumerate(items):
+        extra = as_mapping(item.get("extra_info"))
         raw_prompts.append(item.get("raw_prompt"))
-        extras.append(as_mapping(item.get("extra_info")))
+        extras.append(extra)
         names.append("repo_exploration")
-        indices.append(offset)
+        if extra.get("index") is not None:
+            indices.append(extra.get("index"))
+        else:
+            indices.append(offset)
+        if "data_source" in item or "reward_model" in item:
+            has_reward_fields = True
+        data_sources.append(item.get("data_source"))
+        reward_models.append(item.get("reward_model"))
+    non_tensor: dict[str, Any] = {
+        "raw_prompt": object_array(raw_prompts),
+        "extra_info": object_array(extras),
+        "agent_name": object_array(names),
+        "index": np.array(indices, dtype=object),
+    }
+    if has_reward_fields:
+        non_tensor["data_source"] = object_array(data_sources)
+        non_tensor["reward_model"] = object_array(reward_models)
     return DataProto(
-        non_tensor_batch={
-            "raw_prompt": object_array(raw_prompts),
-            "extra_info": object_array(extras),
-            "agent_name": object_array(names),
-            "index": np.array(indices, dtype=object),
-        },
+        non_tensor_batch=non_tensor,
         meta_info={"validate": validate, "global_steps": 0},
     )
 
