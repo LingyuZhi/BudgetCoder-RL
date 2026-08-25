@@ -1,7 +1,8 @@
-"""Shared GPU AgentLoopManager bootstrap for M3B/M3C/M4A.
+"""Shared GPU AgentLoopManager bootstrap for M3B/M3C/M4A/M4B.
 
 M3B/M3C default: RewardLoop skipped, ``rollout.n=1``.
 M4A: optional RewardLoop handles and trainer-level ``rollout.n=4``.
+M4B: LoRA + one-step ``RayPPOTrainer`` config on the same freeze envelope.
 """
 
 from __future__ import annotations
@@ -192,7 +193,7 @@ def assert_sampling_config(
     if recorded["temperature"] == 0:
         raise SystemExit(
             "HARD FAIL: rollout.temperature==0 would make vLLM greedy; "
-            "M3B/M3C/M4A must use Qwen3 sampling 0.7/0.8/20"
+            "M3B/M3C/M4A/M4B must use Qwen3 sampling 0.7/0.8/20"
         )
     if recorded["n"] != int(require_rollout_n):
         if int(require_rollout_n) == 1:
@@ -228,6 +229,71 @@ def apply_reward_loop_config(
         config.reward.custom_reward_function.name = str(reward_fn_name)
         config.reward.num_workers = int(num_workers)
         config.reward.reward_model.enable = False
+        config.algorithm.adv_estimator = "grpo"
+        config.algorithm.use_kl_in_reward = False
+    return config
+
+
+def apply_m4b_train_config(
+    config: Any,
+    *,
+    train_files: str,
+    val_files: str,
+    n_tasks: int,
+    n_gpus: int,
+    lora_rank: int = 16,
+    lora_alpha: int = 16,
+    default_local_dir: str | None = None,
+) -> Any:
+    """Minimal one-step GRPO+LoRA trainer settings. Does not edit freeze JSON."""
+    from omegaconf import open_dict
+
+    with open_dict(config):
+        config.actor_rollout_ref.model.lora_rank = int(lora_rank)
+        config.actor_rollout_ref.model.lora_alpha = int(lora_alpha)
+        config.actor_rollout_ref.model.target_modules = "all-linear"
+        config.actor_rollout_ref.model.enable_gradient_checkpointing = True
+        config.actor_rollout_ref.rollout.load_format = "safetensors"
+        config.actor_rollout_ref.actor.strategy = "fsdp"
+        config.actor_rollout_ref.actor.ppo_mini_batch_size = int(n_tasks)
+        config.actor_rollout_ref.actor.ppo_epochs = 1
+        config.actor_rollout_ref.actor.entropy_coeff = 0.0
+        config.actor_rollout_ref.actor.use_kl_loss = False
+        config.actor_rollout_ref.actor.calculate_entropy = False
+        config.actor_rollout_ref.actor.use_dynamic_bsz = True
+        # After no-padding, E003 seqs were ~3k response + prompt; 32768 packed
+        # all 8 trajectories into one backward and OOM'd. 8192 keeps
+        # max_token_len >= typical seq while splitting the optimizer microbatch.
+        config.actor_rollout_ref.actor.ppo_max_token_len_per_gpu = 8192
+        config.actor_rollout_ref.actor.optim.lr_warmup_steps = 0
+        config.actor_rollout_ref.rollout.log_prob_use_dynamic_bsz = True
+        config.actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu = MAX_MODEL_LEN
+        # Same as hydra/M4A default. 0.4 left only ~2.4GiB KV, below 32k need.
+        config.data.train_files = str(train_files)
+        config.data.val_files = str(val_files)
+        config.data.train_batch_size = int(n_tasks)
+        config.data.shuffle = False
+        config.data.dataloader_num_workers = 0
+        config.data.filter_overlong_prompts = False
+        config.data.truncation = "error"
+        config.data.max_prompt_length = PROMPT_LENGTH
+        config.data.max_response_length = RESPONSE_LENGTH
+        config.data.return_raw_chat = True
+        config.trainer.total_epochs = 1
+        config.trainer.total_training_steps = 1
+        config.trainer.val_before_train = False
+        config.trainer.test_freq = -1
+        config.trainer.save_freq = -1
+        config.trainer.logger = ["console"]
+        config.trainer.resume_mode = "disable"
+        config.trainer.nnodes = 1
+        config.trainer.n_gpus_per_node = int(n_gpus)
+        config.trainer.project_name = "budget-coder-rl"
+        config.trainer.experiment_name = "E003-m4b"
+        config.trainer.critic_warmup = 0
+        if default_local_dir:
+            config.trainer.default_local_dir = str(default_local_dir)
+        config.critic.enable = False
         config.algorithm.adv_estimator = "grpo"
         config.algorithm.use_kl_in_reward = False
     return config
