@@ -1,0 +1,752 @@
+#!/usr/bin/env python
+"""M6 frozen held-out-task eval: AgentLoopManager B0/B1/M1 matrix.
+
+Does not run RayPPOTrainer.fit, RewardLoop, or GRPO. Base and RL use
+separate Ray sessions so a zero-init LoRA adapter cannot pollute B0/B1.
+
+Usage (compute node n30158, pinned conda env ``verl``):
+
+    python scripts/eval/run_m6_eval.py --phase smoke
+    python scripts/eval/run_m6_eval.py --phase base
+    python scripts/eval/run_m6_eval.py --phase rl
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import sys
+import time
+import traceback
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Mapping, Sequence
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(REPO_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT / "src"))
+if str(Path(__file__).resolve().parent) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+if str(REPO_ROOT / "scripts" / "smoke") not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT / "scripts" / "smoke"))
+
+from budget_coder_rl.data.swe_gym_materialize import (  # noqa: E402
+    dev_parquet_path,
+)
+from budget_coder_rl.data.swe_gym_repos import bcrl_data_root, swe_gym_repos_root  # noqa: E402
+from budget_coder_rl.env import RepoEnvironment  # noqa: E402
+from budget_coder_rl.eval.e014 import is_login_host  # noqa: E402
+from budget_coder_rl.eval.episode import build_episode_record  # noqa: E402
+from budget_coder_rl.eval.m3b import QWEN3_SAMPLING  # noqa: E402
+from budget_coder_rl.eval.m4b import PINNED_VERL_COMMIT  # noqa: E402
+from budget_coder_rl.eval.m5a import (  # noqa: E402
+    SHARED_VERL_ROOT,
+    default_isolated_verl_root,
+    ensure_isolated_verl_checkout,
+    imported_verl_errors,
+    prepend_isolated_verl,
+)
+from budget_coder_rl.eval.m5b import redact_env  # noqa: E402
+from budget_coder_rl.eval.m6 import (  # noqa: E402
+    AGENT_LOOP_CONFIG_RELPATH,
+    EVAL_NAME,
+    EXPERIMENT_ID,
+    LORA_ALPHA,
+    LORA_RANK,
+    MILESTONE,
+    N_GPUS,
+    TENSOR_MODEL_PARALLEL_SIZE,
+    VLLM_LORA_INT_ID,
+    build_policy_extra_info,
+    checkpoint_path_errors,
+    default_e015_output_dir,
+    default_rl_actor_dir,
+    default_trace_dir,
+    extra_info_leakage_errors,
+    forbidden_output_dir_errors,
+    jobs_for_phase,
+    load_completed,
+    load_eval_contract,
+    load_tasks,
+    lock_errors,
+    resume_key,
+    split_jobs_by_policy,
+    write_json,
+)
+from budget_coder_rl.eval.provenance import collect_run_provenance, sha256_file  # noqa: E402
+from budget_coder_rl.ray_tmpdir import (  # noqa: E402
+    cleanup_our_tmp_ray,
+    ray_init_kwargs,
+    short_temp_root,
+)
+from smoke_rlhf_dataset import build_dataset, resolve_tokenizer_path  # noqa: E402
+
+TRACE_NOTE = (
+    "Research/debug artifact. AgentLoopOutput / DataProto token arrays are the "
+    "training truth. Do not rebuild RL token trajectories from this JSONL."
+)
+EXTRA_FIELD_KEYS = (
+    "instance_id",
+    "repo",
+    "base_commit",
+    "split",
+    "final_submission",
+    "termination",
+    "segments",
+    "events",
+    "prompt_token_count",
+    "policy_token_count",
+    "observation_token_count",
+    "tool_observation_token_count",
+    "repo_observation_tokens",
+    "budget_metadata_tokens",
+    "total_env_tokens",
+    "obs_tokens_used",
+    "obs_tokens_limit",
+    "obs_tokens_remaining",
+    "budget_accounting_version",
+    "budget_visible",
+    "budget_exhausted",
+    "sampling_params",
+    "sampling_seed",
+    "max_turns",
+    "max_new_tokens_per_turn",
+    "model_name_or_path",
+    "trace_role",
+    "unpadded_prompt_ids",
+)
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--experiment-id", default=EXPERIMENT_ID)
+    parser.add_argument(
+        "--phase",
+        choices=("smoke", "base", "rl", "all"),
+        required=True,
+    )
+    parser.add_argument("--repo-root", type=Path, default=REPO_ROOT)
+    parser.add_argument("--dev", type=Path, default=None)
+    parser.add_argument("--model-path", default=None)
+    parser.add_argument("--data-root", type=Path, default=None)
+    parser.add_argument("--checkpoint-actor-dir", type=Path, default=None)
+    parser.add_argument("--n-gpus", type=int, default=N_GPUS)
+    parser.add_argument(
+        "--tensor-model-parallel-size",
+        type=int,
+        default=TENSOR_MODEL_PARALLEL_SIZE,
+    )
+    parser.add_argument("--batch-size", type=int, default=2)
+    parser.add_argument("--max-hours", type=float, default=12.0)
+    parser.add_argument("--probe-only", action="store_true")
+    parser.add_argument(
+        "--skip-gpu-idle",
+        action="store_true",
+        help="Require 2 visible GPUs but skip the idle-memory gate.",
+    )
+    parser.add_argument("--output-dir", type=Path, default=None)
+    return parser.parse_args(argv)
+
+
+def json_safe(value: Any) -> Any:
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return value
+    if hasattr(value, "item") and not isinstance(value, (bytes, str)):
+        try:
+            return json_safe(value.item())
+        except Exception:
+            pass
+    if isinstance(value, np_ndarray()):
+        return [json_safe(item) for item in value.tolist()]
+    if isinstance(value, Mapping):
+        return {str(key): json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [json_safe(item) for item in value]
+    return str(value)
+
+
+def np_ndarray():
+    import numpy as np
+
+    return np.ndarray
+
+
+def append_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as handle:
+        for row in rows:
+            handle.write(json.dumps(json_safe(row), ensure_ascii=True) + "\n")
+
+
+def _as_dict(value: Any) -> dict[str, Any]:
+    if value is None:
+        return {}
+    if isinstance(value, Mapping):
+        return {str(key): value[key] for key in value}
+    if hasattr(value, "item") and not isinstance(value, (bytes, str)):
+        try:
+            value = value.item()
+        except Exception:
+            pass
+        if isinstance(value, Mapping):
+            return {str(key): value[key] for key in value}
+    raise TypeError(f"expected mapping, got {type(value)!r}")
+
+
+def index_dataset(dataset) -> dict[str, dict[str, Any]]:
+    indexed: dict[str, dict[str, Any]] = {}
+    for index in range(len(dataset)):
+        item = dataset[index]
+        extra = _as_dict(item.get("extra_info"))
+        instance_id = str(extra.get("instance_id") or "")
+        if not instance_id:
+            raise SystemExit(f"dataset[{index}] missing extra_info.instance_id")
+        indexed[instance_id] = item
+    return indexed
+
+
+def extra_from_result(result, index: int) -> dict[str, Any]:
+    extra_keys = result.non_tensor_batch
+    fake: dict[str, Any] = {}
+    for key in EXTRA_FIELD_KEYS:
+        payload = extra_keys.get(key)
+        if payload is not None:
+            fake[key] = payload[index]
+    return fake
+
+
+def operational_record(
+    job: Mapping[str, Any],
+    *,
+    error: str,
+    provenance: Mapping[str, Any],
+) -> dict[str, Any]:
+    return {
+        "schema_version": "bcrl-episode-v1",
+        "trace_note": TRACE_NOTE,
+        "identity": {
+            "instance_id": job["instance_id"],
+            "repo": job.get("repo"),
+            "base_commit": None,
+            "split": "dev",
+        },
+        "condition": {
+            "condition_id": job["condition_id"],
+            "policy": job["policy"],
+            "budget_visible": job["budget_visible"],
+            "obs_tokens_limit": job["obs_tokens_limit"],
+            "sampling_seed": job.get("sampling_seed"),
+        },
+        "termination": "operational_error",
+        "error": error,
+        "provenance": dict(provenance),
+    }
+
+
+def _assert_compute_node() -> str:
+    host = os.uname().nodename if hasattr(os, "uname") else ""
+    if is_login_host(host):
+        raise SystemExit(f"HARD FAIL: do not run M6 GPU on login node ({host})")
+    try:
+        import subprocess
+
+        subprocess.check_output(["nvidia-smi"], stderr=subprocess.STDOUT)
+    except Exception as exc:
+        raise SystemExit(f"HARD FAIL: nvidia-smi failed on {host}: {exc}") from exc
+    return host
+
+
+def _apply_eval_kv_budget(config: Any) -> None:
+    from omegaconf import open_dict
+
+    with open_dict(config):
+        config.actor_rollout_ref.rollout.gpu_memory_utilization = 0.5
+
+
+def _shutdown_ray() -> None:
+    import ray
+
+    if ray.is_initialized():
+        ray.shutdown()
+    time.sleep(5)
+
+
+def _run_session(
+    *,
+    session_name: str,
+    jobs: Sequence[Mapping[str, Any]],
+    use_lora: bool,
+    checkpoint_actor_dir: Path | None,
+    config_factory,
+    runtime_env: dict[str, Any],
+    tmp_root: Path,
+    indexed: Mapping[str, Mapping[str, Any]],
+    env: RepoEnvironment,
+    episodes_path: Path,
+    output_dir: Path,
+    provenance: dict[str, Any],
+    batch_size: int,
+    max_hours: float,
+    started: float,
+    completed: set[tuple[str, str, int]],
+) -> dict[str, Any]:
+    from gpu_runtime import (
+        assert_sampling_config,
+        build_batch,
+        init_eval_agent_loop_manager,
+        as_mapping,
+    )
+
+    import ray
+
+    pending = [job for job in jobs if resume_key(job) not in completed]
+    stats = {
+        "session": session_name,
+        "n_jobs": len(jobs),
+        "n_pending": len(pending),
+        "n_written": 0,
+        "n_error": 0,
+        "lora_probe": None,
+        "stop_reason": "completed",
+    }
+    if not pending:
+        print(json.dumps({"session": session_name, "skipped": "already_complete"}))
+        return stats
+
+    ray.init(runtime_env=runtime_env, **ray_init_kwargs(tmp_root))
+    try:
+        from gpu_runtime import get_verl_info
+
+        provenance[f"verl_runtime_{session_name}"] = get_verl_info()
+        write_json(output_dir / "provenance.json", provenance)
+        config = config_factory()
+        sampling_recorded = assert_sampling_config(config)
+        provenance[f"sampling_rollout_{session_name}"] = sampling_recorded
+        write_json(output_dir / "provenance.json", provenance)
+        bundle = init_eval_agent_loop_manager(
+            config,
+            checkpoint_actor_dir=(
+                str(checkpoint_actor_dir) if use_lora and checkpoint_actor_dir else None
+            ),
+            require_lora_id=VLLM_LORA_INT_ID if use_lora else None,
+        )
+        manager = bundle["agent_loop_manager"]
+        stats["lora_probe"] = bundle.get("lora_probe")
+        write_json(output_dir / f"lora_probe_{session_name}.json", bundle.get("lora_probe") or {})
+        queue = list(pending)
+        batch_index = 0
+        while queue:
+            elapsed_h = (time.time() - started) / 3600.0
+            if elapsed_h >= max_hours:
+                stats["stop_reason"] = "max_hours"
+                break
+            batch_jobs = queue[:batch_size]
+            del queue[:batch_size]
+            items: list[dict[str, Any]] = []
+            item_meta: list[dict[str, Any]] = []
+            for job in batch_jobs:
+                key = resume_key(job)
+                if key in completed:
+                    continue
+                instance_id = str(job["instance_id"])
+                if instance_id not in indexed:
+                    record = operational_record(
+                        job,
+                        error=f"instance not in parquet: {instance_id}",
+                        provenance=provenance,
+                    )
+                    append_jsonl(episodes_path, [record])
+                    completed.add(key)
+                    stats["n_error"] += 1
+                    stats["n_written"] += 1
+                    continue
+                source = dict(indexed[instance_id])
+                extra = as_mapping(source.get("extra_info"))
+                try:
+                    env.prepare_from_extra_info(extra)
+                    patched_extra = build_policy_extra_info(extra, job)
+                    leaks = extra_info_leakage_errors(patched_extra)
+                    if leaks:
+                        raise ValueError(str(leaks))
+                except Exception as exc:
+                    record = operational_record(
+                        job,
+                        error=f"prepare/extra_info failed: {exc}",
+                        provenance=provenance,
+                    )
+                    append_jsonl(episodes_path, [record])
+                    completed.add(key)
+                    stats["n_error"] += 1
+                    stats["n_written"] += 1
+                    continue
+                patched = dict(source)
+                patched["extra_info"] = patched_extra
+                items.append(patched)
+                item_meta.append(dict(job))
+            if not items:
+                continue
+            batch_t0 = time.time()
+            batch = build_batch(items, validate=False)
+            result = manager.generate_sequences(prompts=batch)
+            if len(result) != len(items):
+                raise SystemExit(
+                    f"generate_sequences returned {len(result)} for {len(items)} inputs"
+                )
+            rows: list[dict[str, Any]] = []
+            for index, meta in enumerate(item_meta):
+                extra = extra_from_result(result, index)
+                sampling = extra.get("sampling_params") or {}
+                temperature = sampling.get("temperature")
+                if temperature in {0, 0.0}:
+                    raise SystemExit(
+                        "HARD FAIL: episode sampling temperature is 0 "
+                        f"(instance={meta['instance_id']}). validate=True greedy trap?"
+                    )
+                if "do_sample" in sampling:
+                    raise SystemExit("HARD FAIL: do_sample leaked into sampling_params")
+                record = build_episode_record(extra, provenance=provenance)
+                record["trace_note"] = TRACE_NOTE
+                record["experiment_id"] = EXPERIMENT_ID
+                record["eval_name"] = EVAL_NAME
+                record["condition"]["condition_id"] = meta["condition_id"]
+                record["condition"]["policy"] = meta["policy"]
+                record["condition"]["budget_visible"] = meta["budget_visible"]
+                record["condition"]["obs_tokens_limit"] = meta["obs_tokens_limit"]
+                record["condition"]["sampling_seed"] = meta["sampling_seed"]
+                rows.append(record)
+                completed.add(resume_key(meta))
+            append_jsonl(episodes_path, rows)
+            stats["n_written"] += len(rows)
+            batch_dt = time.time() - batch_t0
+            batch_index += 1
+            write_json(
+                output_dir / "heartbeat.json",
+                {
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "session": session_name,
+                    "batch_index": batch_index,
+                    "n_written_session": stats["n_written"],
+                    "n_error_session": stats["n_error"],
+                    "queue_remaining": len(queue),
+                    "elapsed_s": time.time() - started,
+                    "last_batch_s": batch_dt,
+                    "n_completed": len(completed),
+                },
+            )
+            print(
+                json.dumps(
+                    {
+                        "session": session_name,
+                        "batch_index": batch_index,
+                        "wrote": len(rows),
+                        "batch_s": round(batch_dt, 1),
+                        "queue": len(queue),
+                    }
+                ),
+                flush=True,
+            )
+    except Exception:
+        stats["stop_reason"] = "error"
+        write_json(
+            output_dir / f"run_error_{session_name}.json",
+            {
+                "traceback": traceback.format_exc(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            },
+        )
+        raise
+    finally:
+        _shutdown_ray()
+    return stats
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    repo_root = args.repo_root.resolve()
+    started = time.time()
+    if args.experiment_id != EXPERIMENT_ID:
+        print(f"HARD FAIL: experiment_id must be {EXPERIMENT_ID}", file=sys.stderr)
+        return 1
+    lock_msgs = lock_errors(repo_root)
+    if lock_msgs:
+        print(f"HARD FAIL: eval lock {lock_msgs}", file=sys.stderr)
+        return 1
+    contract = load_eval_contract(repo_root)
+    output_dir = (
+        args.output_dir.resolve()
+        if args.output_dir is not None
+        else default_e015_output_dir(repo_root)
+    )
+    forbidden = forbidden_output_dir_errors(output_dir, repo_root)
+    if forbidden:
+        print(f"HARD FAIL: {forbidden}", file=sys.stderr)
+        return 1
+    output_dir.mkdir(parents=True, exist_ok=True)
+    os.environ["BCRL_M6_OUTPUT_DIR"] = str(output_dir)
+
+    data_root = Path(args.data_root) if args.data_root is not None else bcrl_data_root()
+    isolated_root = default_isolated_verl_root(data_root)
+    verl_info = ensure_isolated_verl_checkout(
+        isolated_root=isolated_root,
+        source_git=SHARED_VERL_ROOT,
+        pinned_commit=PINNED_VERL_COMMIT,
+        create=True,
+    )
+    merged_pythonpath = prepend_isolated_verl(isolated_root, repo_root)
+    verl_import_errors, verl_runtime = imported_verl_errors(isolated_root=isolated_root)
+    if verl_import_errors:
+        print(f"HARD FAIL: {verl_import_errors}", file=sys.stderr)
+        write_json(
+            output_dir / "verl_import_error.json",
+            {"errors": verl_import_errors, "info": verl_runtime},
+        )
+        return 1
+
+    from gpu_runtime import (  # noqa: E402
+        M3C_AGENT_LOOP_CONFIG_RELPATH,
+        apply_eval_lora_config,
+        build_config,
+        require_visible_gpus,
+        resolve_model_path,
+    )
+
+    host = _assert_compute_node()
+    if int(args.n_gpus) != N_GPUS:
+        print(f"HARD FAIL: M6 requires n_gpus={N_GPUS}", file=sys.stderr)
+        return 1
+    gpu_info = require_visible_gpus(N_GPUS, idle=not args.skip_gpu_idle)
+    model_path = resolve_model_path(args.model_path)
+    if not Path(model_path).exists():
+        print(f"HARD FAIL: model path does not exist: {model_path}", file=sys.stderr)
+        return 1
+
+    agent_loop_config = repo_root / AGENT_LOOP_CONFIG_RELPATH
+    if not agent_loop_config.is_file():
+        print(f"HARD FAIL: missing {agent_loop_config}", file=sys.stderr)
+        return 1
+    if M3C_AGENT_LOOP_CONFIG_RELPATH not in str(agent_loop_config):
+        print("HARD FAIL: M6 must use the M3C AgentLoop YAML", file=sys.stderr)
+        return 1
+
+    checkpoint_actor = (
+        args.checkpoint_actor_dir.resolve()
+        if args.checkpoint_actor_dir is not None
+        else default_rl_actor_dir(data_root)
+    )
+    ckpt_errors = checkpoint_path_errors(checkpoint_actor)
+    if ckpt_errors:
+        print(f"HARD FAIL: {ckpt_errors}", file=sys.stderr)
+        return 1
+    if args.phase in {"rl", "all", "smoke"} and not checkpoint_actor.is_dir():
+        print(f"HARD FAIL: missing RL actor dir {checkpoint_actor}", file=sys.stderr)
+        return 1
+
+    tasks = load_tasks(repo_root)
+    jobs = jobs_for_phase(tasks, args.phase)
+    if args.probe_only:
+        jobs = jobs[:1]
+    base_jobs, rl_jobs = split_jobs_by_policy(jobs)
+
+    tmp_cleanup = cleanup_our_tmp_ray()
+    tmp_root = short_temp_root()
+    tokenizer_path = resolve_tokenizer_path(None) or model_path
+    from transformers import AutoTokenizer
+
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
+    parquet_path = args.dev.resolve() if args.dev is not None else dev_parquet_path(repo_root)
+    if not parquet_path.is_file():
+        print(f"HARD FAIL: missing M1E dev parquet {parquet_path}", file=sys.stderr)
+        return 1
+    cache_dir = output_dir / "rlhf_dataset_cache"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    dataset = build_dataset(parquet_path, tokenizer, cache_dir)
+    indexed = index_dataset(dataset)
+    env = RepoEnvironment(
+        repos_root=swe_gym_repos_root(args.data_root),
+        data_root=args.data_root,
+    )
+
+    trace_dir = default_trace_dir(data_root)
+    trace_dir.mkdir(parents=True, exist_ok=True)
+    episodes_path = trace_dir / "episodes.jsonl"
+    completed = load_completed(episodes_path)
+
+    provenance = collect_run_provenance(
+        repo_root,
+        verl_source=isolated_root,
+        agent_loop_config=agent_loop_config,
+        model_path=model_path,
+        tokenizer_name_or_path=getattr(tokenizer, "name_or_path", None),
+    )
+    provenance.update(
+        {
+            "experiment_id": EXPERIMENT_ID,
+            "milestone": MILESTONE,
+            "eval_name": EVAL_NAME,
+            "phase": args.phase,
+            "split_kind": "held-out-task",
+            "not_held_out_repository_test": True,
+            "eval_config_sha256": sha256_file(
+                repo_root / "configs/experiments/stage1_m6_eval.json"
+            ),
+            "n_jobs": len(jobs),
+            "n_base_jobs": len(base_jobs),
+            "n_rl_jobs": len(rl_jobs),
+            "n_already_completed": len(completed),
+            "sampling_intended": dict(QWEN3_SAMPLING),
+            "validate": False,
+            "vllm_rollout_n": 1,
+            "isolated_verl": verl_info,
+            "verl_runtime": verl_runtime,
+            "gpu": gpu_info,
+            "host": host,
+            "data_root": str(data_root),
+            "ray_tmpdir": str(tmp_root),
+            "tmp_cleanup": tmp_cleanup,
+            "checkpoint_actor_dir": str(checkpoint_actor),
+            "episodes_path": str(episodes_path),
+            "contract": {
+                "n_tasks": contract.get("n_tasks"),
+                "budgets": contract.get("budgets"),
+                "canonical_rl_step": contract.get("canonical_rl_step"),
+            },
+        }
+    )
+    write_json(output_dir / "provenance.json", provenance)
+
+    runtime_env = {
+        "env_vars": {
+            "TOKENIZERS_PARALLELISM": "true",
+            "NCCL_DEBUG": "WARN",
+            "VLLM_LOGGING_LEVEL": "INFO",
+            "VLLM_USE_V1": "1",
+            "VLLM_ALLOW_RUNTIME_LORA_UPDATING": "true",
+            "VLLM_DISABLE_COMPILE_CACHE": "1",
+            "CUDA_DEVICE_MAX_CONNECTIONS": "1",
+            "CUDA_VISIBLE_DEVICES": os.environ.get("CUDA_VISIBLE_DEVICES", "0,1"),
+            "BCRL_DATA_ROOT": str(data_root),
+            "BCRL_M6_OUTPUT_DIR": str(output_dir),
+            "PYTHONPATH": merged_pythonpath,
+            "TMPDIR": str(tmp_root),
+            "RAY_TMPDIR": str(tmp_root),
+            "http_proxy": os.environ.get("http_proxy") or "",
+            "https_proxy": os.environ.get("https_proxy") or "",
+            "HTTPS_PROXY": os.environ.get("https_proxy") or os.environ.get("HTTPS_PROXY") or "",
+        }
+    }
+    write_json(output_dir / "runtime_env_redacted.json", redact_env(runtime_env["env_vars"]))
+
+    def base_config():
+        config = build_config(
+            model_path,
+            n_gpus=N_GPUS,
+            tensor_model_parallel_size=int(args.tensor_model_parallel_size),
+            agent_loop_config=str(agent_loop_config),
+            sampling=QWEN3_SAMPLING,
+            rollout_n=1,
+        )
+        _apply_eval_kv_budget(config)
+        return config
+
+    def rl_config():
+        config = base_config()
+        apply_eval_lora_config(config, lora_rank=LORA_RANK, lora_alpha=LORA_ALPHA)
+        return config
+
+    session_stats: list[dict[str, Any]] = []
+    stop_reason = "completed"
+    try:
+        if base_jobs:
+            session_stats.append(
+                _run_session(
+                    session_name="base",
+                    jobs=base_jobs,
+                    use_lora=False,
+                    checkpoint_actor_dir=None,
+                    config_factory=base_config,
+                    runtime_env=runtime_env,
+                    tmp_root=tmp_root,
+                    indexed=indexed,
+                    env=env,
+                    episodes_path=episodes_path,
+                    output_dir=output_dir,
+                    provenance=provenance,
+                    batch_size=int(args.batch_size),
+                    max_hours=float(args.max_hours),
+                    started=started,
+                    completed=completed,
+                )
+            )
+        if rl_jobs:
+            if any(item.get("stop_reason") == "max_hours" for item in session_stats):
+                stop_reason = "max_hours"
+            else:
+                session_stats.append(
+                    _run_session(
+                        session_name="rl",
+                        jobs=rl_jobs,
+                        use_lora=True,
+                        checkpoint_actor_dir=checkpoint_actor,
+                        config_factory=rl_config,
+                        runtime_env=runtime_env,
+                        tmp_root=tmp_root,
+                        indexed=indexed,
+                        env=env,
+                        episodes_path=episodes_path,
+                        output_dir=output_dir,
+                        provenance=provenance,
+                        batch_size=int(args.batch_size),
+                        max_hours=float(args.max_hours),
+                        started=started,
+                        completed=completed,
+                    )
+                )
+    except Exception:
+        stop_reason = "error"
+        write_json(
+            output_dir / "run_error.json",
+            {
+                "traceback": traceback.format_exc(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            },
+        )
+        raise
+    finally:
+        _shutdown_ray()
+
+    if any(item.get("stop_reason") == "max_hours" for item in session_stats):
+        stop_reason = "max_hours"
+    if any(item.get("stop_reason") == "error" for item in session_stats):
+        stop_reason = "error"
+
+    n_written = sum(int(item.get("n_written") or 0) for item in session_stats)
+    n_error = sum(int(item.get("n_error") or 0) for item in session_stats)
+    status = {
+        "status": "PASS" if stop_reason != "error" else "FAIL",
+        "stop_reason": stop_reason,
+        "experiment_id": EXPERIMENT_ID,
+        "eval_name": EVAL_NAME,
+        "phase": args.phase,
+        "episodes_path": str(episodes_path),
+        "n_jobs": len(jobs),
+        "n_written": n_written,
+        "n_error": n_error,
+        "n_completed": len(completed),
+        "elapsed_s": time.time() - started,
+        "sampling": QWEN3_SAMPLING,
+        "validate": False,
+        "vllm_rollout_n": 1,
+        "n_gpus": N_GPUS,
+        "canonical_rl_step": 32,
+        "sessions": session_stats,
+        "split_kind": "held-out-task",
+    }
+    write_json(output_dir / f"run_status_{args.phase}.json", status)
+    write_json(output_dir / "run_status.json", status)
+    print(json.dumps(json_safe(status), indent=2))
+    return 0 if stop_reason != "error" else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

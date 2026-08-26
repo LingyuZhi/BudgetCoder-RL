@@ -594,6 +594,181 @@ def init_agent_loop_manager(config, reward_loop_worker_handles=None):
     return agent_loop_manager
 
 
+def apply_eval_lora_config(
+    config: Any,
+    *,
+    lora_rank: int = 16,
+    lora_alpha: int = 16,
+) -> Any:
+    """Enable FSDP LoRA on the AgentLoopManager path. Model-only checkpoint load."""
+    from omegaconf import open_dict
+
+    with open_dict(config):
+        config.actor_rollout_ref.model.lora_rank = int(lora_rank)
+        config.actor_rollout_ref.model.lora_alpha = int(lora_alpha)
+        config.actor_rollout_ref.model.target_modules = "all-linear"
+        config.actor_rollout_ref.rollout.load_format = "safetensors"
+        config.actor_rollout_ref.actor.strategy = "fsdp"
+        config.actor_rollout_ref.actor.checkpoint.load_contents = ["model"]
+        config.actor_rollout_ref.rollout.gpu_memory_utilization = 0.5
+    return config
+
+
+def query_vllm_lora_ids(llm_server_manager: Any) -> dict[str, Any]:
+    """Best-effort LoRA presence check. Does not modify veRL."""
+    import json
+    import urllib.error
+    import urllib.request
+
+    addresses = []
+    try:
+        addresses = list(llm_server_manager.get_addresses() or [])
+    except Exception as exc:
+        return {"addresses": [], "error": str(exc), "lora_int_ids": []}
+    listed: list[dict[str, Any]] = []
+    found: list[int] = []
+    for addr in addresses:
+        text = str(addr)
+        if text.startswith("http://") or text.startswith("https://"):
+            url = f"{text.rstrip('/')}/v1/models"
+        else:
+            url = f"http://{text}/v1/models"
+        row: dict[str, Any] = {"address": text, "url": url}
+        try:
+            with urllib.request.urlopen(url, timeout=15) as resp:
+                payload = json.loads(resp.read().decode("utf-8"))
+            row["payload"] = payload
+            for model in payload.get("data") or []:
+                model_id = str((model or {}).get("id") or "")
+                row.setdefault("ids", []).append(model_id)
+                if model_id.isdigit():
+                    found.append(int(model_id))
+                if "123" in model_id.split("/")[-1]:
+                    found.append(123)
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, OSError) as exc:
+            row["error"] = str(exc)
+        listed.append(row)
+    return {
+        "addresses": addresses,
+        "listed": listed,
+        "lora_int_ids": sorted(set(found)),
+    }
+
+
+def init_eval_agent_loop_manager(
+    config,
+    *,
+    checkpoint_actor_dir: str | None = None,
+    require_lora_id: int | None = None,
+):
+    """AgentLoopManager bootstrap with optional FSDP actor load + vLLM sync."""
+    import ray
+
+    from verl.checkpoint_engine import CheckpointEngineManager
+    from verl.experimental.agent_loop import AgentLoopManager
+    from verl.single_controller.ray import RayClassWithInitArgs, RayWorkerGroup
+    from verl.single_controller.ray.base import create_colocated_worker_cls
+    from verl.trainer.ppo.ray_trainer import ResourcePoolManager, Role
+    from verl.utils import omega_conf_to_dataclass
+    from verl.utils.device import get_device_name
+    from verl.workers.engine_workers import ActorRolloutRefWorker
+    from verl.workers.rollout.llm_server import LLMServerManager
+
+    assert config.actor_rollout_ref.rollout.mode == "async"
+    global_pool_id = "global_pool"
+    resource_pool_manager = ResourcePoolManager(
+        resource_pool_spec={
+            global_pool_id: [config.trainer.n_gpus_per_node] * config.trainer.nnodes
+        },
+        mapping={Role.ActorRollout: global_pool_id},
+    )
+    resource_pool_manager.create_resource_pool()
+    actor_rollout_cls = RayClassWithInitArgs(
+        cls=ray.remote(ActorRolloutRefWorker),
+        config=config.actor_rollout_ref,
+        role="actor_rollout",
+    )
+    worker_dict_cls = create_colocated_worker_cls(
+        class_dict={"actor_rollout": actor_rollout_cls}
+    )
+    wg_dict = RayWorkerGroup(
+        resource_pool=resource_pool_manager.get_resource_pool(Role.ActorRollout),
+        ray_cls_with_init=worker_dict_cls,
+        device_name=get_device_name(),
+    )
+    actor_rollout_wg = wg_dict.spawn(prefix_set={"actor_rollout"})["actor_rollout"]
+    actor_rollout_wg.init_model()
+    if checkpoint_actor_dir:
+        actor_path = str(checkpoint_actor_dir)
+        if "global_step_" not in actor_path:
+            raise SystemExit(
+                f"HARD FAIL: checkpoint path must contain global_step_ (got {actor_path!r})"
+            )
+        if any(f"global_step_{step}" in actor_path for step in (8, 16, 24)) and (
+            "global_step_32" not in actor_path
+        ):
+            raise SystemExit(
+                f"HARD FAIL: refusing intermediate RL checkpoint {actor_path}"
+            )
+        actor_rollout_wg.load_checkpoint(actor_path)
+    llm_server_manager = LLMServerManager.create(
+        config=config, worker_group=actor_rollout_wg
+    )
+    agent_loop_manager = AgentLoopManager.create(
+        config=config,
+        llm_client=llm_server_manager.get_client(),
+        reward_loop_worker_handles=None,
+    )
+    checkpoint_manager = CheckpointEngineManager(
+        config=omega_conf_to_dataclass(config.actor_rollout_ref.rollout.checkpoint_engine),
+        trainer=actor_rollout_wg,
+        replicas=llm_server_manager.get_replicas(),
+    )
+    checkpoint_manager.sleep_replicas()
+    checkpoint_manager.update_weights()
+    lora_probe = query_vllm_lora_ids(llm_server_manager)
+    lora_as_adapter: list[Any] = []
+    for replica in llm_server_manager.get_replicas():
+        handle = getattr(replica, "_server_handle", None)
+        if handle is None:
+            lora_as_adapter.append(None)
+            continue
+        try:
+            lora_as_adapter.append(bool(ray.get(handle.lora_as_adapter.remote())))
+        except Exception as exc:
+            lora_as_adapter.append(f"error:{exc}")
+    lora_probe["lora_as_adapter"] = lora_as_adapter
+    if require_lora_id is not None:
+        lora_probe["require_lora_id"] = int(require_lora_id)
+        found = set(int(item) for item in (lora_probe.get("lora_int_ids") or []))
+        lora_probe["http_saw_adapter"] = int(require_lora_id) in found
+        explicit_true = any(item is True for item in lora_as_adapter)
+        explicit_false = any(item is False for item in lora_as_adapter)
+        query_failed = bool(lora_as_adapter) and all(
+            isinstance(item, str) and str(item).startswith("error:")
+            for item in lora_as_adapter
+        )
+        if explicit_false and not explicit_true:
+            raise SystemExit(
+                "HARD FAIL: vLLM lora_as_adapter is false after LoRA eval init; "
+                f"probe={lora_probe}"
+            )
+        if int(require_lora_id) not in found:
+            lora_probe["note"] = (
+                "FSDP load + update_weights completed. HTTP /v1/models did not "
+                "list adapter id 123. generate() attaches LoRARequest(123) iff "
+                "engine.list_loras contains 123."
+            )
+            if query_failed:
+                lora_probe["lora_as_adapter_query"] = "failed; relying on update_weights"
+    return {
+        "agent_loop_manager": agent_loop_manager,
+        "llm_server_manager": llm_server_manager,
+        "actor_rollout_wg": actor_rollout_wg,
+        "lora_probe": lora_probe,
+    }
+
+
 def build_batch(items: list[dict[str, Any]], *, validate: bool):
     from verl.protocol import DataProto
 

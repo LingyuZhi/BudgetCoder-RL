@@ -1,0 +1,15 @@
+{
+  "path": "configs/experiments/stage1_m6_eval.json",
+  "sha256": "bdaabd34520d86a7514fde485dd2037d5920e6ebd6945fe31bc90a1c701b7c76",
+  "immutable": true,
+  "experiment_id": "E015",
+  "milestone": "M6",
+  "eval_name": "frozen SWE-Gym held-out-task dev evaluation",
+  "canonical_rl_step": 32,
+  "forbidden_rl_steps": [
+    8,
+    16,
+    24
+  ],
+  "note": "Do not edit stage1_m6_eval.json after this lock. Do not splice E001/E006 into the main table."
+}
