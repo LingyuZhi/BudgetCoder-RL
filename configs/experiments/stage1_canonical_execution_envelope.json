@@ -1,0 +1,46 @@
+{
+  "schema_version": "bcrl-stage1-canonical-execution-envelope-v1",
+  "status": "frozen",
+  "experiment_id": "canonical-execution-envelope",
+  "source_experiment_id": "E013",
+  "ppo_max_token_len_per_gpu": 20480,
+  "revision_reason": "sequence_capacity_headroom",
+  "source_overlay": "configs/experiments/stage1_m5_e013_runtime.json",
+  "source_overlay_sha256": "1977b427696c105183c6363e806cba623c7c135210c44b711fd15ee1f516b74d",
+  "e012_kept": {
+    "path": "configs/experiments/stage1_m5_e012_runtime.json",
+    "sha256": "a71f4557e6ca752715f81b21a18d3a70d810950af47d99c9bed7c9bfdf30fcf1",
+    "ppo_max_token_len_per_gpu": 18432,
+    "note": "Immutable historical 18432 stress; not the canonical rerun envelope."
+  },
+  "parent_freeze": {
+    "path": "configs/experiments/stage1_m5_main.json",
+    "sha256": "fac90e49b1c3d6bc42beff57cdc73a407b2d9f88cb83f748dc4670d6dfc9837b",
+    "ppo_max_token_len_per_gpu_in_freeze_json": 16384,
+    "note": "Research freeze file stays 16384; Hydra apply uses this execution overlay."
+  },
+  "gpu": {
+    "n_gpus": 2,
+    "tensor_model_parallel_size": 1,
+    "device": "2xA100-40GB"
+  },
+  "checkpoint_selection": {
+    "rule": "terminal_global_step_32",
+    "canonical_global_step": 32
+  },
+  "canonical_32_step_not_started": true,
+  "not_m6_candidate": true,
+  "evidence": {
+    "realized_max_seq": 14512.0,
+    "margin": 5968.0,
+    "gpu0_peak_mib": 29101,
+    "gpu1_peak_mib": 28281,
+    "oom": false,
+    "n_steps_completed": 1
+  },
+  "notes": [
+    "Use this envelope for the next canonical 32-step rerun overlay.",
+    "Do not treat E013 stress checkpoints as M6 candidates.",
+    "Do not edit E012 artifacts or the 18432 overlay."
+  ]
+}

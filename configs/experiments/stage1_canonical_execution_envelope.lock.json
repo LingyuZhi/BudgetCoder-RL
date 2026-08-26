@@ -1,0 +1,10 @@
+{
+  "path": "configs/experiments/stage1_canonical_execution_envelope.json",
+  "sha256": "0b5928dbf28fd3f5949b3f62dcac47b23970b900a42b595c6fee6514c2986f65",
+  "ppo_max_token_len_per_gpu": 20480,
+  "source_experiment_id": "E013",
+  "source_overlay_sha256": "1977b427696c105183c6363e806cba623c7c135210c44b711fd15ee1f516b74d",
+  "e012_sha256": "a71f4557e6ca752715f81b21a18d3a70d810950af47d99c9bed7c9bfdf30fcf1",
+  "parent_sha256": "fac90e49b1c3d6bc42beff57cdc73a407b2d9f88cb83f748dc4670d6dfc9837b",
+  "note": "Frozen execution envelope for the future canonical 32-step rerun."
+}

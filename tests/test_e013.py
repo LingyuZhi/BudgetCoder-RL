@@ -119,3 +119,25 @@ def test_memory_healthy_threshold():
     assert not ok
     ok, reasons = memory_healthy(oom=False, peak_mib=None)
     assert not ok
+
+
+EXPECTED_CANONICAL_SHA256 = (
+    "0b5928dbf28fd3f5949b3f62dcac47b23970b900a42b595c6fee6514c2986f65"
+)
+
+
+def test_canonical_execution_envelope_frozen_at_20480():
+    path = REPO_ROOT / "configs/experiments/stage1_canonical_execution_envelope.json"
+    lock_path = REPO_ROOT / "configs/experiments/stage1_canonical_execution_envelope.lock.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    lock = json.loads(lock_path.read_text(encoding="utf-8"))
+    assert sha256_file(path) == EXPECTED_CANONICAL_SHA256
+    assert lock["sha256"] == EXPECTED_CANONICAL_SHA256
+    assert payload["status"] == "frozen"
+    assert int(payload["ppo_max_token_len_per_gpu"]) == 20480
+    assert payload["source_experiment_id"] == "E013"
+    assert payload["canonical_32_step_not_started"] is True
+    assert payload["e012_kept"]["sha256"] == EXPECTED_E012_OVERLAY_SHA256
+    assert int(payload["e012_kept"]["ppo_max_token_len_per_gpu"]) == 18432
+    assert payload["parent_freeze"]["sha256"] == EXPECTED_MAIN_SHA256
+    assert int(payload["parent_freeze"]["ppo_max_token_len_per_gpu_in_freeze_json"]) == 16384
