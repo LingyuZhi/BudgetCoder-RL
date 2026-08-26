@@ -1,0 +1,38 @@
+{
+  "schema_version": "bcrl-stage1-m5-scaled-e017-v1",
+  "milestone": "E017-SCALED-M5-MAIN",
+  "experiment_id": "E017",
+  "not_preflight": true,
+  "do_not_start_275": false,
+  "inherits": "configs/experiments/stage1_m5_scaled.json",
+  "parent": {
+    "path": "configs/experiments/stage1_m5_scaled.json",
+    "sha256": "672f064399a1d42062dd4360b4bd22b30f101988f3325e29338781e934e9ae8a",
+    "schema_version": "bcrl-stage1-m5-scaled-v1"
+  },
+  "allowed_override_scope": [
+    "trainer_namespace",
+    "checkpoint",
+    "launch"
+  ],
+  "overrides": {
+    "trainer": {
+      "experiment_name": "E017-scaled-m5-main",
+      "default_local_dir": "/data/home/zdhs0148/my_data/budget-coder-rl/checkpoints/stage1_m5_scaled_e017",
+      "resume_mode": "disable"
+    },
+    "checkpoint": {
+      "directory_template": "$BCRL_DATA_ROOT/checkpoints/stage1_m5_scaled_e017"
+    },
+    "launch": {
+      "session_name": "E017"
+    }
+  },
+  "output_dir": "/data/home/zdhs0148/my_proj/budget-coder-rl/outputs/experiments/E017",
+  "trajectory_dir": "/data/home/zdhs0148/my_data/budget-coder-rl/trajectories/stage1_m5_scaled/E017",
+  "notes": [
+    "Namespace overlay only. Scientific knobs stay in stage1_m5_scaled.json.",
+    "Fresh launch: resume_mode=disable on an empty E017 checkpoint dir.",
+    "Do not reuse E016 preflight namespace or checkpoints."
+  ]
+}
