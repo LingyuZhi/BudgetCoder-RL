@@ -35,6 +35,7 @@ SESSION_NAME = "E011"
 OUTPUT_ENV = "BCRL_M5_OUTPUT_DIR"
 HARD_STOP_ENV = "BCRL_M5B_HARD_STOP"
 PLACEMENT_ENV = "BCRL_M5B_PLACEMENT"
+PPO_MAX_ENV = "BCRL_PPO_MAX_TOKEN_LEN"
 RUNTIME_CONFIG_RELPATH = "configs/experiments/stage1_m5b_e011_runtime.json"
 RUNTIME_LOCK_RELPATH = "configs/experiments/stage1_m5b_e011_runtime.lock.json"
 MAIN_LOCK_RELPATH = "configs/experiments/stage1_m5_main.lock.json"
@@ -479,9 +480,15 @@ def inspect_step_metrics_for_hard_stop(
     *,
     step: int,
     output_dir: Path,
+    ppo_max_token_len: int | None = None,
 ) -> None:
     payload = dict(metrics or {})
     reasons: list[str] = []
+    envelope = int(
+        ppo_max_token_len
+        if ppo_max_token_len is not None
+        else os.environ.get(PPO_MAX_ENV) or PPO_MAX_TOKEN_LEN
+    )
     for key in (
         "actor/pg_loss",
         "actor/grad_norm",
@@ -498,9 +505,9 @@ def inspect_step_metrics_for_hard_stop(
     if prompt_clip is not None and prompt_clip > 0:
         reasons.append(f"sequence_over_envelope:prompt_length/clip_ratio={prompt_clip}")
     proxy_max = _as_float(payload.get("bcrl/seq/training_proxy_max"))
-    if proxy_max is not None and proxy_max > PPO_MAX_TOKEN_LEN:
+    if proxy_max is not None and proxy_max > envelope:
         reasons.append(
-            f"sequence_over_envelope:training_proxy_max={proxy_max}>{PPO_MAX_TOKEN_LEN}"
+            f"sequence_over_envelope:training_proxy_max={proxy_max}>{envelope}"
         )
 
     state = _load_state(output_dir)

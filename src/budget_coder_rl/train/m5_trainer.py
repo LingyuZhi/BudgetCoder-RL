@@ -22,7 +22,7 @@ from budget_coder_rl.eval.m5a import (
     compact_episode_from_extra,
     compute_bcrl_step_metrics,
 )
-from budget_coder_rl.eval.m5b import HARD_STOP_ENV, PLACEMENT_ENV
+from budget_coder_rl.eval.m5b import HARD_STOP_ENV, PLACEMENT_ENV, PPO_MAX_ENV
 from budget_coder_rl.train.m4b_trainer import (
     _row_extra_fields,
     m4b_collate_fn,
@@ -197,10 +197,12 @@ def install_metrics_jsonl_logger(output_dir: Path) -> None:
         if os.environ.get(HARD_STOP_ENV) == "1":
             from budget_coder_rl.eval.m5b import inspect_step_metrics_for_hard_stop
 
+            envelope_raw = os.environ.get(PPO_MAX_ENV)
             inspect_step_metrics_for_hard_stop(
                 data if isinstance(data, MappingABC) else payload["metrics"],
                 step=int(step),
                 output_dir=output_dir,
+                ppo_max_token_len=int(envelope_raw) if envelope_raw else None,
             )
         return result
 

@@ -1,0 +1,54 @@
+{
+  "schema_version": "bcrl-stage1-e012-runtime-v1",
+  "milestone": "M5B-E012-capacity",
+  "experiment_id": "E012",
+  "parent": {
+    "path": "configs/experiments/stage1_m5_main.json",
+    "sha256": "fac90e49b1c3d6bc42beff57cdc73a407b2d9f88cb83f748dc4670d6dfc9837b",
+    "lock_path": "configs/experiments/stage1_m5_main.lock.json",
+    "schema_version": "bcrl-stage1-m5-main-v1"
+  },
+  "e011_runtime": {
+    "path": "configs/experiments/stage1_m5b_e011_runtime.json",
+    "sha256": "69f149b74e0a39276655bc0f832a16c0535724ef4a302f18a6d0a8aedc6a2804"
+  },
+  "revision_reason": "sequence_capacity_exceeded",
+  "allowed_override_scope": [
+    "gpu",
+    "launch",
+    "systems"
+  ],
+  "checkpoint_selection": {
+    "rule": "terminal_global_step_32",
+    "canonical_global_step": 32,
+    "forbidden": "post-hoc train/W&B curve picking"
+  },
+  "overrides": {
+    "gpu": {
+      "n_gpus": 2,
+      "nnodes": 1,
+      "tensor_model_parallel_size": 1,
+      "device": "2xA100-40GB",
+      "cuda_visible_devices": "0,1"
+    },
+    "launch": {
+      "session_name": "E012",
+      "preferred": "tmux",
+      "fallback": "sbatch"
+    },
+    "systems": {
+      "ppo_max_token_len_per_gpu": 18432
+    }
+  },
+  "notes": [
+    "Does not edit stage1_m5_main.json or the E011 overlay.",
+    "Only actor packing envelope changes. Research/training semantics are frozen.",
+    "rollout.log_prob_max_token_len_per_gpu stays 32768 (already matching).",
+    "Stress checkpoints are not M6 candidates. Canonical E012 main is not started here.",
+    "Pinned veRL rearrange_micro_batches asserts per-sequence max_seq_len <= ppo_max_token_len_per_gpu * ulysses_sp (sp=1). Nested input_ids use max(per-sample length); E011 reported tensor(16751).",
+    "BCRL training_proxy = prompt + policy + observation matches that length.",
+    "E011 actor.ppo_max_token_len_per_gpu=16384 was the blocker. rollout.log_prob_max_token_len_per_gpu is already 32768 via apply_m5_train_config. ref.log_prob remains 16384 but unused (use_kl_loss=false, LoRA ref_in_actor).",
+    "M5A observed max 15251 is not a stochastic hard bound: same dask task reached 16751 in E011 from extra inserted observation tokens.",
+    "Collate upper bound prompt_length+response_length=32768 is excluded (M5A packing-OOM risk). Do not jump to max_model_len to 'never fail'."
+  ]
+}
