@@ -1,0 +1,66 @@
+{
+  "schema_version": "bcrl-stage1-e014-runtime-v1",
+  "milestone": "M5B-E014-canonical",
+  "experiment_id": "E014",
+  "parent": {
+    "path": "configs/experiments/stage1_m5_main.json",
+    "sha256": "fac90e49b1c3d6bc42beff57cdc73a407b2d9f88cb83f748dc4670d6dfc9837b",
+    "lock_path": "configs/experiments/stage1_m5_main.lock.json",
+    "schema_version": "bcrl-stage1-m5-main-v1"
+  },
+  "canonical_envelope": {
+    "path": "configs/experiments/stage1_canonical_execution_envelope.json",
+    "sha256": "0b5928dbf28fd3f5949b3f62dcac47b23970b900a42b595c6fee6514c2986f65",
+    "ppo_max_token_len_per_gpu": 20480
+  },
+  "e011_runtime": {
+    "path": "configs/experiments/stage1_m5b_e011_runtime.json",
+    "sha256": "69f149b74e0a39276655bc0f832a16c0535724ef4a302f18a6d0a8aedc6a2804"
+  },
+  "e012_runtime": {
+    "path": "configs/experiments/stage1_m5_e012_runtime.json",
+    "sha256": "a71f4557e6ca752715f81b21a18d3a70d810950af47d99c9bed7c9bfdf30fcf1",
+    "ppo_max_token_len_per_gpu": 18432
+  },
+  "e013_runtime": {
+    "path": "configs/experiments/stage1_m5_e013_runtime.json",
+    "sha256": "1977b427696c105183c6363e806cba623c7c135210c44b711fd15ee1f516b74d",
+    "ppo_max_token_len_per_gpu": 20480
+  },
+  "revision_reason": "canonical_32_step_rerun",
+  "allowed_override_scope": [
+    "gpu",
+    "launch",
+    "systems"
+  ],
+  "checkpoint_selection": {
+    "rule": "terminal_global_step_32",
+    "canonical_global_step": 32,
+    "forbidden": "post-hoc train/W&B curve picking"
+  },
+  "overrides": {
+    "gpu": {
+      "n_gpus": 2,
+      "nnodes": 1,
+      "tensor_model_parallel_size": 1,
+      "device": "2xA100-40GB",
+      "cuda_visible_devices": "0,1"
+    },
+    "launch": {
+      "session_name": "E014",
+      "preferred": "tmux",
+      "fallback": "sbatch"
+    },
+    "systems": {
+      "ppo_max_token_len_per_gpu": 20480
+    }
+  },
+  "notes": [
+    "Does not edit stage1_m5_main.json, E011-E013 overlays/artifacts, or the frozen canonical envelope JSON.",
+    "Hydra apply uses ppo_max=20480 from the frozen canonical execution envelope. Freeze JSON stays 16384.",
+    "256-task / 32-step canonical M5B rerun. Checkpoints go to $BCRL_DATA_ROOT/checkpoints/stage1_m5_e014, not stage1_m5_main.",
+    "Do not resume E011. Do not load E010 or E012/E013 stress weights. First start uses resume_mode=disable.",
+    "M6 candidate is only global_step_32. Intermediate save_freq=8 shards are not M6 candidates.",
+    "rollout.log_prob_max_token_len_per_gpu stays 32768. TP stays 1."
+  ]
+}

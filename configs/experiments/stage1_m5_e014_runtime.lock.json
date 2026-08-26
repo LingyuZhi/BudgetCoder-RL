@@ -1,0 +1,17 @@
+{
+  "path": "configs/experiments/stage1_m5_e014_runtime.json",
+  "sha256": "850e6830237f6697d60c58805e68e386277257c2f539def8cb825bb9e1f8c69a",
+  "parent_path": "configs/experiments/stage1_m5_main.json",
+  "parent_sha256": "fac90e49b1c3d6bc42beff57cdc73a407b2d9f88cb83f748dc4670d6dfc9837b",
+  "canonical_path": "configs/experiments/stage1_canonical_execution_envelope.json",
+  "canonical_sha256": "0b5928dbf28fd3f5949b3f62dcac47b23970b900a42b595c6fee6514c2986f65",
+  "e011_sha256": "69f149b74e0a39276655bc0f832a16c0535724ef4a302f18a6d0a8aedc6a2804",
+  "e012_sha256": "a71f4557e6ca752715f81b21a18d3a70d810950af47d99c9bed7c9bfdf30fcf1",
+  "e013_sha256": "1977b427696c105183c6363e806cba623c7c135210c44b711fd15ee1f516b74d",
+  "experiment_id": "E014",
+  "milestone": "M5B-E014-canonical",
+  "revision_reason": "canonical_32_step_rerun",
+  "ppo_max_token_len_per_gpu": 20480,
+  "scope": "systems-capacity plus 2-GPU launch; research freeze unchanged",
+  "note": "Do not edit stage1_m5_main.json, E011-E013 overlays, or the canonical envelope JSON."
+}
