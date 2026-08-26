@@ -52,6 +52,9 @@ def test_e012_overlay_allowlist_parent_and_e011_hashes():
     assert consumed["ppo_max_token_len_per_gpu"] in ENVELOPE_CANDIDATES
     assert consumed["ppo_max_token_len_per_gpu"] == 18432
     assert consumed["revision_reason"] == "sequence_capacity_exceeded"
+    assert sha256_file(overlay_path) == (
+        "a71f4557e6ca752715f81b21a18d3a70d810950af47d99c9bed7c9bfdf30fcf1"
+    )
 
 
 def test_overlay_rejects_research_knob_changes():
