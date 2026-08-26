@@ -1,0 +1,261 @@
+{
+  "schema_version": "bcrl-stage1-m5-scaled-v1",
+  "milestone": "M5-SCALED",
+  "experiment_id": "scaled-m5",
+  "inherits_m3c_freeze": {
+    "path": "/data/home/zdhs0148/my_proj/budget-coder-rl/configs/experiments/stage1_m3c_freeze.json",
+    "sha256": "49084af1c792e2049af72d4c98291dc546b829122034dba9e698cea8f7284185",
+    "schema_version": "bcrl-stage1-m3c-freeze-v1"
+  },
+  "canonical_envelope": {
+    "path": "/data/home/zdhs0148/my_proj/budget-coder-rl/configs/experiments/stage1_canonical_execution_envelope.json",
+    "sha256": "0b5928dbf28fd3f5949b3f62dcac47b23970b900a42b595c6fee6514c2986f65",
+    "ppo_max_token_len_per_gpu": 20480
+  },
+  "train_candidate_manifest": {
+    "path": "/data/home/zdhs0148/my_proj/budget-coder-rl/data/manifests/m5_scaled_train_candidates.json",
+    "sha256": "df785b9e35c3b6403e6f5cc0819ea18d94bf2cb43bac7de9b38473cbaaea5855",
+    "schema_version": "bcrl-m5-scaled-train-candidates-v1",
+    "n_unique": 2193,
+    "n_rows": 2200,
+    "unique_ids_sha256": "a32795cd5515a9465068fce0fe9deef334fa919b4fa79e5a2735b855905c0e32",
+    "padded_ids_sha256": "24c27349d4476c7df4dedd00a33ba000a8f9e8677509bc7d0cd05269b4316b7a",
+    "pad_ids": [
+      "pydantic__pydantic-8650",
+      "Project-MONAI__MONAI-2837",
+      "python__mypy-11140",
+      "Project-MONAI__MONAI-5117",
+      "Project-MONAI__MONAI-2321",
+      "pandas-dev__pandas-50719",
+      "python__mypy-10415"
+    ]
+  },
+  "scale_context": {
+    "codescout_4b_public": {
+      "instances": 1600,
+      "steps": 200,
+      "batch": 8,
+      "G": 8,
+      "trajectories": 12800
+    },
+    "this_run": {
+      "unique": 2193,
+      "steps": 275,
+      "batch": 8,
+      "G": 4,
+      "trajectories": 8800
+    },
+    "note": "Deliberate compute-constrained scale match, not hyperparameter reproduction. Do not raise G to 8 to chase CodeScout."
+  },
+  "inherited_m3c": {
+    "model": "Qwen/Qwen3-4B-Instruct-2507",
+    "primary_training_B_obs": 4096,
+    "budget_visible": true,
+    "sampling": {
+      "do_sample": true,
+      "temperature": 0.7,
+      "top_p": 0.8,
+      "top_k": 20,
+      "n": 1
+    },
+    "validate": false,
+    "vllm_rollout_n": 1,
+    "proposed_grpo_rollout_n": 4,
+    "max_turns": 6,
+    "max_new_tokens_per_turn": 2048,
+    "envelope": {
+      "prompt_length": 16384,
+      "response_length": 16384,
+      "max_model_len": 32768
+    },
+    "localization_reward": {
+      "formula": "0.5 * file_f1 + 0.5 * symbol_f1",
+      "symbol_unavailable": "file-only localization_score; symbol_status=unavailable",
+      "invalid_parse": 0,
+      "budget_exhausted_without_valid_final": 0,
+      "read_search_bonus": false,
+      "token_penalty": false
+    },
+    "verl": {
+      "version": "0.8.0.dev0",
+      "fork_commit": "8481f9f9880d0f46a75b3db0329d3de8abad3d81",
+      "core_commit": "60546ef2a7464a158cd170f58f852a62a4e552ba"
+    }
+  },
+  "inherited_m4_runtime": {
+    "lora_rank": 16,
+    "lora_alpha": 16,
+    "lora_target_modules": "all-linear",
+    "actor_strategy": "fsdp",
+    "fsdp_param_offload": true,
+    "fsdp_optimizer_offload": true,
+    "model_dtype": "bf16",
+    "enable_gradient_checkpointing": true,
+    "actor_lr": 1e-06,
+    "entropy_coeff": 0.0,
+    "use_kl_loss": false,
+    "use_kl_in_reward": false,
+    "load_format": "safetensors",
+    "gpu_memory_utilization": 0.5,
+    "checkpoint_path": "RayPPOTrainer._save_checkpoint / FSDPCheckpointManager",
+    "no_m4c_lora_fingerprint_hooks": true,
+    "no_custom_vllm_server": true
+  },
+  "newly_frozen": {
+    "gpu": {
+      "n_gpus": 2,
+      "nnodes": 1,
+      "tensor_model_parallel_size": 1,
+      "device": "2xA100-40GB",
+      "cuda_visible_devices": "0,1",
+      "fsdp_world_size": 2,
+      "n_vllm_replicas": 2
+    },
+    "data": {
+      "train_batch_size": 8,
+      "shuffle": false,
+      "filter_overlong_prompts": false,
+      "truncation": "error",
+      "max_prompt_length": 16384,
+      "max_response_length": 16384,
+      "n_unique": 2193,
+      "n_rows": 2200,
+      "drop_last": true,
+      "padding_policy": "sha256_salt_pipe_instance_id_lowest_7"
+    },
+    "actor": {
+      "ppo_mini_batch_size": 8,
+      "ppo_epochs": 1,
+      "use_dynamic_bsz": true,
+      "ppo_max_token_len_per_gpu": 20480,
+      "log_prob_max_token_len_per_gpu": 32768,
+      "calculate_entropy": true,
+      "entropy_coeff": 0.0,
+      "use_kl_loss": false,
+      "optim_lr": 1e-06,
+      "lr_warmup_steps": 0
+    },
+    "algorithm": {
+      "adv_estimator": "grpo",
+      "use_kl_in_reward": false,
+      "rollout_n": 4,
+      "vllm_n": 1
+    },
+    "trainer": {
+      "total_epochs": 1,
+      "total_training_steps": 275,
+      "val_before_train": false,
+      "test_freq": -1,
+      "save_freq": 32,
+      "max_actor_ckpt_to_keep": 2,
+      "resume_mode": "auto",
+      "logger": [
+        "console",
+        "wandb"
+      ],
+      "project_name": "budget-coder-rl",
+      "experiment_name": "scaled-m5-main",
+      "seed": 20260826,
+      "critic_enable": false
+    },
+    "checkpoint": {
+      "backend": "FSDPCheckpointManager",
+      "contents": [
+        "model",
+        "optimizer",
+        "extra"
+      ],
+      "approx_size_gib": 9.2,
+      "retention_n": 2,
+      "save_freq": 32,
+      "save_events": [
+        32,
+        64,
+        96,
+        128,
+        160,
+        192,
+        224,
+        256,
+        275
+      ],
+      "storage_bound_unpruned_gib": 82.8,
+      "directory_template": "$BCRL_DATA_ROOT/checkpoints/stage1_m5_scaled",
+      "terminal_global_step": 275,
+      "no_lora_only_migration": true,
+      "audit": {
+        "pinned_paths": {
+          "save": "verl/trainer/ppo/ray_trainer.py RayPPOTrainer._save_checkpoint",
+          "actor_retention": "verl/utils/checkpoint/fsdp_checkpoint_manager.py FSDPCheckpointManager.register_checkpoint",
+          "remove": "BaseCheckpointManager.remove_previous_save_local_path"
+        },
+        "tracked_path": "global_step_N/actor",
+        "does_not_delete_parent_global_step_dir": true,
+        "data_pt_location": "global_step_N/data.pt",
+        "terminal_save_if_save_freq_positive": true,
+        "resume_mode_auto": "latest_checkpointed_iteration.txt then actor/ + data.pt",
+        "e014_empirical": "max_actor_ckpt_to_keep=2 left global_step_{8,16,24,32} on disk; do not assume prune deletes global_step_*",
+        "save_freq": 32,
+        "max_actor_ckpt_to_keep": 2,
+        "save_events": [
+          32,
+          64,
+          96,
+          128,
+          160,
+          192,
+          224,
+          256,
+          275
+        ],
+        "n_save_events": 9,
+        "terminal_global_step": 275,
+        "shard_gib": 9.2,
+        "storage_bound_unpruned_gib": 82.8,
+        "storage_bound_if_actor_prune_works_gib": 18.4,
+        "disk_min_gib": 100.0,
+        "worst_resume_gap_steps": 31,
+        "canonical_later_candidate": "only global_step_275",
+        "custom_gc_this_round": false
+      }
+    },
+    "hard_stop": {
+      "one_pass_over_padded_rows": true,
+      "silent_second_epoch": false,
+      "do_not_start_from_this_file_in_e016": true,
+      "continuation_requires_new_version": true,
+      "abort_on": [
+        "OOM",
+        "veRL pin mismatch",
+        "M3C freeze hash mismatch",
+        "scaled manifest hash mismatch",
+        "dataloader silent drop",
+        "shared dirty veRL import",
+        "disk below 100 GiB"
+      ]
+    }
+  },
+  "compute_estimate": {
+    "source": "linear from E014 5851.6s / 32 steps",
+    "seconds_per_step": 182.863,
+    "estimated_wall_clock_s": 50287.2,
+    "estimated_wall_clock_h": 13.97,
+    "estimated_gpu_hours_2xA100": 27.9,
+    "n_steps": 275,
+    "n_trajectories": 8800,
+    "long_prompt_tail_may_be_slower": true
+  },
+  "runtime_provenance": {
+    "budget_coder_rl_commit": "bae89ba4bc59b27033acb3475a368ed44dbb586b"
+  },
+  "notes": [
+    "Do not silently edit this file after freeze. Do not start the 275-step run from E016.",
+    "G stays 4. This experiment only corrects training-data / training-step scale.",
+    "Do not edit stage1_m3c_freeze.json, stage1_m5_main.json, E014, or E015."
+  ],
+  "gate": {
+    "READY_FOR_SCALED_M5_MAIN": false,
+    "immutable": false,
+    "preflight_experiment_id": "E016"
+  }
+}

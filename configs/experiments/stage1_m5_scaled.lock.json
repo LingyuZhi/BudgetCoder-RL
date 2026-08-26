@@ -1,0 +1,15 @@
+{
+  "path": "configs/experiments/stage1_m5_scaled.json",
+  "sha256": "672f064399a1d42062dd4360b4bd22b30f101988f3325e29338781e934e9ae8a",
+  "manifest_path": "data/manifests/m5_scaled_train_candidates.json",
+  "manifest_sha256": "df785b9e35c3b6403e6f5cc0819ea18d94bf2cb43bac7de9b38473cbaaea5855",
+  "unique_ids_sha256": "a32795cd5515a9465068fce0fe9deef334fa919b4fa79e5a2735b855905c0e32",
+  "padded_ids_sha256": "24c27349d4476c7df4dedd00a33ba000a8f9e8677509bc7d0cd05269b4316b7a",
+  "n_unique": 2193,
+  "n_rows": 2200,
+  "optimizer_steps": 275,
+  "group_n": 4,
+  "ppo_max_token_len_per_gpu": 20480,
+  "save_freq": 32,
+  "note": "Do not edit stage1_m3c_freeze.json, stage1_m5_main.json, E014, or E015. Do not start the 275-step run until READY_FOR_SCALED_M5_MAIN=true."
+}
