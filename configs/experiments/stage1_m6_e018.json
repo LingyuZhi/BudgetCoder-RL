@@ -1,0 +1,103 @@
+{
+  "schema_version": "bcrl-stage1-m6-e018-v1",
+  "milestone": "E018-SCALED-M6-EVAL",
+  "experiment_id": "E018",
+  "eval_only": true,
+  "not_training": true,
+  "do_not_enter_m7": true,
+  "inherits": "configs/experiments/stage1_m6_eval.json",
+  "parent": {
+    "path": "configs/experiments/stage1_m6_eval.json",
+    "sha256": "bdaabd34520d86a7514fde485dd2037d5920e6ebd6945fe31bc90a1c701b7c76",
+    "schema_version": "bcrl-stage1-m6-eval-v1",
+    "experiment_id": "E015",
+    "eval_name": "frozen SWE-Gym held-out-task dev evaluation"
+  },
+  "allowed_override_scope": [
+    "namespace",
+    "checkpoint",
+    "conditions",
+    "wandb",
+    "launch"
+  ],
+  "frozen_from_parent": {
+    "n_tasks": 244,
+    "n_correlation_groups": 211,
+    "ordered_ids_sha256": "c25b29585d4f1a14f850d98f093e19f85614229a299cca787e3b78dadb499576",
+    "budgets": [2048, 4096, 8192],
+    "primary_training_B_obs": 4096,
+    "paired_seed_base": 20260827,
+    "paired_seed_formula": "PAIRED_SEED_BASE + task_index",
+    "max_turns": 6,
+    "max_new_tokens_per_turn": 2048,
+    "sampling": {
+      "do_sample": true,
+      "temperature": 0.7,
+      "top_p": 0.8,
+      "top_k": 20,
+      "n": 1
+    },
+    "validate": false,
+    "vllm_rollout_n": 1,
+    "agent_loop_config": "configs/agent_loop/repo_exploration_m3c.yaml",
+    "tools_prompt_parser_frozen": true,
+    "historical_runs_in_main_table": false
+  },
+  "overrides": {
+    "namespace": {
+      "output_dir": "outputs/experiments/E018",
+      "trajectory_relpath": "trajectories/m6/E018"
+    },
+    "checkpoint": {
+      "experiment_id": "E017",
+      "selection_rule": "terminal_global_step_275",
+      "global_step": 275,
+      "path_template": "$BCRL_DATA_ROOT/checkpoints/stage1_m5_scaled_e017/global_step_275",
+      "actor_subdir": "actor",
+      "forbidden_steps": [8, 16, 24, 32, 256]
+    },
+    "conditions": [
+      {
+        "id": "B0",
+        "policy": "base",
+        "budget_visible": false,
+        "label": "Base Hidden"
+      },
+      {
+        "id": "B1",
+        "policy": "base",
+        "budget_visible": true,
+        "label": "Base Visible"
+      },
+      {
+        "id": "M_scaled",
+        "policy": "rl",
+        "budget_visible": true,
+        "label": "Scaled RL Visible",
+        "checkpoint_step": 275
+      }
+    ],
+    "wandb": {
+      "project": "budget-coder-rl",
+      "experiment_name": "E018-scaled-m6-eval"
+    },
+    "launch": {
+      "session_name": "E018"
+    }
+  },
+  "prototype_overlay": {
+    "source_experiment": "E015",
+    "condition_id": "M1",
+    "label": "Prototype RL",
+    "checkpoint": "E014 global_step_32",
+    "independent_randomized_experiment": false
+  },
+  "primary_comparison": "M_scaled vs B1",
+  "auxiliary_comparison": "B0 vs B1",
+  "scale_correction_comparison": "M_scaled vs M1_proto",
+  "notes": [
+    "Namespace overlay only. E015 freeze JSON stays immutable.",
+    "Do not evaluate E017 global_step_256 or E014 global_step_32 as the E018 candidate.",
+    "Do not splice E001/E006. Do not enter M7. Do not train."
+  ]
+}

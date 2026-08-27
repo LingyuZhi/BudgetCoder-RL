@@ -1,0 +1,21 @@
+{
+  "path": "configs/experiments/stage1_m6_e018.json",
+  "sha256": "8749e58fbe88ce2560e37f4a32861e4a1c8ffc739136c2389dc582c055bb15f9",
+  "parent_path": "configs/experiments/stage1_m6_eval.json",
+  "parent_sha256": "bdaabd34520d86a7514fde485dd2037d5920e6ebd6945fe31bc90a1c701b7c76",
+  "ordered_ids_sha256": "c25b29585d4f1a14f850d98f093e19f85614229a299cca787e3b78dadb499576",
+  "m3c_freeze_sha256": "49084af1c792e2049af72d4c98291dc546b829122034dba9e698cea8f7284185",
+  "experiment_id": "E018",
+  "canonical_rl_step": 275,
+  "forbidden_rl_steps": [
+    8,
+    16,
+    24,
+    32,
+    256
+  ],
+  "eval_only": true,
+  "not_training": true,
+  "do_not_enter_m7": true,
+  "note": "Namespace overlay only. Do not edit stage1_m6_eval.json. Candidate is E017 global_step_275."
+}
