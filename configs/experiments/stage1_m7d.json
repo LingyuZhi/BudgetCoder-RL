@@ -1,0 +1,84 @@
+{
+  "schema_version": "bcrl-stage1-m7d-v1",
+  "milestone": "M7D",
+  "experiment_id": "M7D",
+  "diagnostic_only": true,
+  "eval_only": true,
+  "not_training": true,
+  "do_not_modify_e017_e018_m7c": true,
+  "do_not_start_intervention": true,
+  "no_optimizer_step": true,
+  "purpose": "Factorial forensic of standalone AgentLoop vs E017 trainer-style rollout on a frozen 16-task train prefix.",
+  "policy": {
+    "model": "Qwen/Qwen3-4B-Instruct-2507",
+    "lora_rank": 16,
+    "lora_alpha": 16,
+    "lora_target_modules": "all-linear"
+  },
+  "execution": {
+    "budget_visible": true,
+    "obs_tokens_limit": 4096,
+    "max_turns": 6,
+    "max_new_tokens_per_turn": 2048,
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "top_k": 20,
+    "do_sample": true,
+    "validate": false,
+    "vllm_rollout_n": 1,
+    "agent_loop_config": "configs/agent_loop/repo_exploration_m3c.yaml",
+    "apply_chat_template_kwargs": {},
+    "enable_thinking": null,
+    "seed_policy": "e017_unseeded"
+  },
+  "subset": {
+    "n": 16,
+    "split": "train",
+    "source": "data/manifests/m5_scaled_train_candidates.json",
+    "selection": "ordered_ids prefix; no result-based resampling"
+  },
+  "cells": {
+    "A": {
+      "path": "standalone_eval",
+      "lora": null,
+      "group_n": 1
+    },
+    "B": {
+      "path": "trainer_rollout",
+      "lora": null,
+      "group_n": 1
+    },
+    "C": {
+      "path": "trainer_rollout",
+      "lora": null,
+      "group_n": 4
+    },
+    "D": {
+      "path": "trainer_rollout",
+      "lora": "fresh_zero_init",
+      "group_n": 4,
+      "checkpoint": null
+    }
+  },
+  "thresholds": {
+    "low_first_turn_protocol": 0.10,
+    "high_first_turn_protocol": 0.20,
+    "e017_fingerprint_buckets": ["multiple_actions", "framing_unbalanced_tags"]
+  },
+  "verdicts": [
+    "G4_sibling_path_implicated",
+    "trainer_rollout_path_implicated",
+    "fresh_lora_runtime_implicated",
+    "first_request_divergence_found",
+    "E017_historical_pathology_not_reproduced"
+  ],
+  "namespace": {
+    "output_dir": "outputs/experiments/M7D",
+    "trajectory_relpath": "trajectories/m7d/M7D"
+  },
+  "notes": [
+    "Independent diagnostic overlay. Does not lock or edit E017/E018/M7C.",
+    "CPU first-request audit must pass before GPU cells.",
+    "Stop after SUMMARY. Do not enter parser/prompt/reward intervention."
+  ]
+}
