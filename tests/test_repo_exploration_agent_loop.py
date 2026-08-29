@@ -19,7 +19,7 @@ from budget_coder_rl.env import RepoEnvironment, TaskRef
 from budget_coder_rl.protocol.prompt import build_stage1_messages
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-AGENT_LOOP_CONFIG = REPO_ROOT / "configs" / "agent_loop" / "repo_exploration.yaml"
+AGENT_LOOP_CONFIG = REPO_ROOT / "configs" / "agent" / "repo_exploration.yaml"
 
 A1_IDS = [101, 102, 103, 104]
 A2_IDS = [201, 202, 203]
@@ -397,9 +397,9 @@ def test_hydra_yaml_instantiates_repo_exploration_loop(tokenizer, tmp_path: Path
     assert extra["instance_id"] == output.extra_fields["instance_id"]
 
 
-def test_m2d_yaml_raises_per_turn_cap_not_protocol():
+def test_canonical_yaml_per_turn_cap():
     configs = OmegaConf.load(
-        str(REPO_ROOT / "configs" / "agent_loop" / "repo_exploration_m2d.yaml")
+        str(REPO_ROOT / "configs" / "agent" / "repo_exploration.yaml")
     )
     assert configs[0].name == "repo_exploration"
     assert configs[0].max_turns == 6

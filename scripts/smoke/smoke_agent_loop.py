@@ -37,7 +37,7 @@ from pathlib import Path
 import numpy as np
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-AGENT_LOOP_CONFIG = REPO_ROOT / "configs" / "agent_loop" / "dummy_two_turn.yaml"
+AGENT_LOOP_CONFIG = REPO_ROOT / "configs" / "agent" / "dummy_two_turn.yaml"
 OUTPUT_DIR = REPO_ROOT / "outputs" / "smoke"
 
 RAW_PROMPTS = [

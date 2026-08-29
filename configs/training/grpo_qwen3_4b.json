@@ -1,0 +1,103 @@
+{
+  "schema_version": "bcrl-training-grpo-qwen3-4b-v1",
+  "description": "Canonical GRPO + LoRA training for Qwen3-4B-Instruct-2507 with RepoExplorationAgentLoop and localization reward. Knobs are copied from the frozen scaled-training contract; do not retune here.",
+  "provenance": "docs/provenance.md",
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "agent_loop_config": "configs/agent/repo_exploration.yaml",
+  "reward": {
+    "fn_relpath": "src/budget_coder_rl/reward/localization_score.py",
+    "fn_name": "compute_score",
+    "formula": "0.5 * file_f1 + 0.5 * symbol_f1",
+    "num_workers": 2
+  },
+  "budget": {
+    "obs_tokens_limit": 4096,
+    "budget_visible": true,
+    "max_turns": 6,
+    "max_new_tokens_per_turn": 2048
+  },
+  "sampling": {
+    "do_sample": true,
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "top_k": 20,
+    "n": 1
+  },
+  "validate": false,
+  "vllm_rollout_n": 1,
+  "envelope": {
+    "prompt_length": 16384,
+    "response_length": 16384,
+    "max_model_len": 32768
+  },
+  "lora": {
+    "rank": 16,
+    "alpha": 16,
+    "target_modules": "all-linear"
+  },
+  "actor": {
+    "strategy": "fsdp",
+    "fsdp_param_offload": true,
+    "fsdp_optimizer_offload": true,
+    "model_dtype": "bf16",
+    "enable_gradient_checkpointing": true,
+    "ppo_mini_batch_size": 8,
+    "ppo_epochs": 1,
+    "use_dynamic_bsz": true,
+    "ppo_max_token_len_per_gpu": 20480,
+    "log_prob_max_token_len_per_gpu": 32768,
+    "calculate_entropy": true,
+    "entropy_coeff": 0.0,
+    "use_kl_loss": false,
+    "optim_lr": 1e-06,
+    "lr_warmup_steps": 0,
+    "gpu_memory_utilization": 0.5,
+    "load_format": "safetensors"
+  },
+  "algorithm": {
+    "adv_estimator": "grpo",
+    "use_kl_in_reward": false,
+    "rollout_n": 4,
+    "vllm_n": 1
+  },
+  "data": {
+    "train_batch_size": 8,
+    "shuffle": false,
+    "filter_overlong_prompts": false,
+    "truncation": "error",
+    "max_prompt_length": 16384,
+    "max_response_length": 16384,
+    "n_unique": 2193,
+    "n_rows": 2200,
+    "drop_last": true,
+    "candidate_manifest": "data/manifests/m5_scaled_train_candidates.json"
+  },
+  "gpu": {
+    "n_gpus": 2,
+    "nnodes": 1,
+    "tensor_model_parallel_size": 1
+  },
+  "trainer": {
+    "total_epochs": 1,
+    "total_training_steps": 275,
+    "val_before_train": false,
+    "test_freq": -1,
+    "save_freq": 32,
+    "max_actor_ckpt_to_keep": 2,
+    "resume_mode": "disable",
+    "logger": ["console", "wandb"],
+    "project_name": "budget-coder-rl",
+    "experiment_name": "grpo-qwen3-4b",
+    "seed": 20260826,
+    "critic_enable": false
+  },
+  "checkpoint": {
+    "directory_template": "$BCRL_DATA_ROOT/checkpoints/grpo_qwen3_4b"
+  },
+  "output": {
+    "directory_template": "outputs/train/grpo_qwen3_4b"
+  },
+  "trajectory": {
+    "directory_template": "$BCRL_DATA_ROOT/trajectories/grpo_qwen3_4b"
+  }
+}

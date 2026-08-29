@@ -1,7 +1,0 @@
-# M2D real-Qwen smoke registry. Same loop class as M2C; per-turn cap is a
-# runtime safety limit (not a protocol change). 256 was sized for fake
-# scripted actions and would confound protocol failures with truncation.
-- name: repo_exploration
-  _target_: budget_coder_rl.agent_loop.repo_exploration.RepoExplorationAgentLoop
-  max_turns: 6
-  max_new_tokens_per_turn: 2048

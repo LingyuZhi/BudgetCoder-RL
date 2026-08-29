@@ -41,7 +41,7 @@ from budget_coder_rl.data.swe_gym_repos import (  # noqa: E402
 from budget_coder_rl.env import ExplorationSession, RepoEnvironment  # noqa: E402
 from budget_coder_rl.protocol import parse_action  # noqa: E402
 
-AGENT_LOOP_CONFIG = REPO_ROOT / "configs" / "agent_loop" / "repo_exploration.yaml"
+AGENT_LOOP_CONFIG = REPO_ROOT / "configs" / "agent" / "repo_exploration.yaml"
 TRACE_NOTE = (
     "Research/debug artifact. AgentLoopOutput token arrays are the training "
     "truth. Do not rebuild RL token trajectories from this JSONL."

@@ -1,8 +1,0 @@
-# M3A measurement-contract registry. Same loop class as M2C/M2D.
-# obs_tokens_limit=8192 is a smoke default, NOT a frozen Stage-1 training budget.
-- name: repo_exploration
-  _target_: budget_coder_rl.agent_loop.repo_exploration.RepoExplorationAgentLoop
-  max_turns: 6
-  max_new_tokens_per_turn: 2048
-  obs_tokens_limit: 8192
-  budget_visible: false

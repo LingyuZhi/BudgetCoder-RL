@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from budget_coder_rl.data.swe_gym_repos import bcrl_data_root
-from budget_coder_rl.eval.e014 import is_login_host
+from budget_coder_rl.train.gpu_runtime import is_login_host
 from budget_coder_rl.eval.m4a import GROUP_N, load_json
 from budget_coder_rl.eval.m4b import write_json
 from budget_coder_rl.eval.m5_scaled import (
@@ -54,8 +54,8 @@ MILESTONE = "E017-SCALED-M5-MAIN"
 SESSION_NAME = "E017"
 SCHEMA_VERSION = "bcrl-stage1-m5-scaled-e017-v1"
 WANDB_EXPERIMENT_NAME = "E017-scaled-m5-main"
-OVERLAY_RELPATH = "configs/experiments/stage1_m5_scaled_e017.json"
-OVERLAY_LOCK_RELPATH = "configs/experiments/stage1_m5_scaled_e017.lock.json"
+OVERLAY_RELPATH = "configs/historical/stage1_m5_scaled_e017.json"
+OVERLAY_LOCK_RELPATH = "configs/historical/stage1_m5_scaled_e017.lock.json"
 CHECKPOINT_RELPATH = "checkpoints/stage1_m5_scaled_e017"
 TRAJECTORY_RELPATH = "trajectories/stage1_m5_scaled/E017"
 COMPUTE_HOST_HINT = "n30158"
@@ -122,7 +122,7 @@ ALLOWED_LAUNCH_KEYS = frozenset({"session_name"})
 JSONL_LINK_NAMES = ("episodes.jsonl", "metrics.jsonl", "step_bcrl.jsonl")
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
-_OVERLAY_ON_DISK = _REPO_ROOT / "configs/experiments/stage1_m5_scaled_e017.json"
+_OVERLAY_ON_DISK = _REPO_ROOT / "configs/historical/stage1_m5_scaled_e017.json"
 EXPECTED_OVERLAY_SHA256 = (
     sha256_file(_OVERLAY_ON_DISK) if _OVERLAY_ON_DISK.is_file() else ("0" * 64)
 )
@@ -352,7 +352,11 @@ def overlay_errors(
         errors.append("not_preflight must be true")
     if overlay.get("do_not_start_275") is not False:
         errors.append("do_not_start_275 must be false for the main run")
-    if str(overlay.get("inherits") or "") != CONTRACT_RELPATH:
+    inherited = str(overlay.get("inherits") or "")
+    if inherited not in {
+        CONTRACT_RELPATH,
+        "configs/experiments/stage1_m5_scaled.json",
+    }:
         errors.append(f"inherits must be {CONTRACT_RELPATH}")
     parent = overlay.get("parent") if isinstance(overlay.get("parent"), MappingABC) else {}
     if str(parent.get("sha256") or "") != EXPECTED_CONTRACT_SHA256:

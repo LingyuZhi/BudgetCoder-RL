@@ -225,7 +225,7 @@ def main(argv: list[str] | None = None) -> int:
     errors: list[str] = []
     if not train_path.is_file() or not dev_path.is_file():
         print("HARD FAIL: materialized parquet missing. Run:", file=sys.stderr)
-        print("  python scripts/data/materialize_swe_gym_m1e.py", file=sys.stderr)
+        print("  python scripts/data/prepare_swe_gym.py materialize", file=sys.stderr)
         return 1
     if not raw_parquet.is_file():
         print(f"HARD FAIL: raw parquet not found: {raw_parquet}", file=sys.stderr)

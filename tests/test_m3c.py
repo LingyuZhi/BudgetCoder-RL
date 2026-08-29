@@ -325,20 +325,18 @@ def test_m3c_yaml_matches_frozen_training_scaffold():
     from omegaconf import OmegaConf
 
     repo = Path(__file__).resolve().parents[1]
-    yaml_path = repo / "configs" / "agent_loop" / "repo_exploration_m3c.yaml"
+    yaml_path = repo / "configs" / "agent" / "repo_exploration.yaml"
     configs = OmegaConf.load(str(yaml_path))
     assert configs[0].name == "repo_exploration"
     assert configs[0].budget_visible is True
     assert configs[0].max_turns == 6
     assert configs[0].max_new_tokens_per_turn == 2048
     assert configs[0].obs_tokens_limit == 4096
-    note = yaml_path.read_text(encoding="utf-8")
-    assert "stage1_m3c_freeze.json" in note
     assert OVERLONG_INSTANCE_IDS == frozenset({"Project-MONAI__MONAI-6344"})
 
 
 def test_stage1_freeze_json_contract():
-    path = Path(__file__).resolve().parents[1] / "configs" / "experiments" / "stage1_m3c_freeze.json"
+    path = Path(__file__).resolve().parents[1] / "configs" / "historical" / "stage1_m3c_freeze.json"
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert payload["schema_version"] == "bcrl-stage1-m3c-freeze-v1"
     assert payload["not_trained"] is True

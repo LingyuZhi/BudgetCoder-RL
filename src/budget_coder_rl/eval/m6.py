@@ -36,12 +36,12 @@ EXPERIMENT_ID = "E015"
 MILESTONE = "M6"
 SCHEMA_VERSION = "bcrl-stage1-m6-eval-v1"
 EVAL_NAME = "frozen SWE-Gym held-out-task dev evaluation"
-CONFIG_RELPATH = "configs/experiments/stage1_m6_eval.json"
-LOCK_RELPATH = "configs/experiments/stage1_m6_eval.lock.json"
+CONFIG_RELPATH = "configs/historical/stage1_m6_eval.json"
+LOCK_RELPATH = "configs/historical/stage1_m6_eval.lock.json"
 M3B_MANIFEST_RELPATH = "data/manifests/m3b_baseline_tasks.json"
-M3C_FREEZE_RELPATH = "configs/experiments/stage1_m3c_freeze.json"
+M3C_FREEZE_RELPATH = "configs/historical/stage1_m3c_freeze.json"
 SPLIT_RELPATH = "data/manifests/swe_gym_m1d_split.json"
-AGENT_LOOP_CONFIG_RELPATH = "configs/agent_loop/repo_exploration_m3c.yaml"
+AGENT_LOOP_CONFIG_RELPATH = "configs/agent/repo_exploration.yaml"
 FORBIDDEN_OUTPUT_IDS = ("E001", "E006", "E011", "E012", "E013", "E014")
 
 N_DEV_TASKS = 244

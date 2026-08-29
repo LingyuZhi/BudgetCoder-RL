@@ -41,8 +41,8 @@ PROPOSED_SCHEMA = "bcrl-m5-scaled-train-candidates-proposal-v1"
 M1D_SPLIT_RELPATH = "data/manifests/swe_gym_m1d_split.json"
 M1D_POLICY_RELPATH = "data/manifests/swe_gym_m1d_policy.json"
 M1E_MANIFEST_RELPATH = "data/manifests/swe_gym_m1e_dataset_manifest.json"
-M5_MAIN_RELPATH = "configs/experiments/stage1_m5_main.json"
-ENVELOPE_RELPATH = "configs/experiments/stage1_canonical_execution_envelope.json"
+M5_MAIN_RELPATH = "configs/historical/stage1_m5_main.json"
+ENVELOPE_RELPATH = "configs/historical/stage1_canonical_execution_envelope.json"
 M2C_STATS_RELPATH = "data/stats/swe_gym_m2c_prompt_length.json"
 M2C_OVERLONG_RELPATH = "data/interim/swe_gym/m2c_prompt_overlong.jsonl"
 
@@ -705,7 +705,7 @@ def build_ledger_rows(
             "stage": "M1D split train",
             "input_n": 2438,
             "predicate": "group-repo v1, seed=42, largest-remainder repo quota, subset-sum groups",
-            "code": "scripts/data/split_swe_gym_m1d.py + data/manifests/swe_gym_m1d_split.json",
+            "code": "scripts/data/prepare_swe_gym.py verify-split + data/manifests/swe_gym_m1d_split.json",
             "deterministic": True,
             "oracle_used": False,
             "reward_used": False,
@@ -717,7 +717,7 @@ def build_ledger_rows(
             "stage": "M1E train parquet",
             "input_n": n_train,
             "predicate": "materialize identities; no extra drop; row order instance_id lexicographic",
-            "code": "scripts/data/materialize_swe_gym_m1e.py",
+            "code": "scripts/data/prepare_swe_gym.py materialize",
             "deterministic": True,
             "oracle_used": False,
             "reward_used": False,
@@ -1174,7 +1174,7 @@ def run_audit(
             "e014": "valid 256-task proof-of-concept main run",
             "e015": "valid evaluation of E014; null result is not a bug",
             "next_contract_after_review": [
-                "configs/experiments/stage1_m5_scaled.json",
+                "configs/historical/stage1_m5_scaled.json",
                 "data/manifests/m5_scaled_train_candidates.json",
             ],
             "next_experiment_id": "E016+",
@@ -1396,7 +1396,7 @@ def render_summary(payload: Mapping[str, Any]) -> str:
             "",
             "After user review (not this round):",
             "",
-            "- `configs/experiments/stage1_m5_scaled.json`",
+            "- `configs/historical/stage1_m5_scaled.json`",
             "- `data/manifests/m5_scaled_train_candidates.json`",
             "- experiment id **E016+**",
             "",

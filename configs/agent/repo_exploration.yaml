@@ -1,0 +1,9 @@
+# Canonical AgentLoop registry for repository exploration.
+# Frozen training budget: obs_tokens_limit=4096, budget_visible=true.
+# Eval runners may override extra_info.obs_tokens_limit for {2048, 4096, 8192}.
+- name: repo_exploration
+  _target_: budget_coder_rl.agent_loop.repo_exploration.RepoExplorationAgentLoop
+  max_turns: 6
+  max_new_tokens_per_turn: 2048
+  obs_tokens_limit: 4096
+  budget_visible: true

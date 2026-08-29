@@ -32,7 +32,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_freeze_json_not_edited_by_m4b():
-    path = REPO_ROOT / "configs" / "experiments" / "stage1_m3c_freeze.json"
+    path = REPO_ROOT / "configs" / "historical" / "stage1_m3c_freeze.json"
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert freeze_contract_errors(payload) == []
     assert payload["grpo_optimizer"] is False

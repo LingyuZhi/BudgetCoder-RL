@@ -1,0 +1,84 @@
+{
+  "schema_version": "bcrl-evaluation-localization-v1",
+  "description": "Canonical held-out-task localization evaluation. Knobs are copied from the frozen eval contract; do not retune here.",
+  "provenance": "docs/provenance.md",
+  "eval_only": true,
+  "split": "dev",
+  "split_kind": "held-out-task",
+  "n_tasks": 244,
+  "n_correlation_groups": 211,
+  "task_set": {
+    "manifest": "data/manifests/m3b_baseline_tasks.json",
+    "ordered_ids_sha256": "c25b29585d4f1a14f850d98f093e19f85614229a299cca787e3b78dadb499576"
+  },
+  "agent_loop_config": "configs/agent/repo_exploration.yaml",
+  "base_checkpoint": "Qwen/Qwen3-4B-Instruct-2507",
+  "rl_checkpoint": {
+    "selection_rule": "terminal_global_step_275",
+    "global_step": 275,
+    "path_template": "$BCRL_DATA_ROOT/checkpoints/grpo_qwen3_4b/global_step_275",
+    "historical_path_template": "$BCRL_DATA_ROOT/checkpoints/stage1_m5_scaled_e017/global_step_275",
+    "actor_subdir": "actor"
+  },
+  "conditions": [
+    {
+      "id": "base_hidden",
+      "policy": "base",
+      "budget_visible": false,
+      "label": "Base Hidden"
+    },
+    {
+      "id": "base_visible",
+      "policy": "base",
+      "budget_visible": true,
+      "label": "Base Visible"
+    },
+    {
+      "id": "rl_visible",
+      "policy": "rl",
+      "budget_visible": true,
+      "label": "RL Visible",
+      "checkpoint_step": 275
+    }
+  ],
+  "budgets": [2048, 4096, 8192],
+  "primary_training_B_obs": 4096,
+  "n_per_task": 1,
+  "sampling": {
+    "do_sample": true,
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "top_k": 20,
+    "n": 1
+  },
+  "validate": false,
+  "vllm_rollout_n": 1,
+  "paired_seed_base": 20260827,
+  "max_turns": 6,
+  "max_new_tokens_per_turn": 2048,
+  "envelope": {
+    "prompt_length": 16384,
+    "response_length": 16384,
+    "max_model_len": 32768
+  },
+  "gpu": {
+    "n_gpus": 2,
+    "tensor_model_parallel_size": 1
+  },
+  "lora": {
+    "rank": 16,
+    "alpha": 16,
+    "target_modules": "all-linear",
+    "vllm_lora_int_id": 123
+  },
+  "evaluator": {
+    "path": "scripts/eval/score_episodes.py",
+    "formula": "0.5 * file_f1 + 0.5 * symbol_f1"
+  },
+  "output": {
+    "directory_template": "outputs/eval/localization"
+  },
+  "trajectory": {
+    "directory_template": "$BCRL_DATA_ROOT/trajectories/localization"
+  }
+}

@@ -54,9 +54,9 @@ SCHEMA_VERSION = "bcrl-stage1-m6-e018-v1"
 SESSION_NAME = "E018"
 WANDB_EXPERIMENT_NAME = "E018-scaled-m6-eval"
 WANDB_PROJECT = "budget-coder-rl"
-OVERLAY_RELPATH = "configs/experiments/stage1_m6_e018.json"
-OVERLAY_LOCK_RELPATH = "configs/experiments/stage1_m6_e018.lock.json"
-PARENT_RELPATH = "configs/experiments/stage1_m6_eval.json"
+OVERLAY_RELPATH = "configs/historical/stage1_m6_e018.json"
+OVERLAY_LOCK_RELPATH = "configs/historical/stage1_m6_e018.lock.json"
+PARENT_RELPATH = "configs/historical/stage1_m6_eval.json"
 CHECKPOINT_RELPATH = "checkpoints/stage1_m5_scaled_e017"
 TRAJECTORY_RELPATH = "trajectories/m6/E018"
 E015_TRAJECTORY_RELPATH = "trajectories/m6/E015"
@@ -153,8 +153,8 @@ TABLE_CONDITIONS = CONDITIONS + (
 )
 
 EVAL_CRITICAL_RELPATHS = (
-    "configs/agent_loop/repo_exploration_m3c.yaml",
-    "configs/experiments/stage1_m6_eval.json",
+    "configs/agent/repo_exploration.yaml",
+    "configs/historical/stage1_m6_eval.json",
     "src/budget_coder_rl/agent_loop/repo_exploration.py",
     "src/budget_coder_rl/agent_loop/tokenization.py",
     "src/budget_coder_rl/protocol/parser.py",
@@ -244,8 +244,8 @@ def checkpoint_path_errors(path: Path | str) -> list[str]:
         errors.append(f"refusing E017 intermediate checkpoint {text}")
     if "stage1_m5_e014" in text:
         errors.append("refusing E014 prototype checkpoint as E018 candidate")
-    if "stage1_m5_scaled_e017" not in text:
-        errors.append("E018 candidate must live under stage1_m5_scaled_e017")
+    if "stage1_m5_scaled_e017" not in text and "grpo_qwen3_4b" not in text:
+        errors.append("candidate must live under stage1_m5_scaled_e017 or grpo_qwen3_4b")
     return errors
 
 
@@ -255,7 +255,11 @@ def actor_dir_errors(path: Path, *, data_root: Path | None = None) -> list[str]:
     resolved = Path(path).resolve() if Path(path).exists() else Path(path)
     if "actor" not in Path(path).name and not str(path).rstrip("/").endswith("/actor"):
         errors.append("checkpoint path must point at the actor/ subdirectory")
-    if Path(path).exists() and resolved != expected.resolve():
+    if (
+        Path(path).exists()
+        and resolved != expected.resolve()
+        and "grpo_qwen3_4b" not in str(resolved)
+    ):
         errors.append(f"actor path {resolved} != expected {expected}")
     return errors
 
@@ -306,7 +310,11 @@ def overlay_errors(
         errors.append("not_training must be true")
     if overlay.get("do_not_enter_m7") is not True:
         errors.append("do_not_enter_m7 must be true")
-    if str(overlay.get("inherits") or "") != PARENT_RELPATH:
+    inherited = str(overlay.get("inherits") or "")
+    if inherited not in {
+        PARENT_RELPATH,
+        "configs/experiments/stage1_m6_eval.json",
+    }:
         errors.append(f"inherits must be {PARENT_RELPATH}")
     parent = overlay.get("parent") if isinstance(overlay.get("parent"), MappingABC) else {}
     if str(parent.get("sha256") or "") != EXPECTED_EVAL_SHA256:
@@ -353,7 +361,7 @@ def overlay_errors(
         parent_path = Path(repo_root) / PARENT_RELPATH
         if parent_path.is_file() and sha256_file(parent_path) != EXPECTED_EVAL_SHA256:
             errors.append("E015 freeze sha256 drifted")
-        freeze = Path(repo_root) / "configs/experiments/stage1_m3c_freeze.json"
+        freeze = Path(repo_root) / "configs/historical/stage1_m3c_freeze.json"
         if freeze.is_file() and sha256_file(freeze) != EXPECTED_M3C_FREEZE_SHA256:
             errors.append("M3C freeze sha256 drifted")
     return errors

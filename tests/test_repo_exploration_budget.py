@@ -434,43 +434,29 @@ def test_agent_loop_source_does_not_import_evaluator_oracle():
     assert "localization_score" not in text
 
 
-def test_m3a_yaml_has_smoke_limit_not_frozen_training_budget():
+def test_canonical_yaml_has_frozen_training_budget():
     configs = OmegaConf.load(
         str(
             Path(__file__).resolve().parents[1]
             / "configs"
-            / "agent_loop"
-            / "repo_exploration_m3a.yaml"
+            / "agent"
+            / "repo_exploration.yaml"
         )
     )
     assert configs[0].name == "repo_exploration"
-    assert configs[0].obs_tokens_limit == 8192
-    assert configs[0].budget_visible is False
+    assert configs[0].obs_tokens_limit == 4096
+    assert configs[0].budget_visible is True
     assert configs[0].max_new_tokens_per_turn == 2048
-    m2 = OmegaConf.load(str(AGENT_LOOP_CONFIG))
-    assert "obs_tokens_limit" not in m2[0]
 
 
-def test_m3b_yaml_is_provisional_8192_not_frozen_training_budget():
+def test_canonical_yaml_max_turns_and_sampling_envelope():
     configs = OmegaConf.load(
         str(
             Path(__file__).resolve().parents[1]
             / "configs"
-            / "agent_loop"
-            / "repo_exploration_m3b.yaml"
+            / "agent"
+            / "repo_exploration.yaml"
         )
     )
-    assert configs[0].name == "repo_exploration"
-    assert configs[0].obs_tokens_limit == 8192
-    assert configs[0].budget_visible is False
     assert configs[0].max_turns == 6
     assert configs[0].max_new_tokens_per_turn == 2048
-    m3a = OmegaConf.load(
-        str(
-            Path(__file__).resolve().parents[1]
-            / "configs"
-            / "agent_loop"
-            / "repo_exploration_m3a.yaml"
-        )
-    )
-    assert m3a[0].obs_tokens_limit == 8192

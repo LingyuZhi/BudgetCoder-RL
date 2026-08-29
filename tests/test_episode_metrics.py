@@ -116,7 +116,7 @@ def test_provenance_records_git_commit(tmp_path: Path):
     assert len(info["commit"]) >= 7
     payload = collect_run_provenance(
         repo_root,
-        agent_loop_config=repo_root / "configs" / "agent_loop" / "repo_exploration_m3a.yaml",
+        agent_loop_config=repo_root / "configs" / "agent" / "repo_exploration.yaml",
         model_path="unused",
     )
     assert payload["budget_coder_rl"]["commit"] == info["commit"]

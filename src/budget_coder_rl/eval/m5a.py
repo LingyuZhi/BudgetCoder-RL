@@ -47,15 +47,39 @@ M5B_EXPERIMENT_ID = "E011"
 MILESTONE = "M5A"
 OUTPUT_ENV = "BCRL_M5_OUTPUT_DIR"
 REWARD_FN_RELPATH = "src/budget_coder_rl/reward/localization_score.py"
-MAIN_CONFIG_RELPATH = "configs/experiments/stage1_m5_main.json"
-PILOT_CONFIG_RELPATH = "configs/experiments/stage1_m5a_pilot.json"
+MAIN_CONFIG_RELPATH = "configs/historical/stage1_m5_main.json"
+PILOT_CONFIG_RELPATH = "configs/historical/stage1_m5a_pilot.json"
 E007_EPISODES_RELPATH = "trajectories/m3c/E007/episodes.jsonl"
 E003_MASK_RELPATH = "outputs/experiments/E003/loss_mask_evidence.json"
 E008_EPISODES_RELPATH = "outputs/experiments/E008/episodes.jsonl"
 
-SHARED_VERL_ROOT = Path("/data/home/zdhs0148/verl")
-PREFERRED_SIBLING_VERL = Path("/data/home/zdhs0148/my_proj/deps/verl")
+SHARED_VERL_ROOT = Path(os.environ.get("BCRL_VERL_ROOT") or Path.home() / "verl")
+PREFERRED_SIBLING_VERL = Path(
+    os.environ.get("BCRL_VERL_SIBLING")
+    or (Path(__file__).resolve().parents[3].parent / "deps" / "verl")
+)
 ISOLATED_VERL_RELPATH = "runtimes/verl-8481f9f"
+
+
+def default_verl_source(repo_root: Path | None = None) -> Path:
+    env = os.environ.get("BCRL_VERL_ROOT")
+    if env:
+        return Path(env)
+    candidates: list[Path] = []
+    if repo_root is not None:
+        candidates.append(Path(repo_root).resolve().parent / "deps" / "verl")
+    sibling = Path(__file__).resolve().parents[3].parent / "deps" / "verl"
+    candidates.append(sibling)
+    try:
+        import verl
+
+        candidates.append(Path(verl.__file__).resolve().parents[1])
+    except Exception:
+        pass
+    for path in candidates:
+        if path.is_dir():
+            return path
+    return sibling
 
 N_CANDIDATES = 256
 TRAIN_BATCH_SIZE = 8

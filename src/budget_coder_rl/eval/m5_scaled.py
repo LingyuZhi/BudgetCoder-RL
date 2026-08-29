@@ -16,8 +16,6 @@ from typing import Any, Mapping, Sequence
 
 from budget_coder_rl.data.swe_gym_materialize import EXPECTED_TRAIN_ROWS
 from budget_coder_rl.data.swe_gym_repos import bcrl_data_root
-from budget_coder_rl.eval.e013 import CHOSEN_ENVELOPE
-from budget_coder_rl.eval.e014 import EXPECTED_CANONICAL_SHA256
 from budget_coder_rl.eval.m3b import repo_round_robin_ids, sha256_ids
 from budget_coder_rl.eval.m3c import OVERLONG_INSTANCE_IDS
 from budget_coder_rl.eval.m4a import GROUP_N, OBS_TOKENS_LIMIT, load_json
@@ -51,15 +49,15 @@ CANDIDATE_SCHEMA = "bcrl-m5-scaled-train-candidates-v1"
 CONTRACT_SCHEMA = "bcrl-stage1-m5-scaled-v1"
 PREFLIGHT_SCHEMA = "bcrl-stage1-m5-scaled-e016-preflight-v1"
 CANDIDATE_RELPATH = "data/manifests/m5_scaled_train_candidates.json"
-CONTRACT_RELPATH = "configs/experiments/stage1_m5_scaled.json"
-CONTRACT_LOCK_RELPATH = "configs/experiments/stage1_m5_scaled.lock.json"
-PREFLIGHT_RELPATH = "configs/experiments/stage1_m5_scaled_e016_preflight.json"
-PREFLIGHT_LOCK_RELPATH = "configs/experiments/stage1_m5_scaled_e016_preflight.lock.json"
-CANONICAL_ENVELOPE_RELPATH = "configs/experiments/stage1_canonical_execution_envelope.json"
-M3C_FREEZE_RELPATH = "configs/experiments/stage1_m3c_freeze.json"
+CONTRACT_RELPATH = "configs/historical/stage1_m5_scaled.json"
+CONTRACT_LOCK_RELPATH = "configs/historical/stage1_m5_scaled.lock.json"
+PREFLIGHT_RELPATH = "configs/historical/stage1_m5_scaled_e016_preflight.json"
+PREFLIGHT_LOCK_RELPATH = "configs/historical/stage1_m5_scaled_e016_preflight.lock.json"
+CANONICAL_ENVELOPE_RELPATH = "configs/historical/stage1_canonical_execution_envelope.json"
+M3C_FREEZE_RELPATH = "configs/historical/stage1_m3c_freeze.json"
 M3C_CANDIDATE_RELPATH = "data/manifests/m3c_train_candidates.json"
-M5_MAIN_RELPATH = "configs/experiments/stage1_m5_main.json"
-E014_RUNTIME_RELPATH = "configs/experiments/stage1_m5_e014_runtime.json"
+M5_MAIN_RELPATH = "configs/historical/stage1_m5_main.json"
+E014_RUNTIME_RELPATH = "configs/historical/stage1_m5_e014_runtime.json"
 MILESTONE = "M5-SCALED"
 EXPERIMENT_ID = "scaled-m5"
 PREFLIGHT_EXPERIMENT_ID = "E016"
@@ -85,7 +83,7 @@ MAIN_STEPS = 275
 PREFLIGHT_STEPS = 2
 PREFLIGHT_MAX_STEPS = 2
 N_TRAJECTORIES = N_ROWS * GROUP_N
-PPO_MAX_TOKEN_LEN = CHOSEN_ENVELOPE
+PPO_MAX_TOKEN_LEN = 20480
 SAVE_FREQ = 32
 MAX_ACTOR_CKPT_TO_KEEP = 2
 CKPT_SHARD_GIB = 9.2
@@ -103,6 +101,9 @@ EXPECTED_MANIFEST_FILE_SHA256 = (
 )
 EXPECTED_CONTRACT_SHA256 = (
     "672f064399a1d42062dd4360b4bd22b30f101988f3325e29338781e934e9ae8a"
+)
+EXPECTED_CANONICAL_SHA256 = (
+    "0b5928dbf28fd3f5949b3f62dcac47b23970b900a42b595c6fee6514c2986f65"
 )
 EXPECTED_PAD_IDS = (
     "pydantic__pydantic-8650",

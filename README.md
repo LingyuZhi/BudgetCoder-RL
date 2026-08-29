@@ -31,13 +31,37 @@ Pinned starting point:
 
 Tool and environment tokens are observations. They must not contribute to the policy loss.
 
+## Canonical entrypoints
+
+```bash
+# 1. Prepare the SWE-Gym localization dataset (frozen split is verify-only)
+python scripts/data/prepare_swe_gym.py all
+
+# 2. Train GRPO + LoRA (compute node; pinned conda env)
+python scripts/train/train_grpo.py
+python scripts/train/train_grpo.py --dry-run
+
+# 3. Held-out localization eval (base and/or LoRA checkpoint × budgets)
+python scripts/eval/evaluate_localization.py --phase all
+python scripts/eval/evaluate_localization.py --dry-run
+```
+
+Configs:
+
+- training: `configs/training/grpo_qwen3_4b.json`
+- evaluation: `configs/evaluation/localization.json`
+- agent: `configs/agent/repo_exploration.yaml`
+
+Frozen scientific contracts and hashes: `docs/provenance.md`.
+
 ## Repository layout
 
 ```text
 src/budget_coder_rl/   # core Python package
-configs/               # Stage 1 and experiment configs
-scripts/               # setup / data / smoke / train / eval entrypoints
+configs/               # training / evaluation / agent / historical provenance
+scripts/               # data / train / eval / smoke entrypoints
 data/                  # dataset lifecycle: manifests/fixtures in Git; raw/processed gitignored
+docs/                  # provenance pins (not a results narrative)
 tests/
 ```
 
