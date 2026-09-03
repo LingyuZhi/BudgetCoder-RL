@@ -1,4 +1,5 @@
 # BudgetCoder-RL
+![](assets/logo.png)
 
 BudgetCoder-RL is an Agentic RL research prototype for **budget-aware repository exploration**. A coding agent receives a real software issue, a repository snapshot, a small set of exploration tools, and a **hard context budget**. It must search and read the repo over multiple turns, then submit the code locations it believes are relevant to the issue.
 
